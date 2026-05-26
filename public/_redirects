@@ -1,0 +1,2 @@
+/api/gemini/generate /.netlify/functions/gemini-generate 200
+/* /index.html 200

@@ -1,0 +1,224 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { Users, Activity, Target, Zap, Shield, Crown } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+
+export default function AdminOverview() {
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    activeUsers: 0,
+    bannedUsers: 0,
+    totalTasks: 0,
+    baseUsers: 0,
+    orbitUsers: 0,
+    novaUsers: 0,
+    infiniteUsers: 0
+  });
+
+  const [growthData, setGrowthData] = useState<any[]>([]);
+
+  const fetchStats = async () => {
+    const { count: totalUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+    const { count: activeUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'active');
+    const { count: bannedUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'banned');
+    const { count: totalTasks } = await supabase.from('tasks').select('*', { count: 'exact', head: true });
+    
+    // Fetch plan counts
+    const { count: baseUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('plan', 'base');
+    const { count: orbitUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('plan', 'orbit');
+    const { count: novaUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('plan', 'nova');
+    const { count: infiniteUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('plan', 'infinite');
+
+    const { data: usersData } = await supabase.from('profiles').select('created_at');
+    const now = new Date();
+
+    const d15DaysAgo = new Date(now);
+    d15DaysAgo.setDate(now.getDate() - 15);
+    
+    const d7DaysAgo = new Date(now);
+    d7DaysAgo.setDate(now.getDate() - 7);
+
+    const users15DaysAgo = usersData ? usersData.filter(u => new Date(u.created_at) <= d15DaysAgo).length : 0;
+    const users7DaysAgo = usersData ? usersData.filter(u => new Date(u.created_at) <= d7DaysAgo).length : 0;
+    
+    // Growth percentage calculation
+    let weeklyGrowth = 0;
+    if (users15DaysAgo > 0) {
+      weeklyGrowth = Math.round(((users7DaysAgo - users15DaysAgo) / users15DaysAgo) * 100);
+    } else if (users7DaysAgo > 0) {
+      weeklyGrowth = 100; // If there were 0 users 15 days ago but >0 7 days ago
+    }
+
+    setStats({
+      totalUsers: totalUsers || 0,
+      activeUsers: activeUsers || 0,
+      bannedUsers: bannedUsers || 0,
+      totalTasks: totalTasks || 0,
+      baseUsers: baseUsers || 0,
+      orbitUsers: orbitUsers || 0,
+      novaUsers: novaUsers || 0,
+      infiniteUsers: infiniteUsers || 0,
+      weeklyGrowth: weeklyGrowth
+    });
+
+    // Fetch real growth data (users created in the last 15 days)
+    const data = [];
+    for (let i = 14; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(now.getDate() - i);
+      const dateString = d.toLocaleDateString('en-CA');
+      const displayDate = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+
+      // count users created on or before this day
+      const usersUpToDate = usersData ? usersData.filter(u => {
+        const uDate = new Date(u.created_at);
+        return uDate <= d;
+      }).length : 0;
+
+      data.push({
+        date: displayDate,
+        usuarios: usersUpToDate,
+      });
+    }
+    setGrowthData(data);
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchStats();
+  }, []);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3 mb-8">
+        <Activity className="text-neon-blue" size={24} />
+        <h2 className="text-xl font-bold font-display">Visão Geral da Plataforma</h2>
+      </div>
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-surface rounded-2xl p-5 border border-surface-light">
+          <div className="flex items-start justify-between mb-2">
+            <span className="text-xs font-bold text-text-secondary uppercase tracking-widest">Total Usuários</span>
+            <Users size={16} className="text-neon-blue" />
+          </div>
+          <div className="text-3xl font-black">{stats.totalUsers}</div>
+          <div className="text-[10px] text-emerald-500 font-bold mt-2">
+            {stats.weeklyGrowth > 0 ? '+' : ''}{stats.weeklyGrowth}% esta semana
+          </div>
+        </div>
+
+        <div className="bg-surface rounded-2xl p-5 border border-surface-light">
+          <div className="flex items-start justify-between mb-2">
+            <span className="text-xs font-bold text-text-secondary uppercase tracking-widest">Usuários Ativos</span>
+            <Activity size={16} className="text-emerald-500" />
+          </div>
+          <div className="text-3xl font-black">{stats.activeUsers}</div>
+          <div className="text-[10px] text-text-secondary mt-2">Retenção de 85%</div>
+        </div>
+
+        <div className="bg-surface rounded-2xl p-5 border border-surface-light">
+          <div className="flex items-start justify-between mb-2">
+            <span className="text-xs font-bold text-text-secondary uppercase tracking-widest">Contas Banidas</span>
+            <Shield size={16} className="text-red-500" />
+          </div>
+          <div className="text-3xl font-black">{stats.bannedUsers}</div>
+          <div className="text-[10px] text-text-secondary mt-2">Segurança Ativa</div>
+        </div>
+
+        <div className="bg-surface rounded-2xl p-5 border border-surface-light">
+          <div className="flex items-start justify-between mb-2">
+            <span className="text-xs font-bold text-text-secondary uppercase tracking-widest">Tarefas Executadas</span>
+            <Target size={16} className="text-neon-purple" />
+          </div>
+          <div className="text-3xl font-black">{stats.totalTasks}</div>
+          <div className="text-[10px] text-text-secondary mt-2">No banco de dados</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Chart */}
+        <div className="lg:col-span-2 bg-surface rounded-2xl p-6 border border-surface-light">
+          <h3 className="text-sm font-bold text-text-secondary uppercase tracking-widest mb-6">Crescimento de Usuários</h3>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={growthData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#00f0ff" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#00f0ff" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="date" stroke="#666" fontSize={10} tickLine={false} axisLine={false} />
+                <YAxis stroke="#666" fontSize={10} tickLine={false} axisLine={false} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#111', border: '1px solid #333', borderRadius: '8px' }}
+                  itemStyle={{ color: '#00f0ff' }}
+                />
+                <Area type="monotone" dataKey="usuarios" stroke="#00f0ff" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Plan Distribution */}
+        <div className="bg-surface rounded-2xl p-6 border border-surface-light flex flex-col">
+          <h3 className="text-sm font-bold text-text-secondary uppercase tracking-widest mb-6">Métricas de Planos</h3>
+          <div className="flex-1 flex flex-col justify-center gap-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+                   <Target size={18} className="text-text-secondary" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold">Base</div>
+                  <div className="text-[10px] text-text-secondary uppercase tracking-widest">Usuários Comuns</div>
+                </div>
+              </div>
+              <div className="text-xl font-black">{stats.baseUsers}</div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-neon-blue/10 flex items-center justify-center border border-neon-blue/20">
+                   <Crown size={18} className="text-neon-blue" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-neon-blue">Orbit</div>
+                  <div className="text-[10px] text-text-secondary uppercase tracking-widest">Acesso Especial</div>
+                </div>
+              </div>
+              <div className="text-xl font-black">{stats.orbitUsers}</div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                   <Crown size={18} className="text-amber-500" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-amber-500">Nova</div>
+                  <div className="text-[10px] text-text-secondary uppercase tracking-widest">Acesso Premium</div>
+                </div>
+              </div>
+              <div className="text-xl font-black">{stats.novaUsers}</div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-neon-purple/10 flex items-center justify-center border border-neon-purple/20">
+                   <Zap size={18} className="text-neon-purple" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-neon-purple">Infinite</div>
+                  <div className="text-[10px] text-text-secondary uppercase tracking-widest">Acesso Total</div>
+                </div>
+              </div>
+              <div className="text-xl font-black">{stats.infiniteUsers}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

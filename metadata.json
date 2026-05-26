@@ -1,0 +1,10 @@
+{
+  "name": "Remix: Remix: EVOLUX 1 ",
+  "description": "Um sistema de evolução pessoal gamificado onde o usuário constrói sua melhor versão ao longo do tempo.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

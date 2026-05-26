@@ -1,0 +1,15 @@
+# COPIE E COLE ESTAS VARIÁVEIS NO SEU PAINEL DA NETLIFY
+# (Acesse seu site na Netlify -> Site Configuration -> Environment Variables -> Add a Variable)
+
+# 1. EVITAR ERROS DE BUILD (Desativa o plugin incorreto do Next.js)
+NETLIFY_NEXT_PLUGIN_SKIP="true"
+DISABLE_NEXTJS_PLUGIN="true"
+
+# 2. CHAVE DA IA DO GEMINI (Gratuita)
+# Vá em https://aistudio.google.com/ e clique em "Get API Key" para gerar sua chave gratuita corporativa ou pessoal.
+GEMINI_API_KEY="COLE_AQUI_SUA_CHAVE_DO_GEMINI_DA_AI_STUDIO"
+
+# 3. LINK DO SEU SITE HOSPEDADO (URL DO REPOSITÓRIO FINAL)
+# Após o primeiro build na Netlify, ela gerará um link terminado em ".netlify.app" para você. Exemplo:
+# APP_URL="https://papaya-rabanadas-7019c5.netlify.app"
+APP_URL="INSIRA_O_LINK_DO_SEU_SITE_AQUI"
