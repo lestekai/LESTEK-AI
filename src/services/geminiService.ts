@@ -42,12 +42,22 @@ export async function generateAI(
   const { prompt, model = DEFAULT_MODEL, systemInstruction, responseMimeType } = payload;
 
   // Verification: Validating that the API Key config is set and ready (backend proxies the actual key)
-  const clientViteKey = (typeof window !== 'undefined' && (
-    (import.meta as any).env?.VITE_GEMINI_API_KEY || 
-    (import.meta as any).env?.NEXT_PUBLIC_GEMINI_API_KEY || 
-    (import.meta as any).env?.GEMINI_API_KEY
-  )) || '';
-  const customKey = typeof window !== 'undefined' ? localStorage.getItem('evolux_custom_gemini_key') || clientViteKey || '' : '';
+  // Fallback to client-side env variable injection if Netlify function misses it
+  let clientViteKey = '';
+  try {
+    // Vite static replacements
+    // @ts-ignore
+    const vKey = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.VITE_GEMINI_API_KEY : '';
+    // @ts-ignore
+    const nKey = typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.NEXT_PUBLIC_GEMINI_API_KEY : '';
+    clientViteKey = vKey || nKey || '';
+  } catch(e) {}
+  
+  if (!clientViteKey && typeof process !== 'undefined' && process.env) {
+    clientViteKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
+  }
+
+  const customKey = typeof window !== 'undefined' ? localStorage.getItem('evolux_custom_gemini_key') || clientViteKey || '' : clientViteKey;
   const apiKey = "RESOLVED_SAFE_ON_BACKEND";
   if (!apiKey) {
     throw Error("API KEY ausente");

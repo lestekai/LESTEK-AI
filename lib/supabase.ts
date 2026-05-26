@@ -32,8 +32,13 @@ export function getSupabaseAdmin() {
         persistSession: false,
         autoRefreshToken: false,
         detectSessionInUrl: false,
-        storageKey: 'supabase-admin-auth'
-      }
+        storageKey: 'supabase-admin-auth',
+        storage: typeof window !== 'undefined' ? {
+          getItem: () => null,
+          setItem: () => {},
+          removeItem: () => {}
+        } : undefined
+      } as any
     });
   }
   return globalObj.supabaseAdminInstance;

@@ -44,18 +44,27 @@ export async function handler(event: any, context: any) {
       "";
 
     const getEnv = (key: string) => {
+      // Netlify v2 API fallback
+      if (typeof globalThis !== 'undefined' && (globalThis as any).Netlify?.env?.get) {
+        const val = (globalThis as any).Netlify.env.get(key);
+        if (val) return val;
+      }
       if (typeof process !== 'undefined' && process.env) {
-        return process.env[key] || process.env[' ' + key] || null;
+        return process.env[key] || process.env[key.trim()] || null;
       }
       return null;
     };
 
-    const apiKey =
+    let apiKey =
       (typeof customHeaderKey === "string" && customHeaderKey.trim() !== "")
         ? customHeaderKey
         : (getEnv("GEMINI_API_KEY") ||
            getEnv("NEXT_PUBLIC_GEMINI_API_KEY") ||
            getEnv("VITE_GEMINI_API_KEY"));
+
+    if (apiKey) {
+      apiKey = apiKey.replace(/['"]/g, '').trim();
+    }
 
     console.log("===== GEMINI ENV DEBUG =====");
 
