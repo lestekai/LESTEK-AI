@@ -5,7 +5,6 @@
 
 [functions]
   node_bundler = "esbuild"
-  timeout = 60
 
 [build.environment]
   NODE_VERSION = "20"

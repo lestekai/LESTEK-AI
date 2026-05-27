@@ -84,7 +84,7 @@ export async function generateAI(
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // Strict 30s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 50000); // 50s timeout
 
     try {
       console.log(`[Gemini Service] Tentativa ${attempt} de ${retries} para o modelo '${model}'...`);
@@ -150,7 +150,7 @@ export async function generateAI(
       console.error(`[Gemini Service] Erro na tentativa ${attempt} de ${retries}:`, error);
 
       const isTimeout = error.name === 'AbortError';
-      const errorMessage = isTimeout ? 'Timeout de 30 segundos excedido' : (error.message || 'Erro desconhecido');
+      const errorMessage = isTimeout ? 'Timeout de 50 segundos excedido' : (error.message || 'Erro desconhecido');
 
       if (attempt < retries) {
         const nextDelay = delayMs * attempt;

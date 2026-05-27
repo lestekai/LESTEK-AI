@@ -1599,7 +1599,8 @@ export function findExerciseInLibrary(nameOrId: string, expectedMuscle?: string)
   }
 
   // Require a decent threshold for fuzzy matching to avoid random images
-  if (bestScore >= 20) return bestMatch;
+  // >= 50 means at least 50% length match, or 1 keyword + correct muscle, or 3+ keywords
+  if (bestScore >= 50) return bestMatch;
   return undefined;
 }
 
