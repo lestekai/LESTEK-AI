@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { PREMADE_TEMPLATES } from '@/lib/templates';
 
+const generateId = () => typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+
 export default function TemplatesPage() {
   const navigate = useNavigate();
   const { setPlan, currentPlan, hasCompletedQuestionnaire } = useWorkoutStore();
@@ -18,10 +20,11 @@ export default function TemplatesPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const applyTemplate = (template: any) => {
+    const newId = generateId();
     const newPlan = {
       ...template,
-      phaseId: crypto.randomUUID(),
-      id: crypto.randomUUID(),
+      phaseId: newId,
+      id: newId,
       generatedAt: new Date().toISOString()
     };
     setPlan(newPlan);

@@ -1550,41 +1550,40 @@ export function findExerciseInLibrary(nameOrId: string): ExerciseLibraryItem | u
   const cleanStr = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9áéíóúâêôãõç]/g, '');
   const cleanedQuery = cleanStr(nameOrId);
   
-  // 1. Exact match
-  let match = EXERCISE_LIBRARY.find(ex => cleanStr(ex.name) === cleanedQuery || ex.id === nameOrId);
-  if (match) return match;
-  
-  // 2. Contains match
-  match = EXERCISE_LIBRARY.find(ex => cleanedQuery.includes(cleanStr(ex.name)) || cleanStr(ex.name).includes(cleanedQuery));
-  if (match) return match;
-  
-  // 3. Keyword match (e.g., matching "Leg Press") - Requires multiple keywords to match or the strongest single keyword
-  const keywords = nameOrId.toLowerCase().split(' ').filter(k => k.length > 3);
-  if (keywords.length > 0) {
-    // Score each exercise by how many keywords it includes
-    let bestMatch: ExerciseLibraryItem | undefined = undefined;
-    let bestScore = 0;
-    
-    for (const ex of EXERCISE_LIBRARY) {
-      const exNameClean = cleanStr(ex.name);
-      let score = 0;
+  let bestMatch: ExerciseLibraryItem | undefined = undefined;
+  let bestScore = -1;
+
+  for (const ex of EXERCISE_LIBRARY) {
+    const exClean = cleanStr(ex.name);
+    let score = 0;
+
+    // Highest priority: Exact match on ID or cleaned name
+    if (exClean === cleanedQuery || ex.id === nameOrId) {
+      return ex; // Return immediately for exact match
+    }
+
+    // Medium priority: Fully contained strings
+    if (cleanedQuery.includes(exClean) || exClean.includes(cleanedQuery)) {
+      // Score based on how close the length is
+      score = 100 - Math.abs(exClean.length - cleanedQuery.length);
+    } else {
+      // Lowest priority: Keyword overlap
+      const keywords = nameOrId.toLowerCase().split(' ').filter(k => k.length > 3);
       for (const k of keywords) {
-        if (exNameClean.includes(cleanStr(k))) {
-          score += 1;
+        if (exClean.includes(cleanStr(k))) {
+          score += 10;
         }
       }
-      // Boost score if the target muscles match the exercise's target?
-      if (score > bestScore) {
-        bestScore = score;
-        bestMatch = ex;
-      }
     }
-    
-    if (bestMatch && bestScore > 0) {
-      return bestMatch;
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = ex;
     }
   }
-  
+
+  // Only return if it actually matched something decent
+  if (bestScore > 0) return bestMatch;
   return undefined;
 }
 

@@ -11,6 +11,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Play, Pause, CheckCircle, ArrowLeft, Clock, Dumbbell, AlertTriangle, FastForward, Plus, X, Search } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
+const generateId = () => typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+
 export default function ActiveWorkoutPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -207,7 +209,7 @@ export default function ActiveWorkoutPage() {
     });
 
     completeWorkout({
-      id: crypto.randomUUID(),
+      id: generateId(),
       date: new Date().toISOString(),
       dayFocus: todayPlan.focus,
       durationMinutes: Math.floor(workoutSeconds / 60) || 1,

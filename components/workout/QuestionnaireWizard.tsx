@@ -8,6 +8,8 @@ import { useAppStore } from '@/lib/store';
 import { Download, BrainCircuit, Dumbbell, User, HeartPulse, Target, ShieldCheck, Zap, ArrowRight, ArrowLeft, PenTool, Type } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const generateId = () => typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+
 const STEPS = [
   { id: 'personal', title: 'Dados Pessoais', icon: User },
   { id: 'goal', title: 'Objetivo Principal', icon: Target },
@@ -71,32 +73,27 @@ export function QuestionnaireWizard({ setStoreQuestionnaire, setPlan }: { setSto
     if (checkAILimits()) generatePlanManual(manualText);
   };
 
-  const planSystemInstruction = `Você é o Evolux AI, um treinador de elite, estritamente técnico e inteligente.
-Sua missão é criar ou parsear um plano de treinamento extremamente preciso e profissional.
-IMPORTANTE: A quantidade de exercícios gerados DEVE ser proporcional ao tempo de treino solicitado (minutos por sessão). Para um treino de 60 minutos, forneça pelo menos 6-8 exercícios; para 45 minutos, 5-6 exercícios, etc. CADA exercício listado no treino DEVE ser completo. Se o usuário escolheu incluir Cardio (includeCardio: true), inclua um exercício de cardio no final ou no início do treino (ex: Esteira, Bicicleta Ergométrica, Elíptico) com Duração/Intensidade configuradas em 'reps' (Ex: 15min) e 'sets' como 1.
-Forneça APENAS JSON estruturado, sem blocos de código.
+  const planSystemInstruction = `Você é o Evolux AI. Gere o plano de treino o mais rápido possível e envie APENAS um JSON válido.
+IMPORTANTE: Limite as respostas para ser enxuto. Use nomes técnicos simples e rápidos. 
+Sua missão é criar ou parsear um plano de treinamento extremamente preciso. Se "includeCardio" for true, adicione 1 cardio (sets: 1, reps: "15min").
+Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
 {
-  "phaseName": "Nome descritivo (Ex: Adaptação, Hipertrofia Base, Meu Treino)",
-  "planPromptDescription": "Breve justificativa técnica ou resumo",
+  "phaseName": "Nome",
+  "planPromptDescription": "Curto",
   "schedule": [
     {
-      "dayName": "Dia X",
-      "focus": "Foco do dia",
-      "isRest": boolean,
-      "warmup": ["Aquecimento específico 1"],
-      "cooldown": ["Volta à calma 1"],
-      "intensity": "Moderada, Alta, etc",
+      "dayName": "Segunda-feira",
+      "focus": "Foco",
+      "isRest": false,
+      "intensity": "Alta",
       "exercises": [
         {
-          "id": "str",
+          "id": "identificador_unico",
           "name": "Nome",
           "sets": 3,
           "reps": "8-12",
           "restSeconds": 60,
-          "instructions": "Instruções",
-          "targetMuscles": ["Peito", "Costas"],
-          "equipment": "Halteres/Polia/Barra",
-          "difficulty": "Intermediário"
+          "targetMuscles": ["Perna"]
         }
       ]
     }
@@ -108,7 +105,7 @@ Forneça APENAS JSON estruturado, sem blocos de código.
     try {
       const data = await generateAI({
         prompt,
-        model: 'gemini-2.5-flash',
+        model: 'gemini-1.5-flash',
         systemInstruction: planSystemInstruction,
         responseMimeType: 'application/json'
       });
@@ -116,7 +113,7 @@ Forneça APENAS JSON estruturado, sem blocos de código.
       const planItem = JSON.parse(data.text);
       _setPlan({
         ...planItem,
-        id: crypto.randomUUID(),
+        id: generateId(),
         generatedAt: new Date().toISOString()
       });
       if (!setPlan) navigate('/workouts');

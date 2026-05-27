@@ -51,6 +51,7 @@ function SortableDayItem({ day, idx, todayIndex, setEditingDayIndex }: SortableD
     opacity: isDragging ? 0.7 : 1,
     zIndex: isDragging ? 10 : 0,
     position: isDragging ? 'relative' as const : undefined,
+    touchAction: 'none',
   };
 
   const isToday = idx === todayIndex;
