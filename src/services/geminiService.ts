@@ -14,15 +14,13 @@ export interface GeminiResponse {
   text: string;
 }
 
-const DEFAULT_MODEL = 'gemini-1.5-flash';
+const DEFAULT_MODEL = 'gemini-3.5-flash';
 const VALID_MODELS = [
-  'gemini-1.5-flash',
-  'gemini-2.0-flash',
-  'gemini-2.5-flash',
   'gemini-3.5-flash',
-  'gemini-3.1-pro-preview',
-  'gemini-flash-latest',
   'gemini-3.1-flash-lite',
+  'gemini-flash-latest',
+  'gemini-2.5-flash',
+  'gemini-3.1-pro-preview',
   'gemini-3.1-flash-image-preview',
   'gemini-2.5-flash-image'
 ];

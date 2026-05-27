@@ -104,7 +104,7 @@ export async function handler(event: any, context: any) {
 
     const model =
       body.model ||
-      "gemini-2.5-flash";
+      "gemini-3.5-flash";
 
     const systemInstruction =
       body.systemInstruction;
@@ -137,15 +137,16 @@ export async function handler(event: any, context: any) {
         responseMimeType;
     }
 
-    const modelsToTry = [
+    const candidateModels = [
       model,
-      "gemini-2.0-flash-lite-preview-02-05",
-      "gemini-2.0-flash",
+      "gemini-3.5-flash",
+      "gemini-3.1-flash-lite",
+      "gemini-flash-latest",
       "gemini-2.5-flash",
-      "gemini-1.5-pro",
-      "gemini-1.5-flash",
-      "gemini-pro"
+      "gemini-3.1-pro-preview"
     ];
+
+    const modelsToTry = Array.from(new Set(candidateModels));
 
     let text = "";
     let lastError: any;
