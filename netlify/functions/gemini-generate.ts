@@ -139,8 +139,8 @@ export async function handler(event: any, context: any) {
 
     const modelsToTry = [
       model,
-      "gemini-2.5-flash",
-      "gemini-1.5-flash"
+      "gemini-3.5-flash",
+      "gemini-2.5-flash"
     ];
 
     let text = "";

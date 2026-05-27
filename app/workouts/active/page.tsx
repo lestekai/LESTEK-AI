@@ -53,7 +53,8 @@ export default function ActiveWorkoutPage() {
   // Identifica o exercício atual na biblioteca para pegar GIF e erros comuns
   const getLibraryMatch = () => {
     if (!currentExercise) return null;
-    return findExerciseInLibrary(currentExercise.libraryId) || findExerciseInLibrary(currentExercise.name) || findExerciseInLibrary(currentExercise.id) || null;
+    const target = currentExercise.targetMuscles?.[0] || currentExercise.target || '';
+    return findExerciseInLibrary(currentExercise.libraryId, target) || findExerciseInLibrary(currentExercise.name, target) || findExerciseInLibrary(currentExercise.id, target) || null;
   };
 
   const libraryExercise = getLibraryMatch();

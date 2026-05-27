@@ -74,7 +74,7 @@ function SortableDayItem({ day, idx, todayIndex, setEditingDayIndex }: SortableD
            <button onClick={() => setEditingDayIndex(idx)} className={`p-1 flex items-center justify-center opacity-50 hover:opacity-100 transition-opacity ${isToday ? 'text-background' : 'text-text-secondary'}`}>
               <Edit3 size={10} />
            </button>
-           <button {...attributes} {...listeners} className={`p-1 flex items-center justify-center cursor-grab active:cursor-grabbing opacity-50 hover:opacity-100 transition-opacity ${isToday ? 'text-background' : 'text-text-secondary'}`}>
+           <button {...attributes} {...listeners} className={`touch-none p-1 flex items-center justify-center cursor-grab active:cursor-grabbing opacity-50 hover:opacity-100 transition-opacity ${isToday ? 'text-background' : 'text-text-secondary'}`}>
               <GripHorizontal size={12} />
            </button>
         </div>

@@ -105,7 +105,7 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
     try {
       const data = await generateAI({
         prompt,
-        model: 'gemini-1.5-flash',
+        model: 'gemini-3.5-flash',
         systemInstruction: planSystemInstruction,
         responseMimeType: 'application/json'
       });

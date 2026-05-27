@@ -1545,34 +1545,50 @@ export const EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
   }
 ];
 
-export function findExerciseInLibrary(nameOrId: string): ExerciseLibraryItem | undefined {
+export function findExerciseInLibrary(nameOrId: string, expectedMuscle?: string): ExerciseLibraryItem | undefined {
   if (!nameOrId) return undefined;
-  const cleanStr = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9áéíóúâêôãõç]/g, '');
-  const cleanedQuery = cleanStr(nameOrId);
+  // Keep spaces to avoid unintended character overlaps, but lowercase and remove accents
+  const normalize = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, '').trim();
+  const cleanedQuery = normalize(nameOrId);
+  const queryNoSpaces = cleanedQuery.replace(/\s+/g, '');
   
   let bestMatch: ExerciseLibraryItem | undefined = undefined;
   let bestScore = -1;
 
   for (const ex of EXERCISE_LIBRARY) {
-    const exClean = cleanStr(ex.name);
+    const exClean = normalize(ex.name);
+    const exNoSpaces = exClean.replace(/\s+/g, '');
     let score = 0;
 
     // Highest priority: Exact match on ID or cleaned name
-    if (exClean === cleanedQuery || ex.id === nameOrId) {
+    if (exClean === cleanedQuery || exNoSpaces === queryNoSpaces || ex.id === nameOrId) {
       return ex; // Return immediately for exact match
     }
 
-    // Medium priority: Fully contained strings
+    // Medium priority: Fully contained strings (but requiring high overlap to avoid false positives)
     if (cleanedQuery.includes(exClean) || exClean.includes(cleanedQuery)) {
-      // Score based on how close the length is
+      // Score based on how close the length is (0 to 100)
       score = 100 - Math.abs(exClean.length - cleanedQuery.length);
+      if (score < 50) score = 0; // Ignore tiny overlapping substrings
     } else {
       // Lowest priority: Keyword overlap
-      const keywords = nameOrId.toLowerCase().split(' ').filter(k => k.length > 3);
+      const keywords = cleanedQuery.split(' ').filter(k => k.length > 3 && !['com', 'para', 'na', 'no'].includes(k));
+      let matchCount = 0;
       for (const k of keywords) {
-        if (exClean.includes(cleanStr(k))) {
-          score += 10;
+        if (exClean.includes(k)) {
+          matchCount++;
+          score += 20;
         }
+      }
+      // Require at least one good keyword match
+      if (matchCount === 0) score = 0;
+    }
+
+    // Boost score if the target muscles overlap
+    if (score > 0 && expectedMuscle) {
+      const qMuscle = normalize(expectedMuscle);
+      if (ex.targetMuscles?.some(m => normalize(m).includes(qMuscle) || qMuscle.includes(normalize(m)))) {
+        score += 30; // Significant boost for matching muscle
       }
     }
 
@@ -1582,8 +1598,8 @@ export function findExerciseInLibrary(nameOrId: string): ExerciseLibraryItem | u
     }
   }
 
-  // Only return if it actually matched something decent
-  if (bestScore > 0) return bestMatch;
+  // Require a decent threshold for fuzzy matching to avoid random images
+  if (bestScore >= 20) return bestMatch;
   return undefined;
 }
 
