@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { Users, Activity, Target, Zap, Shield, Crown } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -18,18 +18,32 @@ export default function AdminOverview() {
   const [growthData, setGrowthData] = useState<any[]>([]);
 
   const fetchStats = async () => {
-    const { count: totalUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-    const { count: activeUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'active');
-    const { count: bannedUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'banned');
-    const { count: totalTasks } = await supabase.from('tasks').select('*', { count: 'exact', head: true });
+    const { count: totalUsers } = await supabaseAdmin.from('profiles').select('*', { count: 'exact', head: true });
+    const { count: activeUsers } = await supabaseAdmin.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'active');
+    const { count: bannedUsers } = await supabaseAdmin.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'banned');
+    const { count: totalTasks } = await supabaseAdmin.from('tasks').select('*', { count: 'exact', head: true });
     
-    // Fetch plan counts
-    const { count: baseUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('plan', 'base');
-    const { count: orbitUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('plan', 'orbit');
-    const { count: novaUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('plan', 'nova');
-    const { count: infiniteUsers } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('plan', 'infinite');
+    // Fetch plan counts - wait, plan is inside equipped_cosmetics JSON...
+    // But since the query used .eq('plan', 'base') it might have failed if plan wasn't a real column. We will leave it as is or fix it.
+    // Wait, since there is no `plan` column, these count queries `.eq('plan', 'base')` will result in errors!
+    // I will remove the plan column restriction or fetch all users and count in memory.
+    const { data: allUsers } = await supabaseAdmin.from('profiles').select('equipped_cosmetics, created_at');
+    
+    let baseUsers = 0;
+    let orbitUsers = 0;
+    let novaUsers = 0;
+    let infiniteUsers = 0;
+    
+    if (allUsers) {
+      allUsers.forEach(u => {
+         const plan = u.equipped_cosmetics?.plan || 'base';
+         if (plan === 'base') baseUsers++;
+         if (plan === 'orbit') orbitUsers++;
+         if (plan === 'nova') novaUsers++;
+         if (plan === 'infinite') infiniteUsers++;
+      });
+    }
 
-    const { data: usersData } = await supabase.from('profiles').select('created_at');
     const now = new Date();
 
     const d15DaysAgo = new Date(now);
@@ -38,8 +52,8 @@ export default function AdminOverview() {
     const d7DaysAgo = new Date(now);
     d7DaysAgo.setDate(now.getDate() - 7);
 
-    const users15DaysAgo = usersData ? usersData.filter(u => new Date(u.created_at) <= d15DaysAgo).length : 0;
-    const users7DaysAgo = usersData ? usersData.filter(u => new Date(u.created_at) <= d7DaysAgo).length : 0;
+    const users15DaysAgo = allUsers ? allUsers.filter(u => new Date(u.created_at) <= d15DaysAgo).length : 0;
+    const users7DaysAgo = allUsers ? allUsers.filter(u => new Date(u.created_at) <= d7DaysAgo).length : 0;
     
     // Growth percentage calculation
     let weeklyGrowth = 0;
@@ -54,11 +68,11 @@ export default function AdminOverview() {
       activeUsers: activeUsers || 0,
       bannedUsers: bannedUsers || 0,
       totalTasks: totalTasks || 0,
-      baseUsers: baseUsers || 0,
-      orbitUsers: orbitUsers || 0,
-      novaUsers: novaUsers || 0,
-      infiniteUsers: infiniteUsers || 0,
-      weeklyGrowth: weeklyGrowth
+      baseUsers,
+      orbitUsers,
+      novaUsers,
+      infiniteUsers,
+      weeklyGrowth
     });
 
     // Fetch real growth data (users created in the last 15 days)
@@ -70,7 +84,7 @@ export default function AdminOverview() {
       const displayDate = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
 
       // count users created on or before this day
-      const usersUpToDate = usersData ? usersData.filter(u => {
+      const usersUpToDate = allUsers ? allUsers.filter(u => {
         const uDate = new Date(u.created_at);
         return uDate <= d;
       }).length : 0;

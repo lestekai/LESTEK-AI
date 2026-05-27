@@ -33,18 +33,11 @@ function Layout() {
   const { zoomLevel, profile, updateProfile } = useAppStore();
 
   useEffect(() => {
-    // Ensure user has Infinite plan as requested
-    if (profile && profile.plan !== 'infinite') {
-      updateProfile({ plan: 'infinite' });
-    }
-  }, [profile, updateProfile]);
-
-  useEffect(() => {
     // Modify root font size (16px base) to scale the whole app layout proportionally
     document.documentElement.style.fontSize = `${(zoomLevel / 100) * 16}px`;
   }, [zoomLevel]);
 
-  const hideNavRoutes = ['/', '/login', '/onboarding', '/workouts/active', '/checkout', '/setup'];
+  const hideNavRoutes = ['/', '/login', '/onboarding', '/workouts/active', '/checkout', '/setup', '/plans'];
   const showNav = !hideNavRoutes.includes(location.pathname);
 
   return (

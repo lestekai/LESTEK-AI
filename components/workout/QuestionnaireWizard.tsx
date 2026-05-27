@@ -108,7 +108,7 @@ Forneça APENAS JSON estruturado, sem blocos de código.
     try {
       const data = await generateAI({
         prompt,
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         systemInstruction: planSystemInstruction,
         responseMimeType: 'application/json'
       });

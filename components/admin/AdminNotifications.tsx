@@ -11,7 +11,7 @@ export default function AdminNotifications() {
   const [history, setHistory] = useState<any[]>([]);
 
   const fetchHistory = async () => {
-    const { data } = await supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(20);
+    const { data } = await supabaseAdmin.from('notifications').select('*').order('created_at', { ascending: false }).limit(20);
     if (data) setHistory(data);
   };
 

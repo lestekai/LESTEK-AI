@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { BookOpen, Search, Save, Calendar } from 'lucide-react';
 
 export default function AdminPlans() {
@@ -9,7 +10,7 @@ export default function AdminPlans() {
 
   const fetchUsers = async () => {
     setLoading(true);
-    const { data } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+    const { data } = await supabaseAdmin.from('profiles').select('*').order('created_at', { ascending: false });
     if (data) setUsers(data);
     setLoading(false);
   };
@@ -31,7 +32,7 @@ export default function AdminPlans() {
        plan_request_date: ''
     };
 
-    const { error } = await supabase.from('profiles')
+    const { error } = await supabaseAdmin.from('profiles')
       .update({ equipped_cosmetics })
       .eq('id', userId);
 
@@ -53,7 +54,7 @@ export default function AdminPlans() {
        plan_request_date: ''
     };
 
-    const { error } = await supabase.from('profiles')
+    const { error } = await supabaseAdmin.from('profiles')
       .update({ equipped_cosmetics })
       .eq('id', userId);
 

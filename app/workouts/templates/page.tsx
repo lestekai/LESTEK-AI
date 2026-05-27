@@ -20,6 +20,7 @@ export default function TemplatesPage() {
   const applyTemplate = (template: any) => {
     const newPlan = {
       ...template,
+      phaseId: crypto.randomUUID(),
       id: crypto.randomUUID(),
       generatedAt: new Date().toISOString()
     };
