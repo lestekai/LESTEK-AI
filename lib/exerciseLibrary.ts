@@ -12,7 +12,7 @@ export interface ExerciseLibraryItem {
   gifUrl?: string; // URL for mini animation or placeholder (mp4)
 }
 
-export const EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
+const BASE_EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
   {
     "id": "cardio_esteira",
     "name": "Esteira (Corrida/Caminhada)",
@@ -1542,8 +1542,122 @@ export const EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
     "substitutions": [],
     "gifPlaceholder": "Flexão de Braços com Peso Adicional",
     "gifUrl": "https://api.smartworkout.app/asset/video/44442a7f-b7c0-4ae4-afba-96adf71f1c22.mp4"
+  },
+  {
+    "id": "cadeira_abdutora",
+    "name": "Cadeira Abdutora",
+    "targetMuscles": ["Pernas", "Glúteos"],
+    "equipment": "Máquina",
+    "difficulty": "Iniciante",
+    "description": "A Cadeira Abdutora é um exercício focado nos músculos abdutores (parte externa) e glúteos. Ajuda a estabilizar o quadril e a pelve.",
+    "instructions": "Sente-se no aparelho e ajuste o peso. Afaste as pernas empurrando as almofadas laterais para fora, usando a força dos glúteos e abdutores. Retorne lentamente.",
+    "commonErrors": ["Fazer o movimento muito rápido", "Não apoiar bem as costas no banco"],
+    "substitutions": ["Abdução de quadril na polia", "Abdução com caneleira"],
+    "gifPlaceholder": "Cadeira Abdutora",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Gl%C3%BAteos/M%C3%A1quina%20de%20Abdu%C3%A7%C3%A3o%20de%20Quadril.gif"
+  },
+  {
+    "id": "cadeira_adutora",
+    "name": "Cadeira Adutora",
+    "targetMuscles": ["Pernas"],
+    "equipment": "Máquina",
+    "difficulty": "Iniciante",
+    "description": "A Cadeira Adutora é um exercício que tem como alvo os músculos adutores da parte interna das coxas.",
+    "instructions": "Sente-se no aparelho mantendo a postura correta. Aproxime as pernas, pressionando contra as almofadas, e depois retorne controladamente na fase excêntrica.",
+    "commonErrors": ["Fazer o retorno (excêntrica) de forma descontrolada", "Inclinar o tronco para frente"],
+    "substitutions": ["Adutor na polia"],
+    "gifPlaceholder": "Cadeira Adutora",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/M%C3%A1quina%20de%20Adu%C3%A7%C3%A3o%20de%20Quadril.gif"
+  },
+  {
+    "id": "agachamento_bulgaro",
+    "name": "Agachamento Búlgaro",
+    "targetMuscles": ["Pernas", "Glúteos"],
+    "equipment": "Halteres",
+    "difficulty": "Intermediário",
+    "description": "Exercício unilateral brutal e muito eficaz. Trabalha isoladamente quadríceps e glúteos, exigindo equilíbrio.",
+    "instructions": "Apoie o peito de um dos pés em um banco atrás de você. Segure halteres. Desça abaixando os quadris até a coxa da perna da frente ficar paralela ao chão. O joelho não deve passar a ponta do pé.",
+    "commonErrors": ["Postura cronicamente curvada", "Apoiar a perna no banco em posição de muito desconforto"],
+    "substitutions": ["Afundo", "Avanço"],
+    "gifPlaceholder": "Agachamento Búlgaro",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Agachamento%20B%C3%BAlgaro%20com%20Halteres.gif"
+  },
+  {
+    "id": "mesa_flexora",
+    "name": "Mesa Flexora",
+    "targetMuscles": ["Pernas"],
+    "equipment": "Máquina",
+    "difficulty": "Iniciante",
+    "description": "Exelente para focar o trabalho na cadeia posterior da perna (isquiotibiais).",
+    "instructions": "Deite-se de bruços na máquina com a almofada posicionada logo acima dos calcanhares. Flexione as pernas puxando a almofada em direção aos glúteos.",
+    "commonErrors": ["Tirar o quadril do banco para fazer alavanca"],
+    "substitutions": ["Cadeira Flexora", "Stiff"],
+    "gifPlaceholder": "Mesa Flexora",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Mesa%20flexora.gif"
+  },
+  {
+    "id": "gemeos_em_pe",
+    "name": "Gêmeos em Pé",
+    "targetMuscles": ["Panturrilhas"],
+    "equipment": "Máquina",
+    "difficulty": "Iniciante",
+    "description": "Exercício de flexão plantar para dar volume nas panturrilhas, focando no músculo gastrocnêmio.",
+    "instructions": "Posicione os ombros sob as almofadas. Estenda os tornozelos subindo na ponta dos pés, contraindo a panturrilha forte no topo. Desça alongando bem.",
+    "commonErrors": ["Fazer o movimento rápido e curto", "Dobrar os joelhos para usar impulso"],
+    "substitutions": ["Elevação de calcanhares no banco de leg press"],
+    "gifPlaceholder": "Gêmeos em Pé",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Panturrilhas/Eleva%C3%A7%C3%A3o%20de%20Panturrilha%20em%20M%C3%A1quina%20em%20p%C3%A9.gif"
+  },
+  {
+    "id": "abdominal_supra_na_polia",
+    "name": "Abdominal Supra na Polia",
+    "targetMuscles": ["Abdômen"],
+    "equipment": "Cabos",
+    "difficulty": "Intermediário",
+    "description": "Ótimo abdominal, permite carga ajustável que auxilia no hipertrofia da parede abdominal.",
+    "instructions": "Ajoelhe-se em frente à polia alta com uma corda acoplada. Puxe a corda e posicione as mãos atrás do pescoço ou do lado da cabeça. Dobre o tronco em direção aos joelhos usando os músculos do abdômen, não os braços.",
+    "commonErrors": ["Puxar a corda com os braços, não contraindo o abdômen", "Sentar-se sobre os tornozelos em vez de dobrar a espinha"],
+    "substitutions": ["Abdominal Supra no Banco"],
+    "gifPlaceholder": "Abdominal Supra na Polia",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Mobilidade/Contra%C3%A7%C3%A3o%20abdominal.gif"
   }
 ];
+
+export const EXERCISE_LIBRARY: ExerciseLibraryItem[] = [...BASE_EXERCISE_LIBRARY];
+
+import { EXERCISE_DATABASE } from './exerciseDatabase';
+// Dynamically augment the library with the massive database if not already present
+if (typeof EXERCISE_DATABASE !== 'undefined') {
+  const existingNames = new Set(EXERCISE_LIBRARY.map(e => e.name.toLowerCase()));
+  EXERCISE_DATABASE.forEach(dbItem => {
+    if (!existingNames.has(dbItem.canonicalName.toLowerCase())) {
+      let difficulty: 'Iniciante' | 'Intermediário' | 'Avançado' = 'Intermediário';
+      if (dbItem.canonicalName.toLowerCase().includes('iniciante') || dbItem.equipment === 'peso corporal') {
+        difficulty = 'Iniciante';
+      } else if (dbItem.canonicalName.toLowerCase().includes('avançado')) {
+        difficulty = 'Avançado';
+      }
+      
+      const titleCaseMuscle = dbItem.muscleGroup
+        ? dbItem.muscleGroup.charAt(0).toUpperCase() + dbItem.muscleGroup.slice(1).replace('-', ' ')
+        : 'Outros';
+
+      EXERCISE_LIBRARY.push({
+        id: dbItem.normalizedName.replace(/\s+/g, '_'),
+        name: dbItem.canonicalName,
+        targetMuscles: [titleCaseMuscle],
+        equipment: dbItem.equipment === 'desconhecido' ? 'Peso Corporal' : dbItem.equipment,
+        difficulty,
+        description: `${dbItem.canonicalName}. Exercício focado principalmente em trabalhar ${titleCaseMuscle.toLowerCase()}.`,
+        instructions: `Siga as instruções padrão para um exercício biomecânico de ${dbItem.canonicalName}.`,
+        commonErrors: ["Amplitude de movimento incompleta", "Postura incorreta"],
+        substitutions: [],
+        gifPlaceholder: "Corpo Todo"
+      });
+      existingNames.add(dbItem.canonicalName.toLowerCase());
+    }
+  });
+}
 
 export function findExerciseInLibrary(nameOrId: string, expectedMuscle?: string): ExerciseLibraryItem | undefined {
   if (!nameOrId) return undefined;

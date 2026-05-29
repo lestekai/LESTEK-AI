@@ -55,7 +55,7 @@ export async function generateAI(
     clientViteKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
   }
 
-  const customKey = typeof window !== 'undefined' ? localStorage.getItem('evolux_custom_gemini_key') || clientViteKey || '' : clientViteKey;
+  const customKey = clientViteKey;
   const apiKey = "RESOLVED_SAFE_ON_BACKEND";
   if (!apiKey) {
     throw Error("API KEY ausente");

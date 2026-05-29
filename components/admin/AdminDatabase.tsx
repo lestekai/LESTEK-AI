@@ -1,25 +1,29 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Database, HardDrive, BarChart2 } from 'lucide-react';
+import { Database, HardDrive, BarChart2, AlertTriangle, TerminalSquare } from 'lucide-react';
 
 export default function AdminDatabase() {
   const [tables, setTables] = useState<any[]>([]);
 
   useEffect(() => {
-    // Estimating DB usage purely from UI since we can't query pg_stat_user_tables 
-    // safely without service role & specific grants.
     const est = async () => {
       const { count: u } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
       const { count: t } = await supabase.from('tasks').select('*', { count: 'exact', head: true });
       const { count: w } = await supabase.from('workouts').select('*', { count: 'exact', head: true });
       const { count: h } = await supabase.from('workout_history').select('*', { count: 'exact', head: true });
       const { count: f } = await supabase.from('feedbacks').select('*', { count: 'exact', head: true });
+      const { count: am } = await supabase.from('ai_memory').select('*', { count: 'exact', head: true }).catch(() => ({count: 0}));
+      const { count: fin } = await supabase.from('finances').select('*', { count: 'exact', head: true }).catch(() => ({count: 0}));
+      const { count: inv } = await supabase.from('user_inventory').select('*', { count: 'exact', head: true }).catch(() => ({count: 0}));
 
       setTables([
         { name: 'profiles', rows: u || 0, sizeMb: ((u || 0) * 0.05).toFixed(2) },
         { name: 'tasks', rows: t || 0, sizeMb: ((t || 0) * 0.1).toFixed(2) },
         { name: 'workouts', rows: w || 0, sizeMb: ((w || 0) * 0.2).toFixed(2) },
         { name: 'workout_history', rows: h || 0, sizeMb: ((h || 0) * 0.15).toFixed(2) },
+        { name: 'ai_memory', rows: am || 0, sizeMb: ((am || 0) * 0.1).toFixed(2) },
+        { name: 'finances', rows: fin || 0, sizeMb: ((fin || 0) * 0.05).toFixed(2) },
+        { name: 'user_inventory', rows: inv || 0, sizeMb: ((inv || 0) * 0.05).toFixed(2) },
         { name: 'feedbacks', rows: f || 0, sizeMb: ((f || 0) * 0.03).toFixed(2) },
       ]);
     };
@@ -35,6 +39,23 @@ export default function AdminDatabase() {
       <div className="flex items-center gap-3 mb-8">
         <Database className="text-emerald-500" size={24} />
         <h2 className="text-xl font-bold font-display">Console do Banco de Dados</h2>
+      </div>
+
+      <div className="bg-amber-500/10 border border-amber-500/20 p-6 rounded-2xl">
+        <div className="flex items-center gap-2 mb-4">
+          <TerminalSquare className="text-amber-500" size={20} />
+          <h3 className="text-sm font-bold text-amber-500 uppercase tracking-widest">Atualização Necessária: Schema V2</h3>
+        </div>
+        <p className="text-sm text-text-secondary mb-4 leading-relaxed">
+          Para que o novo armazenamento de Questionário IA, Finanças e Inventário Isolado funcione 100%, você precisa rodar o script SQL gerado <strong className="text-white">EVOLUX_ADVANCED_SCHEMA_V2.sql</strong>.
+        </p>
+        <ul className="text-xs text-text-secondary space-y-2 list-disc list-inside bg-black/40 p-4 rounded-xl border border-white/5">
+          <li>Acesse seu painel do Supabase.</li>
+          <li>Vá em <strong>SQL Editor</strong> &gt; <strong>New Query</strong>.</li>
+          <li>Copie e cole o conteúdo do arquivo <code className="text-neon-blue">EVOLUX_ADVANCED_SCHEMA_V2.sql</code> (ele foi gerado na raiz do projeto).</li>
+          <li>Clique em <strong>Run</strong> (Run script).</li>
+          <li>Sua base passará a contar com tabelas para <code className="text-amber-500">finances</code> e <code className="text-amber-500">user_inventory</code>, melhorando o isolamento de dados pedido.</li>
+        </ul>
       </div>
 
       <div className="bg-surface border border-surface-light p-6 rounded-2xl">

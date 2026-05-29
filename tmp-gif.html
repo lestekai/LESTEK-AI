@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Gif do Treino - Biblioteca de Exercícios e Montagem de Treinos</title>
+    <meta name="description" content="Biblioteca completa de exercícios físicos com GIFs animados. Monte seus treinos personalizados, visualize execuções corretas e organize sua rotina de exercícios.">
+    <meta name="keywords" content="exercícios, treino, academia, musculação, gif exercícios, montagem de treino, treino personalizado, exercícios físicos">
+    <meta name="author" content="Lucas Santos Miranda">
+    
+    <!-- Favicon e Ícones -->
+    <link rel="icon" type="image/png" href="Img/logo.png">
+    <link rel="apple-touch-icon" href="Img/logo.png">
+    <link rel="shortcut icon" href="Img/logo.png">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gifdotreino.com/">
+    <meta property="og:title" content="Gif do Treino - Biblioteca de Exercícios e Montagem de Treinos">
+    <meta property="og:description" content="Monte seus treinos personalizados com nossa biblioteca completa de exercícios em GIF. Visualize a execução correta e organize sua rotina de treinos.">
+    <meta property="og:image" content="Img/logo.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://gifdotreino.com/">
+    <meta property="twitter:title" content="Gif do Treino - Biblioteca de Exercícios">
+    <meta property="twitter:description" content="Monte seus treinos personalizados com nossa biblioteca completa de exercícios em GIF.">
+    <meta property="twitter:image" content="Img/logo.png">
+
+    <!-- Canonical URL -->
+    <meta rel="canonical" href="https://gifdotreino.com/">
+
+    <link rel="stylesheet" href="style.css">
+    <!-- BY LUCAS SANTOS MIRANDA - 2025 Gif do Treino. Todos os direitos reservados. -->
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Gif do Treino",
+        "description": "Biblioteca de exercícios físicos com GIFs animados e montagem de treinos personalizados",
+        "url": "https://gifdotreino.com",
+        "applicationCategory": "HealthAndFitness",
+        "operatingSystem": "All",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "BRL"
+        },
+        "creator": {
+            "@type": "Person",
+            "name": "Lucas Santos Miranda"
+        }
+    }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="search">
+            <input type="text" id="search" placeholder="Pesquise exercícios...">
+            <div class="filter" id="filter-btn">
+                Filtros
+                <span id="filter-count" class="filter-count">0</span>
+                <div class="filter-options" id="filter-options">
+                </div>
+            </div>            
+        </div>
+        <div class="gifs-container" id="gifs-container">
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="close-modal">&times;</button>
+            <img id="modal-gif" src="" alt="GIF">
+            <h2 id="modal-name"></h2>
+            <div class="modal-description" id="modal-description"></div>
+        </div>
+    </div>
+
+    <div class="create-workout-btn" id="create-workout-btn">
+        <span class="icon">📋</span>
+        Meus Treinos
+    </div>
+
+    <div class="workouts-list-modal" id="workouts-list-modal">
+        <div class="workouts-list-content">
+            <button class="modal-close" id="close-workouts-list">&times;</button>
+            <h2>Meus Treinos</h2>
+            
+            <div class="workouts-list-header">
+                <input type="text" id="search-workouts" placeholder="Buscar treinos..." class="search-workouts-input">
+                <button id="new-workout-btn" class="workout-btn">Novo Treino</button>
+            </div>
+
+            <div class="workouts-list" id="workouts-list">
+                <!-- Lista de treinos será inserida aqui -->
+            </div>
+        </div>
+    </div>
+
+    <div class="workout-modal" id="workout-modal">
+        <div class="workout-modal-content">
+            <div class="modal-header">
+                <button class="back-button" id="back-to-workouts">←</button>
+                <h2>Montar Treino</h2>
+                <button class="modal-close" id="close-workout-modal">&times;</button>
+            </div>
+            
+            <div class="workout-form">
+                <div class="workout-header">
+                    <input type="text" id="workout-name" placeholder="Nome do treino" class="workout-title-input">
+                    <input type="text" id="workout-description" placeholder="Descrição do treino" class="workout-description-input">
+                </div>
+
+                <div class="workout-exercises" id="workout-exercises">
+                    <!-- Exercícios serão adicionados aqui -->
+                </div>
+
+                <div class="workout-controls">
+                    <button id="add-exercise" class="workout-btn">+ Adicionar Exercício</button>
+                    <button id="save-workout" class="workout-btn">Salvar Treino</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise-search-modal" id="exercise-search-modal">
+        <div class="exercise-search-content">
+            <button class="exercise-search-close" id="close-exercise-search">&times;</button>
+            <div class="exercise-search-header">
+                <input type="text" class="exercise-search-bar" id="modal-exercise-search" placeholder="Pesquisar exercícios...">
+                <div class="exercise-search-filters" id="modal-exercise-filters">
+                    <!-- Filtros serão adicionados dinamicamente -->
+                </div>
+            </div>
+            <div class="exercise-results" id="exercise-results">
+                <!-- Resultados serão adicionados dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+<footer style="background-color: #333; color: white; padding: 20px; text-align: center;">
+    <p>&copy; 2025 Gif do Treino. Todos os direitos reservados.</p>
+    <p>Entre em contato: <a href="mailto:gifdotreino@gmail.com" style="color: #ff9800;">gifdotreino@gmail.com</a></p>
+    <p style="font-size: 14px; color: #ccc; margin-top: 10px;">
+        Nós somos um site dedicado a informar sobre exercícios de maneira interativa. No entanto, não substituímos a orientação de um profissional. Sempre consulte um especialista antes de iniciar qualquer treino. Cuide-se!
+    </p>
+</footer>
+
+</body>
+</html>

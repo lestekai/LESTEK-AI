@@ -14,9 +14,15 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**', // This allows any path under the hostname
       },
+      {
+        protocol: 'https',
+        hostname: 'www.gifdotreino.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.smartworkout.app',
+      }
     ],
   },
   transpilePackages: ['motion'],

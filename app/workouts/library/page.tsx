@@ -8,6 +8,7 @@ import { BottomNav } from '@/components/BottomNav';
 import { Search, Dumbbell, Tag, Info, AlertTriangle, ArrowLeft, Activity, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getBodyPartImageUrl } from '@/lib/utils';
+import { ExerciseMedia } from '@/components/workout/ExerciseMedia';
 
 import { getCommonErrorsForExercise } from '@/lib/errorGenerator';
 
@@ -68,46 +69,12 @@ export default function LibraryPage() {
               className="bg-surface border border-surface-light p-4 rounded-2xl text-left hover:border-white/20 transition-all group flex gap-4 items-center"
             >
                 <div className="w-24 shrink-0 aspect-video bg-surface rounded-xl overflow-hidden border border-surface-light relative z-10 flex items-center justify-center group-hover:border-neon-blue transition-colors pointer-events-none">
-                   {(() => {
-                     const mediaUrl = ex.gifUrl || getBodyPartImageUrl(ex.targetMuscles[0] || 'Corpo Todo');
-                     
-                     if (!mediaUrl) {
-                       return (
-                         <div className="w-full h-full flex flex-col items-center justify-center bg-surface/50 text-text-secondary/50">
-                           <Dumbbell size={20} />
-                         </div>
-                       );
-                     }
-                     
-                     if (mediaUrl.endsWith('.mp4')) {
-                       return (
-                         <video 
-                           src={mediaUrl} 
-                           autoPlay 
-                           loop 
-                           muted 
-                           playsInline
-                           className="w-full h-full object-cover object-center opacity-80" 
-                           onError={(e) => {
-    (e.target as HTMLElement).style.opacity = '0';
-  }}
-                         />
-                       );
-                     }
-                     
-                     return (
-                       <img 
-                         src={mediaUrl} 
-                         alt={ex.name}
-                         loading="lazy"
-                         fetchPriority="low"
-                         className="w-full h-full object-contain p-1 opacity-80" 
-                         onError={(e) => {
-    (e.target as HTMLElement).style.opacity = '0';
-  }}
-                       />
-                     );
-                   })()}
+                   <ExerciseMedia 
+                     exerciseNameOrId={ex.id}
+                     fallbackMuscle={ex.targetMuscles[0] || 'Corpo Todo'}
+                     priority={false}
+                     className="w-full h-full"
+                   />
                 </div>
               <div className="flex-1 min-w-0">
                 <div className="flex flex-col items-start gap-2 mb-3 mt-1 w-full">
@@ -183,65 +150,19 @@ export default function LibraryPage() {
                   </div>
                 </div>
 
-                <div className="bg-background border border-surface-light rounded-2xl overflow-hidden aspect-video relative flex flex-col items-center justify-center p-0 shadow-inner group">
-                  {(() => {
-                    const mediaUrl = selectedExercise.gifUrl || getBodyPartImageUrl(selectedExercise.targetMuscles[0] || 'Corpo Todo');
-                    if (!mediaUrl) {
-                      return (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface/50">
-                          <Dumbbell size={32} className="text-text-secondary/50 mb-2" />
-                        </div>
-                      );
-                    }
-                    
-                    if (mediaUrl.endsWith('.mp4')) {
-                      return (
-                        <video 
-                          src={mediaUrl} 
-                          autoPlay 
-                          loop 
-                          muted 
-                          playsInline
-                          className="w-full h-auto max-h-[60vh] object-contain object-center opacity-80 transition-opacity duration-300"
-                          onError={(e) => {
-                             const parent = (e.currentTarget as HTMLVideoElement).parentElement;
-                             if(parent) {
-                                parent.classList.add('bg-surface/50');
-                                const fallback = parent.querySelector('.fallback');
-                                if(fallback) fallback.classList.remove('hidden');
-                             }
-                          }}
-                        />
-                      );
-                    }
-                    
-                    return (
-                      <img 
-                        src={mediaUrl} 
-                        alt={selectedExercise.name}
-                        className="w-full h-auto max-h-[60vh] object-contain object-center opacity-80 transition-opacity duration-300"
-                        onError={(e) => {
-                           (e.target as HTMLImageElement).style.display = 'none';
-                           const parent = (e.target as HTMLImageElement).parentElement;
-                           if(parent) {
-                              parent.classList.add('bg-surface/50');
-                              const fallback = parent.querySelector('.fallback');
-                              if(fallback) fallback.classList.remove('hidden');
-                           }
-                        }}
-                      />
-                    );
-                  })()}
-                  <div className="fallback hidden absolute inset-0 flex flex-col items-center justify-center pt-8">
-                    <Dumbbell size={32} className="text-neon-blue/50 mb-2" />
-                    <span className="text-xs font-bold text-text-secondary uppercase">Mídia Indisponível</span>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm pt-2 pb-2 border-t border-white/10 text-center">
+                <div className="bg-background border border-surface-light rounded-2xl overflow-hidden aspect-video relative p-0 shadow-inner group">
+                  <ExerciseMedia 
+                     exerciseNameOrId={selectedExercise.id}
+                     fallbackMuscle={selectedExercise.targetMuscles[0] || 'Corpo Todo'}
+                     priority={true}
+                     className="w-full h-full"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm pt-2 pb-2 border-t border-white/10 text-center pointer-events-none">
                       <p className="text-[10px] text-neon-blue uppercase tracking-widest flex justify-center items-center gap-1">
                         <Activity size={12} /> Demonstração Visual
                       </p>
-                    </div>
                   </div>
+                </div>
 
                 {selectedExercise.description && (
                   <div className="space-y-3">

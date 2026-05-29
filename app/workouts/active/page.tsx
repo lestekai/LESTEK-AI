@@ -6,7 +6,7 @@ import { useWorkoutStore, ExerciseDefinition } from '@/lib/workoutStore';
 import { useAppStore } from '@/lib/store';
 import { EXERCISE_LIBRARY, searchExercises, findExerciseInLibrary } from '@/lib/exerciseLibrary';
 import { getCommonErrorsForExercise } from '@/lib/errorGenerator';
-import { getBodyPartImageUrl } from '@/lib/utils';
+import { ExerciseMedia } from '@/components/workout/ExerciseMedia';
 import { motion, AnimatePresence } from 'motion/react';
 import { Play, Pause, CheckCircle, ArrowLeft, Clock, Dumbbell, AlertTriangle, FastForward, Plus, X, Search } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -341,58 +341,12 @@ export default function ActiveWorkoutPage() {
                        className="space-y-4 overflow-hidden"
                      >
                        {/* Video Demonstrativo / Visual Placeholder */}
-                       <div className="bg-background border border-surface-light rounded-2xl overflow-hidden aspect-video relative flex flex-col items-center justify-center p-0 shadow-inner group">
-                         {(() => {
-    const fallbackMuscle = libraryExercise?.targetMuscles?.[0] || currentExercise.targetMuscles?.[0] || currentExercise.target || 'Corpo Todo';
-    const mediaUrl = libraryExercise?.gifUrl || getBodyPartImageUrl(fallbackMuscle);
-    if (!mediaUrl) {
-      return (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface/50">
-          <Dumbbell size={32} className="text-text-secondary/50 mb-2" />
-        </div>
-      );
-    }
-    if (mediaUrl.endsWith('.mp4')) {
-      return (
-        <video 
-          src={mediaUrl} 
-          autoPlay 
-          loop 
-          muted 
-          playsInline
-          className="w-full h-auto max-h-[60vh] object-contain object-center opacity-80 transition-opacity duration-300" 
-          onError={(e) => {
-             const parent = (e.currentTarget as HTMLVideoElement).parentElement;
-             if(parent) {
-                parent.classList.add('bg-surface/50');
-                const fallback = parent.querySelector('.fallback');
-                if(fallback) fallback.classList.remove('hidden');
-             }
-          }}
-        />
-      );
-    }
-    return (
-      <img 
-        src={mediaUrl} 
-        alt="Demonstração" 
-        className="w-full h-auto max-h-[60vh] object-contain object-center opacity-80 transition-opacity duration-300" 
-        onError={(e) => {
-           (e.target as HTMLImageElement).style.display = 'none';
-           const parent = (e.target as HTMLImageElement).parentElement;
-           if(parent) {
-              parent.classList.add('bg-surface/50');
-              const fallback = parent.querySelector('.fallback');
-              if(fallback) fallback.classList.remove('hidden');
-           }
-        }}
-      />
-    );
-  })()}
-                         <div className="fallback hidden absolute inset-0 flex flex-col items-center justify-center pt-4">
-                            <Dumbbell size={24} className="text-neon-blue/50 mb-2" />
-                            <span className="text-[10px] font-bold text-text-secondary uppercase">Mídia Indisponível</span>
-                         </div>
+                       <div className="bg-background border border-surface-light rounded-2xl overflow-hidden aspect-video relative p-0 shadow-inner group">
+                         <ExerciseMedia 
+                           exerciseNameOrId={currentExercise.libraryId || currentExercise.name || currentExercise.id}
+                           fallbackMuscle={libraryExercise?.targetMuscles?.[0] || currentExercise.targetMuscles?.[0] || currentExercise.target || 'Corpo Todo'}
+                           priority={true}
+                         />
                          <div className="absolute bottom-2 right-2 bg-background/80 px-2 py-1 rounded text-[10px] font-bold text-neon-blue uppercase backdrop-blur-sm shadow border border-neon-blue/20">
                            Demonstração
                          </div>

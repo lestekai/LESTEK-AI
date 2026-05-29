@@ -81,32 +81,53 @@ export default function OnboardingPage() {
     setIsFinishing(true);
     setSetupStep(1);
 
-    // Salvar preferência de IA
+    // Salvar preferência de IA internamente
     useAppStore.setState(state => ({
       profile: state.profile ? { ...state.profile, ai_personality: answers.aiTone } : null
     }));
 
     // Simular instalação e setups OS level
-    setTimeout(() => setSetupStep(2), 2000); // Pedindo Notificações e PWA
+    setTimeout(() => setSetupStep(2), 2000); 
     
-    // Request permission real
     try {
       if ('Notification' in window) {
         await Notification.requestPermission();
       }
-    } catch (e) {
-      // ignore
-    }
+    } catch (e) {}
 
-    setTimeout(() => setSetupStep(3), 4000); // Gerando
+    setTimeout(() => setSetupStep(3), 4000); 
+
+    // Sync to Supabase
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        // Atualiza perfil no Supabase
+        await supabase.from('profiles').update({
+          is_onboarded: true,
+          ai_personality: answers.aiTone
+        }).eq('id', session.user.id);
+        
+        // Salva questionario no ai_memory
+        await supabase.from('ai_memory').upsert({
+          user_id: session.user.id,
+          questionnaire_data: answers,
+          preferences: { aiTone: answers.aiTone, mainGoal: answers.mainGoal }
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
     
-    setTimeout(() => {
+    setTimeout(async () => {
       setSetupStep(4);
       
       const today = getLocalDateStr(new Date());
       const initialTasks: Task[] = [];
-      const addTask = (title: string, category: TaskCategory, xpReward: number = 10) => {
-        initialTasks.push({
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const prepareTaskAndPush = async (title: string, category: TaskCategory, xpReward: number = 10) => {
+        const t: Task = {
           id: Date.now().toString() + Math.random().toString(),
           title,
           completed: false,
@@ -115,25 +136,39 @@ export default function OnboardingPage() {
           category,
           xpReward,
           isRecurring: true
-        });
+        };
+        initialTasks.push(t);
+        
+        if (session?.user) {
+           await supabase.from('tasks').insert({
+             user_id: session.user.id,
+             title: t.title,
+             category: t.category,
+             xp_reward: t.xpReward,
+             date: t.date,
+             base_date: t.baseDate,
+             is_recurring: true,
+             completed: false
+           });
+        }
       };
 
-      addTask('💧 Hidratação Diária (2L+)', 'routine', 10);
+      await prepareTaskAndPush('💧 Hidratação Diária (2L+)', 'routine', 10);
       
       if (answers.goals.includes('Academia / físico') || answers.goals.includes('Saúde')) {
-        addTask('🔥 Protocolo Físico (Treino ou Cardio Livre)', 'workout', 25);
+        await prepareTaskAndPush('🔥 Protocolo Físico (Treino ou Cardio Livre)', 'workout', 25);
       }
       
       if (answers.goals.includes('Foco') || answers.goals.includes('Estudos')) {
-        addTask('🧠 Deep Work / Foco Total (Sem notificações)', 'routine', 25);
+        await prepareTaskAndPush('🧠 Deep Work / Foco Total (Sem notificações)', 'routine', 25);
       }
       
       if (answers.sleep === 'Menos de 5h' || answers.sleep === '5-6h' || answers.difficulties.includes('Sono ruim')) {
-        addTask('🌙 Higiene do Sono (Telas off 1h antes)', 'routine', 20);
+        await prepareTaskAndPush('🌙 Higiene do Sono (Telas off 1h antes)', 'routine', 20);
       }
       
       if (answers.difficulties.includes('Procrastinação') || answers.difficulties.includes('Redes sociais')) {
-        addTask('📵 Jejum de Dopamina na 1ª hora da manhã', 'routine', 20);
+        await prepareTaskAndPush('📵 Jejum de Dopamina na 1ª hora da manhã', 'routine', 20);
       }
 
       completeOnboarding(initialTasks);

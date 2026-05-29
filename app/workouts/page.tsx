@@ -101,6 +101,7 @@ function SortableDayItem({ day, idx, todayIndex, setEditingDayIndex }: SortableD
 import { QuestionnaireWizard } from '@/components/workout/QuestionnaireWizard';
 import { WorkoutEditor } from '@/components/workout/WorkoutEditor';
 import { EXERCISE_LIBRARY, findExerciseInLibrary } from '@/lib/exerciseLibrary';
+import { ExerciseMedia } from '@/components/workout/ExerciseMedia';
 
 // Attach library to global for easiest lookup without passing large sets around if needed 
 if (typeof globalThis !== 'undefined') {
@@ -346,12 +347,11 @@ function WorkoutDashboard({ plan }: { plan: any }) {
           
           <div className="space-y-4">
             {todayPlan.exercises?.map((ex: any, i: number) => {
-              // Try to find the full exercise details from library to get the gifUrl
+              // Try to find the full exercise details from library
               const libraryEx = findExerciseInLibrary(ex.libraryId) || findExerciseInLibrary(ex.name) || findExerciseInLibrary(ex.id);
               
               // Fallback URL mechanism similar to smartworkout.app/pt patterns
               const fallbackMuscle = libraryEx?.targetMuscles?.[0] || ex.targetMuscles?.[0] || ex.target || 'Corpo Todo';
-              const imageUrl = libraryEx?.gifUrl || getBodyPartImageUrl(fallbackMuscle);
 
               return (
               <div 
@@ -359,36 +359,12 @@ function WorkoutDashboard({ plan }: { plan: any }) {
                 className="bg-surface border border-surface-light p-4 rounded-2xl flex items-center gap-4 group hover:border-white/20 transition-all overflow-hidden relative"
               >
                   <div className="w-24 shrink-0 aspect-video bg-surface rounded-xl overflow-hidden border border-surface-light relative z-10 flex items-center justify-center group-hover:border-neon-blue transition-colors pointer-events-none">
-                    {imageUrl ? (
-                      imageUrl.endsWith('.mp4') ? (
-                         <video 
-                           src={imageUrl} 
-                           autoPlay 
-                           loop 
-                           muted 
-                           playsInline
-                           className="w-full h-full object-cover object-center opacity-80" 
-                           onError={(e) => {
-    (e.target as HTMLElement).style.opacity = '0';
-  }}
-                         />
-                      ) : (
-                        <img 
-                          src={imageUrl} 
-                          alt={ex.name}
-                          loading="lazy"
-                          fetchPriority="low"
-                          className="w-full h-full object-contain p-1 opacity-80" 
-                          onError={(e) => {
-    (e.target as HTMLElement).style.opacity = '0';
-  }}
-                        />
-                      )
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-surface/50 text-text-secondary/50">
-                        <Dumbbell size={20} />
-                      </div>
-                    )}
+                    <ExerciseMedia 
+                       exerciseNameOrId={ex.libraryId || ex.name || ex.id}
+                       fallbackMuscle={fallbackMuscle}
+                       priority={false} // Lazy load for lists
+                       className="w-full h-full"
+                    />
                   </div>
                  <div className="flex-1 min-w-0 z-10">
                     <div className="flex items-center gap-2 mb-1">
