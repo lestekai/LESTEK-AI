@@ -103,11 +103,22 @@ export interface WorkoutLog {
   perceivedEffort: number;
 }
 
+export interface WorkoutSettings {
+  preparationTimeSeconds: number;
+  preparationEnabled: boolean;
+  restTimeEnabled: boolean;
+  autoAdvanceEnabled: boolean;
+  soundEnabled: boolean;
+  vibrationEnabled: boolean;
+  estimatedSetTimeSeconds: number;
+}
+
 interface WorkoutState {
   hasCompletedQuestionnaire: boolean;
   questionnaire: WorkoutQuestionnaire;
   currentPlan: WorkoutPlan | null;
   workoutHistory: WorkoutLog[];
+  settings: WorkoutSettings;
   
   setQuestionnaireData: (data: Partial<WorkoutQuestionnaire>) => void;
   setPlan: (plan: WorkoutPlan) => void;
@@ -115,6 +126,7 @@ interface WorkoutState {
   completeWorkout: (log: WorkoutLog) => void;
   resetWorkoutSystem: () => void;
   setWorkoutHistory: (history: WorkoutLog[]) => void;
+  updateSettings: (settings: Partial<WorkoutSettings>) => void;
 }
 
 export const useWorkoutStore = create<WorkoutState>()(
@@ -124,6 +136,15 @@ export const useWorkoutStore = create<WorkoutState>()(
       questionnaire: {},
       currentPlan: null,
       workoutHistory: [],
+      settings: {
+        preparationTimeSeconds: 15,
+        preparationEnabled: true,
+        restTimeEnabled: true,
+        autoAdvanceEnabled: false,
+        soundEnabled: true,
+        vibrationEnabled: true,
+        estimatedSetTimeSeconds: 45
+      },
 
       setQuestionnaireData: (data) => set((state) => ({
         questionnaire: { ...state.questionnaire, ...data }
@@ -159,7 +180,11 @@ export const useWorkoutStore = create<WorkoutState>()(
         questionnaire: {},
         currentPlan: null,
         workoutHistory: []
-      })
+      }),
+
+      updateSettings: (newSettings) => set((state) => ({
+        settings: { ...state.settings, ...newSettings }
+      }))
     }),
     {
       name: 'evolux-workout-storage'

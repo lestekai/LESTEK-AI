@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { generateAI } from '@/src/services/geminiService';
 import { motion, AnimatePresence } from 'motion/react';
 import { useWorkoutStore, WorkoutQuestionnaire } from '@/lib/workoutStore';
@@ -24,8 +24,23 @@ export function QuestionnaireWizard({ setStoreQuestionnaire, setPlan }: { setSto
   const [method, setMethod] = useState<'ai' | 'manual' | null>(null);
   const [manualText, setManualText] = useState('');
   
-  const [stepIndex, setStepIndex] = useState(0);
-  const [data, setData] = useState<WorkoutQuestionnaire>({});
+  const [stepIndex, setStepIndex] = useState(() => {
+    const saved = localStorage.getItem('workout_q_step');
+    return saved ? parseInt(saved, 10) : 0;
+  });
+  const [data, setData] = useState<WorkoutQuestionnaire>(() => {
+    const saved = localStorage.getItem('workout_q_data');
+    return saved ? JSON.parse(saved) : {};
+  });
+  
+  useEffect(() => {
+    localStorage.setItem('workout_q_step', stepIndex.toString());
+  }, [stepIndex]);
+  
+  useEffect(() => {
+    localStorage.setItem('workout_q_data', JSON.stringify(data));
+  }, [data]);
+  
   const [isGenerating, setIsGenerating] = useState(false);
   const globalSetPlan = useWorkoutStore(s => s.setPlan);
   const globalSetStoreQuestionnaire = useWorkoutStore(s => s.setQuestionnaireData);
@@ -74,7 +89,8 @@ export function QuestionnaireWizard({ setStoreQuestionnaire, setPlan }: { setSto
   };
 
   const planSystemInstruction = `Você é o Evolux AI. Gere o plano de treino o mais rápido possível e envie APENAS um JSON válido.
-IMPORTANTE: Limite as respostas para ser enxuto. Use nomes técnicos simples e rápidos. 
+IMPORTANTE: Limite as respostas para ser enxuto. Use nomes técnicos simples e padronizados.
+Se um exercício solicitado não existir ou tiver o nome longo/composto, OBRIGATORIAMENTE substitua-o pelo seu equivalente mais próximo e simples. (ex: "Supino com halter" -> "Supino halter", "Leg press 45" -> "Leg press máquina", "Mesa flexora" -> "Cadeira flexora máquina").
 Sua missão é criar ou parsear um plano de treinamento extremamente preciso. Se "includeCardio" for true, adicione 1 cardio (sets: 1, reps: "15min").
 Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
 {
@@ -116,6 +132,8 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
         id: generateId(),
         generatedAt: new Date().toISOString()
       });
+      localStorage.removeItem('workout_q_step');
+      localStorage.removeItem('workout_q_data');
       if (!setPlan) navigate('/workouts');
     } catch (e: any) {
       console.error('Gemini error:', e);

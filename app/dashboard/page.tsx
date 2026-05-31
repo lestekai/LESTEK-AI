@@ -17,14 +17,38 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const { profile, tasks, checkStreak, toggleTask } = useAppStore();
   const { currentPlan } = useWorkoutStore();
+  const [feedbackState, setFeedbackState] = useState<{status: 'idle'|'loading'|'success'|'error', message: string}>({status: 'idle', message: ''});
 
   useEffect(() => {
     if (!profile) {
       navigate('/login');
+    } else if (!profile.isOnboarded) {
+      navigate('/onboarding');
     } else {
       checkStreak();
+      
+      // Sanitizar tarefas com IDs duplicados para evitar erros de renderização (React Keys)
+      const { tasks: currentTasks, goals: currentGoals, setTasks, setGoals } = useAppStore.getState();
+      const hasDuplicateTasks = currentTasks.some((t, i) => currentTasks.findIndex(o => o.id === t.id) !== i);
+      if (hasDuplicateTasks) {
+        setTasks(currentTasks);
+      }
+      const hasDuplicateGoals = currentGoals.some((g, i) => currentGoals.findIndex(o => o.id === g.id) !== i);
+      if (hasDuplicateGoals) {
+        setGoals(currentGoals);
+      }
+
+      const hasRecurringTasks = currentTasks.some(t => t.isRecurring);
+      if (!hasRecurringTasks && currentTasks.length === 0) {
+        // Fallback: se o usuário já completou onboarding e não tem tarefas fixas
+        const { addTask } = useAppStore.getState();
+        addTask({ title: '💧 Hidratação Diária (2L+)', category: 'routine', xpReward: 10, isRecurring: true });
+        addTask({ title: '🔥 Protocolo Físico (Treino ou Cardio Livre)', category: 'workout', xpReward: 25, isRecurring: true });
+        addTask({ title: '🧠 Foco Total / Leitura (Sem distrações)', category: 'routine', xpReward: 20, isRecurring: true });
+        addTask({ title: '🌙 Higiene do Sono (Telas off 1h antes)', category: 'routine', xpReward: 20, isRecurring: true });
+      }
     }
-  }, [profile, navigate, checkStreak]);
+  }, [profile, navigate, checkStreak, tasks]);
 
   if (!profile) return null;
 
@@ -339,8 +363,9 @@ export default function DashboardPage() {
               const category = formData.get('category') as string;
               
               if (message.trim()) {
+                setFeedbackState({ status: 'loading', message: 'Transmitindo mensagem...' });
                 try {
-                  const { supabase } = await import('@/lib/supabase');
+                  const { supabase, supabaseAdmin } = await import('@/lib/supabase');
                   const { data: { session }, error: sessionError } = await supabase.auth.getSession();
                   
                   if (sessionError) {
@@ -348,31 +373,40 @@ export default function DashboardPage() {
                   }
                   
                   if (session) {
-                    const { error } = await supabase.from('feedbacks').insert({
+                    const { error } = await supabaseAdmin.from('feedbacks').insert({
                       user_id: session.user.id,
                       message,
                       category,
                     });
                     
                     if (!error) {
-                      alert('Feedback enviado com sucesso ao Centro de Comando!');
+                      setFeedbackState({ status: 'success', message: 'Feedback enviado com sucesso ao Centro de Comando!' });
                       form.reset();
                     } else {
                       console.error("Insert error:", error);
-                      alert(`Erro ao enviar feedback: ${error.message}`);
+                      setFeedbackState({ status: 'error', message: `Erro ao enviar feedback: ${error.message}` });
                     }
                   } else {
                     // Fallback para usuário offline / convidado
-                    alert('Feedback registrado no diário de bordo (Modo Offline Convencional ativo).');
+                    setFeedbackState({ status: 'success', message: 'Feedback registrado no diário de bordo.' });
                     form.reset();
                   }
                 } catch (err: any) {
                   console.error("Feedback catch error:", err);
-                  alert(`Ocorreu um erro no módulo de comunicação. Conexão restabelecida.`);
-                  form.reset();
+                  setFeedbackState({ status: 'error', message: `Ocorreu um erro no módulo de comunicação.` });
                 }
+                
+                // Limpar a mensagem de sucesso/erro após 5 segundos
+                setTimeout(() => {
+                  setFeedbackState(prev => prev.status !== 'loading' ? { status: 'idle', message: '' } : prev);
+                }, 5000);
               }
             }} className="flex flex-col gap-3">
+              {feedbackState.message && (
+                <div className={`p-3 rounded-xl text-xs font-medium border ${feedbackState.status === 'success' ? 'bg-green-500/10 text-green-400 border-green-500/20' : feedbackState.status === 'error' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'} transition-opacity`}>
+                  {feedbackState.message}
+                </div>
+              )}
               <select name="category" className="w-full bg-background border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500/50">
                 <option value="feedback">Feedback Geral</option>
                 <option value="sugestao">Sugestão de Melhoria</option>

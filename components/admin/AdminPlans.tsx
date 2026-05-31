@@ -22,10 +22,12 @@ export default function AdminPlans() {
 
   const handleUpdatePlan = async (userId: string, newPlan: string, expiresAt: string) => {
     const userToUpdate = users.find(u => u.id === userId);
-    if (!userToUpdate) return;
-    
+    // Fetch latest user data to prevent overwriting their recent syncs (json backup)
+    const { data: latestProfile } = await supabaseAdmin.from('profiles').select('equipped_cosmetics').eq('id', userId).single();
+    if (!latestProfile) return;
+
     const equipped_cosmetics = {
-       ...(userToUpdate.equipped_cosmetics || {}),
+       ...(latestProfile.equipped_cosmetics || {}),
        plan: newPlan,
        plan_expires_at: expiresAt,
        plan_request: '',
@@ -46,10 +48,12 @@ export default function AdminPlans() {
 
   const handleRejectPlan = async (userId: string) => {
     const userToUpdate = users.find(u => u.id === userId);
-    if (!userToUpdate) return;
-    
+    // Fetch latest user data to prevent overwriting their recent syncs
+    const { data: latestProfile } = await supabaseAdmin.from('profiles').select('equipped_cosmetics').eq('id', userId).single();
+    if (!latestProfile) return;
+
     const equipped_cosmetics = {
-       ...(userToUpdate.equipped_cosmetics || {}),
+       ...(latestProfile.equipped_cosmetics || {}),
        plan_request: '',
        plan_request_date: ''
     };

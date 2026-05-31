@@ -14,6 +14,1304 @@ export interface ExerciseLibraryItem {
 
 const BASE_EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
   {
+    "id": "spino reto com halteres",
+    "name": "Supino Reto com Halteres",
+    "targetMuscles": ["Peitoral","Tríceps","Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino Reto com Halteres foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino Reto com Halteres",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Reto%20com%20Halteres.gif"
+  },
+  {
+    "id": "pxada articlada",
+    "name": "Puxada Articulada",
+    "targetMuscles": ["Costas","Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Puxada Articulada foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Puxada Articulada",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Puxada%20Articulada.gif"
+  },
+  {
+    "id": "desenvolvimento militar com barra",
+    "name": "Desenvolvimento Militar com Barra",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Desenvolvimento Militar com Barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Desenvolvimento Militar com Barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Desenvolvimento%20Militar.gif"
+  },
+  {
+    "id": "remada alta com barra",
+    "name": "Remada Alta com Barra",
+    "targetMuscles": ["Ombros","Trapézio"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada Alta com Barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada Alta com Barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Remada%20Alta.gif"
+  },
+  {
+    "id": "rosca alternada com halteres",
+    "name": "Rosca Alternada com Halteres",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca Alternada com Halteres foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca Alternada com Halteres",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Alternada.gif"
+  },
+  {
+    "id": "spino reto barra",
+    "name": "Supino reto barra",
+    "targetMuscles": ["Peitoral","Tríceps","Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino reto barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino reto barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Reto.gif"
+  },
+  {
+    "id": "spino reto halter",
+    "name": "Supino reto halter",
+    "targetMuscles": ["Peitoral","Tríceps","Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino reto halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino reto halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Reto.gif"
+  },
+  {
+    "id": "spino reto máqina",
+    "name": "Supino reto máquina",
+    "targetMuscles": ["Peitoral","Tríceps","Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino reto máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino reto máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Reto.gif"
+  },
+  {
+    "id": "spino reto cabo",
+    "name": "Supino reto cabo",
+    "targetMuscles": ["Peitoral","Tríceps","Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino reto cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino reto cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Reto.gif"
+  },
+  {
+    "id": "spino inclinado barra",
+    "name": "Supino inclinado barra",
+    "targetMuscles": ["Peitoral Superior","Ombros","Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino inclinado barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino inclinado barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Inclinado%20com%20Halteres.gif"
+  },
+  {
+    "id": "spino inclinado halter",
+    "name": "Supino inclinado halter",
+    "targetMuscles": ["Peitoral Superior","Ombros","Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino inclinado halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino inclinado halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Inclinado%20com%20Halteres.gif"
+  },
+  {
+    "id": "spino inclinado máqina",
+    "name": "Supino inclinado máquina",
+    "targetMuscles": ["Peitoral Superior","Ombros","Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino inclinado máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino inclinado máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Inclinado%20com%20Halteres.gif"
+  },
+  {
+    "id": "spino inclinado cabo",
+    "name": "Supino inclinado cabo",
+    "targetMuscles": ["Peitoral Superior","Ombros","Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino inclinado cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino inclinado cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Inclinado%20com%20Halteres.gif"
+  },
+  {
+    "id": "spino declinado barra",
+    "name": "Supino declinado barra",
+    "targetMuscles": ["Peitoral Inferior"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino declinado barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino declinado barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Declinado.gif"
+  },
+  {
+    "id": "spino declinado halter",
+    "name": "Supino declinado halter",
+    "targetMuscles": ["Peitoral Inferior"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino declinado halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino declinado halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Declinado.gif"
+  },
+  {
+    "id": "spino declinado máqina",
+    "name": "Supino declinado máquina",
+    "targetMuscles": ["Peitoral Inferior"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino declinado máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino declinado máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Declinado.gif"
+  },
+  {
+    "id": "spino declinado cabo",
+    "name": "Supino declinado cabo",
+    "targetMuscles": ["Peitoral Inferior"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino declinado cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino declinado cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Declinado.gif"
+  },
+  {
+    "id": "crciixo barra",
+    "name": "Crucifixo barra",
+    "targetMuscles": ["Peitoral"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Crucifixo barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Crucifixo barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Crucifixo.gif"
+  },
+  {
+    "id": "crciixo halter",
+    "name": "Crucifixo halter",
+    "targetMuscles": ["Peitoral"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Crucifixo halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Crucifixo halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Crucifixo.gif"
+  },
+  {
+    "id": "crciixo máqina",
+    "name": "Crucifixo máquina",
+    "targetMuscles": ["Peitoral"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Crucifixo máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Crucifixo máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Crucifixo.gif"
+  },
+  {
+    "id": "crciixo cabo",
+    "name": "Crucifixo cabo",
+    "targetMuscles": ["Peitoral"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Crucifixo cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Crucifixo cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Crucifixo.gif"
+  },
+  {
+    "id": "crossover cabo",
+    "name": "Crossover cabo",
+    "targetMuscles": ["Peitoral"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Crossover cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Crossover cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Cross%20over.gif"
+  },
+  {
+    "id": "peck deck máqina",
+    "name": "Peck deck máquina",
+    "targetMuscles": ["Peitoral"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Peck deck máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Peck deck máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Peck%20Deck.gif"
+  },
+  {
+    "id": "pxada alta máqina",
+    "name": "Puxada alta máquina",
+    "targetMuscles": ["Costas","Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Puxada alta máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Puxada alta máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Puxada%20Alta.gif"
+  },
+  {
+    "id": "pxada alta cabo",
+    "name": "Puxada alta cabo",
+    "targetMuscles": ["Costas","Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Puxada alta cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Puxada alta cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Puxada%20Alta.gif"
+  },
+  {
+    "id": "remada crvada barra",
+    "name": "Remada curvada barra",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada curvada barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada curvada barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Curvada.gif"
+  },
+  {
+    "id": "remada crvada halter",
+    "name": "Remada curvada halter",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada curvada halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada curvada halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Curvada.gif"
+  },
+  {
+    "id": "remada crvada máqina",
+    "name": "Remada curvada máquina",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada curvada máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada curvada máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Curvada.gif"
+  },
+  {
+    "id": "remada crvada cabo",
+    "name": "Remada curvada cabo",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada curvada cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada curvada cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Curvada.gif"
+  },
+  {
+    "id": "remada baixa barra",
+    "name": "Remada baixa barra",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada baixa barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada baixa barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Baixa.gif"
+  },
+  {
+    "id": "remada baixa halter",
+    "name": "Remada baixa halter",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada baixa halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada baixa halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Baixa.gif"
+  },
+  {
+    "id": "remada baixa máqina",
+    "name": "Remada baixa máquina",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada baixa máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada baixa máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Baixa.gif"
+  },
+  {
+    "id": "remada baixa cabo",
+    "name": "Remada baixa cabo",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada baixa cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada baixa cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Baixa.gif"
+  },
+  {
+    "id": "remada nilateral barra",
+    "name": "Remada unilateral barra",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada unilateral barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada unilateral barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Unilateral.gif"
+  },
+  {
+    "id": "remada nilateral halter",
+    "name": "Remada unilateral halter",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada unilateral halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada unilateral halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Unilateral.gif"
+  },
+  {
+    "id": "remada nilateral máqina",
+    "name": "Remada unilateral máquina",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada unilateral máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada unilateral máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Unilateral.gif"
+  },
+  {
+    "id": "remada nilateral cabo",
+    "name": "Remada unilateral cabo",
+    "targetMuscles": ["Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada unilateral cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada unilateral cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Costas/Remada%20Unilateral.gif"
+  },
+  {
+    "id": "pllover barra",
+    "name": "Pullover barra",
+    "targetMuscles": ["Peitoral","Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Pullover barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Pullover barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Pullover%20com%20Halter.gif"
+  },
+  {
+    "id": "pllover halter",
+    "name": "Pullover halter",
+    "targetMuscles": ["Peitoral","Costas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Pullover halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Pullover halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Pullover%20com%20Halter.gif"
+  },
+  {
+    "id": "agachamento barra",
+    "name": "Agachamento barra",
+    "targetMuscles": ["Quadríceps","Glúteos"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Agachamento barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Agachamento barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Agachamento%20com%20Barra.gif"
+  },
+  {
+    "id": "agachamento halter",
+    "name": "Agachamento halter",
+    "targetMuscles": ["Quadríceps","Glúteos"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Agachamento halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Agachamento halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Agachamento%20com%20Barra.gif"
+  },
+  {
+    "id": "agachamento máqina",
+    "name": "Agachamento máquina",
+    "targetMuscles": ["Quadríceps","Glúteos"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Agachamento máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Agachamento máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Agachamento%20com%20Barra.gif"
+  },
+  {
+    "id": "leg press máqina",
+    "name": "Leg press máquina",
+    "targetMuscles": ["Pernas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Leg press máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Leg press máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Leg%20Press.gif"
+  },
+  {
+    "id": "cadeira extensora máqina",
+    "name": "Cadeira extensora máquina",
+    "targetMuscles": ["Quadríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Cadeira extensora máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Cadeira extensora máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Cadeira%20extensora.gif"
+  },
+  {
+    "id": "cadeira lexora máqina",
+    "name": "Cadeira flexora máquina",
+    "targetMuscles": ["Posterior de Coxa"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Cadeira flexora máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Cadeira flexora máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Cadeira%20flexora.gif"
+  },
+  {
+    "id": "ando barra",
+    "name": "Afundo barra",
+    "targetMuscles": ["Glúteos","Quadríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Afundo barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Afundo barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Afundo.gif"
+  },
+  {
+    "id": "ando halter",
+    "name": "Afundo halter",
+    "targetMuscles": ["Glúteos","Quadríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Afundo halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Afundo halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Afundo.gif"
+  },
+  {
+    "id": "ando máqina",
+    "name": "Afundo máquina",
+    "targetMuscles": ["Glúteos","Quadríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Afundo máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Afundo máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Afundo.gif"
+  },
+  {
+    "id": "ando cabo",
+    "name": "Afundo cabo",
+    "targetMuscles": ["Glúteos","Quadríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Afundo cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Afundo cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Afundo.gif"
+  },
+  {
+    "id": "sti barra",
+    "name": "Stiff barra",
+    "targetMuscles": ["Posterior de Coxa","Glúteos"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Stiff barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Stiff barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Stiff.gif"
+  },
+  {
+    "id": "sti halter",
+    "name": "Stiff halter",
+    "targetMuscles": ["Posterior de Coxa","Glúteos"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Stiff halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Stiff halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Stiff.gif"
+  },
+  {
+    "id": "avanço barra",
+    "name": "Avanço barra",
+    "targetMuscles": ["Pernas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Avanço barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Avanço barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Avan%C3%A7o%20com%20Halteres.gif"
+  },
+  {
+    "id": "avanço halter",
+    "name": "Avanço halter",
+    "targetMuscles": ["Pernas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Avanço halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Avanço halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Avan%C3%A7o%20com%20Halteres.gif"
+  },
+  {
+    "id": "avanço máqina",
+    "name": "Avanço máquina",
+    "targetMuscles": ["Pernas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Avanço máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Avanço máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Avan%C3%A7o%20com%20Halteres.gif"
+  },
+  {
+    "id": "avanço cabo",
+    "name": "Avanço cabo",
+    "targetMuscles": ["Pernas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Avanço cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Avanço cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Avan%C3%A7o%20com%20Halteres.gif"
+  },
+  {
+    "id": "desenvolvimento barra",
+    "name": "Desenvolvimento barra",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Desenvolvimento barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Desenvolvimento barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Desenvolvimento%20com%20Halteres.gif"
+  },
+  {
+    "id": "desenvolvimento halter",
+    "name": "Desenvolvimento halter",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Desenvolvimento halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Desenvolvimento halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Desenvolvimento%20com%20Halteres.gif"
+  },
+  {
+    "id": "desenvolvimento máqina",
+    "name": "Desenvolvimento máquina",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Desenvolvimento máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Desenvolvimento máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Desenvolvimento%20com%20Halteres.gif"
+  },
+  {
+    "id": "desenvolvimento cabo",
+    "name": "Desenvolvimento cabo",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Desenvolvimento cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Desenvolvimento cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Desenvolvimento%20com%20Halteres.gif"
+  },
+  {
+    "id": "elevação lateral barra",
+    "name": "Elevação lateral barra",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação lateral barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação lateral barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20Lateral.gif"
+  },
+  {
+    "id": "elevação lateral halter",
+    "name": "Elevação lateral halter",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação lateral halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação lateral halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20Lateral.gif"
+  },
+  {
+    "id": "elevação lateral máqina",
+    "name": "Elevação lateral máquina",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação lateral máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação lateral máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20Lateral.gif"
+  },
+  {
+    "id": "elevação lateral cabo",
+    "name": "Elevação lateral cabo",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação lateral cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação lateral cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20Lateral.gif"
+  },
+  {
+    "id": "elevação rontal barra",
+    "name": "Elevação frontal barra",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação frontal barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação frontal barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20Frontal%20com%20Halteres.gif"
+  },
+  {
+    "id": "elevação rontal halter",
+    "name": "Elevação frontal halter",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação frontal halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação frontal halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20Frontal%20com%20Halteres.gif"
+  },
+  {
+    "id": "elevação rontal máqina",
+    "name": "Elevação frontal máquina",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação frontal máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação frontal máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20Frontal%20com%20Halteres.gif"
+  },
+  {
+    "id": "elevação rontal cabo",
+    "name": "Elevação frontal cabo",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação frontal cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação frontal cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20Frontal%20com%20Halteres.gif"
+  },
+  {
+    "id": "crciixo inverso máqina",
+    "name": "Crucifixo inverso máquina",
+    "targetMuscles": ["Peitoral"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Crucifixo inverso máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Crucifixo inverso máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Crucifixo.gif"
+  },
+  {
+    "id": "crciixo inverso cabo",
+    "name": "Crucifixo inverso cabo",
+    "targetMuscles": ["Peitoral"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Crucifixo inverso cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Crucifixo inverso cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Crucifixo.gif"
+  },
+  {
+    "id": "remada alta barra",
+    "name": "Remada alta barra",
+    "targetMuscles": ["Ombros","Trapézio"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada alta barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada alta barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Remada%20Alta.gif"
+  },
+  {
+    "id": "remada alta halter",
+    "name": "Remada alta halter",
+    "targetMuscles": ["Ombros","Trapézio"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada alta halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada alta halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Remada%20Alta.gif"
+  },
+  {
+    "id": "remada alta máqina",
+    "name": "Remada alta máquina",
+    "targetMuscles": ["Ombros","Trapézio"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada alta máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada alta máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Remada%20Alta.gif"
+  },
+  {
+    "id": "remada alta cabo",
+    "name": "Remada alta cabo",
+    "targetMuscles": ["Ombros","Trapézio"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Remada alta cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Remada alta cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Remada%20Alta.gif"
+  },
+  {
+    "id": "rosca direta barra",
+    "name": "Rosca direta barra",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca direta barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca direta barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Direta%20com%20Barra.gif"
+  },
+  {
+    "id": "rosca direta halter",
+    "name": "Rosca direta halter",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca direta halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca direta halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Direta%20com%20Barra.gif"
+  },
+  {
+    "id": "rosca direta máqina",
+    "name": "Rosca direta máquina",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca direta máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca direta máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Direta%20com%20Barra.gif"
+  },
+  {
+    "id": "rosca direta cabo",
+    "name": "Rosca direta cabo",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca direta cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca direta cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Direta%20com%20Barra.gif"
+  },
+  {
+    "id": "rosca alternada barra",
+    "name": "Rosca alternada barra",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca alternada barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca alternada barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Alternada.gif"
+  },
+  {
+    "id": "rosca alternada halter",
+    "name": "Rosca alternada halter",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca alternada halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca alternada halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Alternada.gif"
+  },
+  {
+    "id": "rosca alternada máqina",
+    "name": "Rosca alternada máquina",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca alternada máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca alternada máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Alternada.gif"
+  },
+  {
+    "id": "rosca alternada cabo",
+    "name": "Rosca alternada cabo",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca alternada cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca alternada cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Alternada.gif"
+  },
+  {
+    "id": "rosca martelo barra",
+    "name": "Rosca martelo barra",
+    "targetMuscles": ["Bíceps","Antebraço"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca martelo barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca martelo barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Martelo.gif"
+  },
+  {
+    "id": "rosca martelo halter",
+    "name": "Rosca martelo halter",
+    "targetMuscles": ["Bíceps","Antebraço"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca martelo halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca martelo halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Martelo.gif"
+  },
+  {
+    "id": "rosca martelo máqina",
+    "name": "Rosca martelo máquina",
+    "targetMuscles": ["Bíceps","Antebraço"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca martelo máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca martelo máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Martelo.gif"
+  },
+  {
+    "id": "rosca martelo cabo",
+    "name": "Rosca martelo cabo",
+    "targetMuscles": ["Bíceps","Antebraço"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca martelo cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca martelo cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Martelo.gif"
+  },
+  {
+    "id": "rosca scott barra",
+    "name": "Rosca Scott barra",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca Scott barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca Scott barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Scott.gif"
+  },
+  {
+    "id": "rosca scott halter",
+    "name": "Rosca Scott halter",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca Scott halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca Scott halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Scott.gif"
+  },
+  {
+    "id": "rosca scott máqina",
+    "name": "Rosca Scott máquina",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca Scott máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca Scott máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Scott.gif"
+  },
+  {
+    "id": "rosca scott cabo",
+    "name": "Rosca Scott cabo",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca Scott cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca Scott cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Scott.gif"
+  },
+  {
+    "id": "rosca concentrada barra",
+    "name": "Rosca concentrada barra",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca concentrada barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca concentrada barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Concentrada.gif"
+  },
+  {
+    "id": "rosca concentrada halter",
+    "name": "Rosca concentrada halter",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca concentrada halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca concentrada halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Concentrada.gif"
+  },
+  {
+    "id": "rosca concentrada máqina",
+    "name": "Rosca concentrada máquina",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca concentrada máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca concentrada máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Concentrada.gif"
+  },
+  {
+    "id": "rosca concentrada cabo",
+    "name": "Rosca concentrada cabo",
+    "targetMuscles": ["Bíceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Rosca concentrada cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Rosca concentrada cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/B%C3%ADceps/Rosca%20Concentrada.gif"
+  },
+  {
+    "id": "tríceps plley máqina",
+    "name": "Tríceps pulley máquina",
+    "targetMuscles": ["Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Tríceps pulley máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Tríceps pulley máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Tr%C3%ADceps/Tr%C3%ADceps%20Pulley.gif"
+  },
+  {
+    "id": "tríceps plley cabo",
+    "name": "Tríceps pulley cabo",
+    "targetMuscles": ["Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Tríceps pulley cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Tríceps pulley cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Tr%C3%ADceps/Tr%C3%ADceps%20Pulley.gif"
+  },
+  {
+    "id": "tríceps testa barra",
+    "name": "Tríceps testa barra",
+    "targetMuscles": ["Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Tríceps testa barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Tríceps testa barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Tr%C3%ADceps/Tr%C3%ADceps%20Testa.gif"
+  },
+  {
+    "id": "tríceps testa halter",
+    "name": "Tríceps testa halter",
+    "targetMuscles": ["Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Tríceps testa halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Tríceps testa halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Tr%C3%ADceps/Tr%C3%ADceps%20Testa.gif"
+  },
+  {
+    "id": "merglho máqina",
+    "name": "Mergulho máquina",
+    "targetMuscles": ["Tríceps","Peitoral"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Mergulho máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Mergulho máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Mergulho%20nas%20Paralelas.gif"
+  },
+  {
+    "id": "abdominal na polia cabo",
+    "name": "Abdominal na polia cabo",
+    "targetMuscles": ["Abdômen"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Abdominal na polia cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Abdominal na polia cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Abdomen/Abdominal%20na%20Polia.gif"
+  },
+  {
+    "id": "elevação em pé barra",
+    "name": "Elevação em pé barra",
+    "targetMuscles": ["Panturrilhas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação em pé barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação em pé barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Panturrilhas/Eleva%C3%A7%C3%A3o%20de%20Panturrilhas%20em%20P%C3%A9.gif"
+  },
+  {
+    "id": "elevação em pé halter",
+    "name": "Elevação em pé halter",
+    "targetMuscles": ["Panturrilhas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação em pé halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação em pé halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Panturrilhas/Eleva%C3%A7%C3%A3o%20de%20Panturrilhas%20em%20P%C3%A9.gif"
+  },
+  {
+    "id": "elevação em pé máqina",
+    "name": "Elevação em pé máquina",
+    "targetMuscles": ["Panturrilhas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação em pé máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação em pé máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Panturrilhas/Eleva%C3%A7%C3%A3o%20de%20Panturrilhas%20em%20P%C3%A9.gif"
+  },
+  {
+    "id": "elevação em pé cabo",
+    "name": "Elevação em pé cabo",
+    "targetMuscles": ["Panturrilhas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação em pé cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação em pé cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Panturrilhas/Eleva%C3%A7%C3%A3o%20de%20Panturrilhas%20em%20P%C3%A9.gif"
+  },
+  {
+    "id": "elevação sentado barra",
+    "name": "Elevação sentado barra",
+    "targetMuscles": ["Panturrilhas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação sentado barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação sentado barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Panturrilhas/G%C3%AAmeos%20Sentado.gif"
+  },
+  {
+    "id": "elevação sentado halter",
+    "name": "Elevação sentado halter",
+    "targetMuscles": ["Panturrilhas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação sentado halter foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação sentado halter",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Panturrilhas/G%C3%AAmeos%20Sentado.gif"
+  },
+  {
+    "id": "elevação sentado máqina",
+    "name": "Elevação sentado máquina",
+    "targetMuscles": ["Panturrilhas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação sentado máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação sentado máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Panturrilhas/G%C3%AAmeos%20Sentado.gif"
+  },
+  {
+    "id": "elevação sentado cabo",
+    "name": "Elevação sentado cabo",
+    "targetMuscles": ["Panturrilhas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação sentado cabo foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação sentado cabo",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Panturrilhas/G%C3%AAmeos%20Sentado.gif"
+  },
+  {
+    "id": "pantrrilha no leg press máqina",
+    "name": "Panturrilha no leg press máquina",
+    "targetMuscles": ["Pernas"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Panturrilha no leg press máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Panturrilha no leg press máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Pernas/Leg%20Press.gif"
+  },
+  {
+    "id": "spino reto barra",
+    "name": "Supino Reto Barra",
+    "targetMuscles": ["Peitoral","Tríceps","Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino Reto Barra foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino Reto Barra",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Reto.gif"
+  },
+  {
+    "id": "spino inclinado halteres",
+    "name": "Supino Inclinado Halteres",
+    "targetMuscles": ["Peitoral Superior","Ombros","Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Supino Inclinado Halteres foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Supino Inclinado Halteres",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Supino%20Inclinado%20com%20Halteres.gif"
+  },
+  {
+    "id": "crciixo máqina",
+    "name": "Crucifixo Máquina",
+    "targetMuscles": ["Peitoral"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Crucifixo Máquina foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Crucifixo Máquina",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Crucifixo.gif"
+  },
+  {
+    "id": "desenvolvimento militar",
+    "name": "Desenvolvimento Militar",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Desenvolvimento Militar foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Desenvolvimento Militar",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Desenvolvimento%20com%20Halteres.gif"
+  },
+  {
+    "id": "elevação lateral",
+    "name": "Elevação Lateral",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação Lateral foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação Lateral",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20Lateral.gif"
+  },
+  {
+    "id": "elevação rontal",
+    "name": "Elevação Frontal",
+    "targetMuscles": ["Ombros"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Elevação Frontal foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Elevação Frontal",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Ombros/Eleva%C3%A7%C3%A3o%20Frontal%20com%20Halteres.gif"
+  },
+  {
+    "id": "paralelas",
+    "name": "Paralelas",
+    "targetMuscles": ["Tríceps","Peitoral"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Paralelas foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Paralelas",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Mergulho%20nas%20Paralelas.gif"
+  },
+  {
+    "id": "tríceps testa",
+    "name": "Tríceps Testa",
+    "targetMuscles": ["Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Tríceps Testa foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Tríceps Testa",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Tr%C3%ADceps/Tr%C3%ADceps%20Testa.gif"
+  },
+  {
+    "id": "tríceps corda",
+    "name": "Tríceps Corda",
+    "targetMuscles": ["Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Tríceps Corda foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Tríceps Corda",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Tr%C3%ADceps/Tr%C3%ADceps%20Corda.gif"
+  },
+  {
+    "id": "lexão de braço",
+    "name": "Flexão de Braço",
+    "targetMuscles": ["Peitoral","Tríceps"],
+    "difficulty": "Intermediário",
+    "instructions": "O exercício Flexão de Braço foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.",
+    "commonErrors": ["Uso excessivo de carga", "Amplitude de movimento encurtada", "Balanço desnecessário do corpo"],
+    "substitutions": [],
+    "gifPlaceholder": "Flexão de Braço",
+    "gifUrl": "https://www.gifdotreino.com/Exercicios/Peitoral/Flex%C3%A3o%20de%20Bra%C3%A7os.gif"
+  },
+  {
     "id": "cardio_esteira",
     "name": "Esteira (Corrida/Caminhada)",
     "targetMuscles": [
@@ -343,21 +1641,6 @@ const BASE_EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
     "gifUrl": "https://api.smartworkout.app/asset/video/c9e11a50-3f0a-4fce-a4cb-deb79ba7dec0.mp4"
   },
   {
-    "id": "flexao_de_braco_unilateral",
-    "name": "Flexão de Braço Unilateral",
-    "targetMuscles": [
-      "Peito"
-    ],
-    "equipment": "Variado",
-    "difficulty": "Intermediário",
-    "description": "O Flexão com um Braço é um exercício avançado de peso corporal que trabalha os músculos do peito, ombros, tríceps e core. Requer força significativa, ...",
-    "instructions": "O Flexão com um Braço é um exercício avançado de peso corporal que trabalha os músculos do peito, ombros, tríceps e core. Requer força significativa, equilíbrio e estabilidade, tornando-o uma progressão desafiadora em relação à flexão padrão.",
-    "commonErrors": [],
-    "substitutions": [],
-    "gifPlaceholder": "Flexão de Braço Unilateral",
-    "gifUrl": "https://api.smartworkout.app/asset/video/1ac58147-1cfd-40f2-9aa7-549d8b6e5365.mp4"
-  },
-  {
     "id": "flexao_profunda_em_barras_paralelas",
     "name": "Flexão Profunda em Barras Paralelas",
     "targetMuscles": [
@@ -433,21 +1716,6 @@ const BASE_EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
     "gifUrl": "https://api.smartworkout.app/asset/video/aa5076ef-fa6e-47bc-9e61-10a759bf9762.mp4"
   },
   {
-    "id": "crucifixo_baixo_com_halter_unilateral",
-    "name": "Crucifixo Baixo com Halter Unilateral",
-    "targetMuscles": [
-      "Peito"
-    ],
-    "equipment": "Variado",
-    "difficulty": "Intermediário",
-    "description": "O Dumbbell One Arm Low Fly é um exercício de isolamento que visa os músculos peitorais, particularmente a parte inferior do peito. Envolve um moviment...",
-    "instructions": "O Dumbbell One Arm Low Fly é um exercício de isolamento que visa os músculos peitorais, particularmente a parte inferior do peito. Envolve um movimento de um braço que ajuda a melhorar a simetria e o controle muscular. Este exercício também envolve os ombros e os músculos estabilizadores do core.",
-    "commonErrors": [],
-    "substitutions": [],
-    "gifPlaceholder": "Crucifixo Baixo com Halter Unilateral",
-    "gifUrl": "https://api.smartworkout.app/asset/video/f3e26a21-190d-409d-893a-298e58c857ee.mp4"
-  },
-  {
     "id": "crucifixo_no_cabo_para_peitoral_medio",
     "name": "Crucifixo no Cabo para Peitoral Médio",
     "targetMuscles": [
@@ -521,21 +1789,6 @@ const BASE_EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
     "substitutions": [],
     "gifPlaceholder": "Pressão de Svend",
     "gifUrl": "https://api.smartworkout.app/asset/video/70418929-f916-4a2f-822b-f2c9ba8d21d5.mp4"
-  },
-  {
-    "id": "supino_no_smith",
-    "name": "Supino no Smith",
-    "targetMuscles": [
-      "Peito"
-    ],
-    "equipment": "Variado",
-    "difficulty": "Intermediário",
-    "description": "O Smith Bench Press é uma variação do supino tradicional realizada usando uma máquina Smith. Este exercício tem como alvo os músculos peitorais, tríce...",
-    "instructions": "O Smith Bench Press é uma variação do supino tradicional realizada usando uma máquina Smith. Este exercício tem como alvo os músculos peitorais, tríceps e deltoides anteriores. A máquina Smith fornece um caminho guiado para a barra, o que pode ajudar a estabilizar o movimento e focar no engajamento muscular.",
-    "commonErrors": [],
-    "substitutions": [],
-    "gifPlaceholder": "Supino no Smith",
-    "gifUrl": "https://api.smartworkout.app/asset/video/9c1188ad-87fa-402f-9c6c-5e1e1a6f6ba4.mp4"
   },
   {
     "id": "flexao_de_escapula",
@@ -809,21 +2062,6 @@ const BASE_EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
     "gifUrl": "https://api.smartworkout.app/asset/video/7d8a4a20-e873-4831-a6b4-a6a0b28a6cae.mp4"
   },
   {
-    "id": "supino_inclinado_com_halter_unilateral",
-    "name": "Supino Inclinado com Halter Unilateral",
-    "targetMuscles": [
-      "Peito"
-    ],
-    "equipment": "Variado",
-    "difficulty": "Intermediário",
-    "description": "O Supino Inclinado com Halter Unilateral é um exercício unilateral que visa principalmente os músculos peitorais, especificamente a parte superior do ...",
-    "instructions": "O Supino Inclinado com Halter Unilateral é um exercício unilateral que visa principalmente os músculos peitorais, especificamente a parte superior do peito, enquanto também envolve os tríceps e os ombros. Realizar este exercício em um banco inclinado ajuda a enfatizar a parte superior do peito, proporcionando um desenvolvimento equilibrado dos músculos peitorais.",
-    "commonErrors": [],
-    "substitutions": [],
-    "gifPlaceholder": "Supino Inclinado com Halter Unilateral",
-    "gifUrl": "https://api.smartworkout.app/asset/video/d0516cca-9186-4551-b164-994f0cacc5a1.mp4"
-  },
-  {
     "id": "supino_com_barra_e_correntes",
     "name": "Supino com Barra e Correntes",
     "targetMuscles": [
@@ -852,21 +2090,6 @@ const BASE_EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
     "substitutions": [],
     "gifPlaceholder": "Flexão de Braços com Palmas",
     "gifUrl": "https://api.smartworkout.app/asset/video/3eee6526-9f25-4102-be30-39d783599365.mp4"
-  },
-  {
-    "id": "supino_declinado",
-    "name": "Supino Declinado",
-    "targetMuscles": [
-      "Peito"
-    ],
-    "equipment": "Variado",
-    "difficulty": "Intermediário",
-    "description": "O Decline Chest Press é um exercício composto que foca na parte inferior dos músculos peitorais. Envolve empurrar um peso para longe do corpo enquanto...",
-    "instructions": "O Decline Chest Press é um exercício composto que foca na parte inferior dos músculos peitorais. Envolve empurrar um peso para longe do corpo enquanto se está deitado em um banco declinado, envolvendo o peito, tríceps e ombros.",
-    "commonErrors": [],
-    "substitutions": [],
-    "gifPlaceholder": "Supino Declinado",
-    "gifUrl": "https://api.smartworkout.app/asset/video/a814e9e3-9f7a-4785-8a83-ff0cee912f9b.mp4"
   },
   {
     "id": "crucifixo_inclinado_com_halteres",
@@ -1079,21 +2302,6 @@ const BASE_EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
     "gifUrl": "https://api.smartworkout.app/asset/video/2b488d23-3813-4729-b1bd-cab6f1053f8a.mp4"
   },
   {
-    "id": "planche_inclinado",
-    "name": "Planche Inclinado",
-    "targetMuscles": [
-      "Peito"
-    ],
-    "equipment": "Variado",
-    "difficulty": "Intermediário",
-    "description": "O Lean Planche é um exercício avançado de peso corporal que trabalha os ombros, o peito e o core. Requer força e equilíbrio significativos, pois envol...",
-    "instructions": "O Lean Planche é um exercício avançado de peso corporal que trabalha os ombros, o peito e o core. Requer força e equilíbrio significativos, pois envolve manter o corpo paralelo ao chão com apenas as mãos tocando o solo. Este exercício é uma progressão em direção ao planche completo, enfatizando a força dos ombros e a estabilidade do core.",
-    "commonErrors": [],
-    "substitutions": [],
-    "gifPlaceholder": "Planche Inclinado",
-    "gifUrl": "https://api.smartworkout.app/asset/video/c67d256e-815d-4bb4-89df-a6eff0632d35.mp4"
-  },
-  {
     "id": "supino_com_halteres",
     "name": "Supino com Halteres",
     "targetMuscles": [
@@ -1137,21 +2345,6 @@ const BASE_EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
     "substitutions": [],
     "gifPlaceholder": "Supino com Pino",
     "gifUrl": "https://api.smartworkout.app/asset/video/75a3fb07-2034-4dd8-8f1e-acb45105d12b.mp4"
-  },
-  {
-    "id": "supino_com_halter_unilateral",
-    "name": "Supino com Halter Unilateral",
-    "targetMuscles": [
-      "Peito"
-    ],
-    "equipment": "Variado",
-    "difficulty": "Intermediário",
-    "description": "O One-Arm Dumbbell Bench Press é um exercício unilateral para o peito que trabalha os músculos peitorais, tríceps e deltoides. Este exercício melhora ...",
-    "instructions": "O One-Arm Dumbbell Bench Press é um exercício unilateral para o peito que trabalha os músculos peitorais, tríceps e deltoides. Este exercício melhora a simetria muscular, a estabilidade do core e a força geral, envolvendo os músculos estabilizadores para manter o equilíbrio.",
-    "commonErrors": [],
-    "substitutions": [],
-    "gifPlaceholder": "Supino com Halter Unilateral",
-    "gifUrl": "https://api.smartworkout.app/asset/video/5ad0fcdc-a1cd-4d26-a219-d451352dc27f.mp4"
   },
   {
     "id": "flexao_de_bracos_em_barras_paralelas",
@@ -1454,21 +2647,6 @@ const BASE_EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
     "gifUrl": "https://api.smartworkout.app/asset/video/8fad7bad-4464-4e8f-8cce-4e2cc2e0f778.mp4"
   },
   {
-    "id": "supino_inclinado_na_maquina_smith",
-    "name": "Supino Inclinado na Máquina Smith",
-    "targetMuscles": [
-      "Peito"
-    ],
-    "equipment": "Variado",
-    "difficulty": "Intermediário",
-    "description": "O Smith Incline Chest Press é um exercício composto que foca na parte superior dos músculos peitorais, utilizando a máquina Smith para um movimento gu...",
-    "instructions": "O Smith Incline Chest Press é um exercício composto que foca na parte superior dos músculos peitorais, utilizando a máquina Smith para um movimento guiado. Este exercício permite um levantamento controlado com estabilidade adicional, tornando-o adequado tanto para iniciantes quanto para levantadores avançados que buscam aprimorar o desenvolvimento do peito superior.",
-    "commonErrors": [],
-    "substitutions": [],
-    "gifPlaceholder": "Supino Inclinado na Máquina Smith",
-    "gifUrl": "https://api.smartworkout.app/asset/video/e576a629-7546-4b4d-98a3-51f73340c6dc.mp4"
-  },
-  {
     "id": "flexao_de_bracos_com_apoio_dos_joelhos",
     "name": "Flexão de Braços com Apoio dos Joelhos",
     "targetMuscles": [
@@ -1512,21 +2690,6 @@ const BASE_EXERCISE_LIBRARY: ExerciseLibraryItem[] = [
     "substitutions": [],
     "gifPlaceholder": "Aberturas Poliquin",
     "gifUrl": "https://api.smartworkout.app/asset/video/3f9de872-5fd1-44cb-a0f9-99ee1faa226c.mp4"
-  },
-  {
-    "id": "crucifixo_com_halteres_em_banco_declinado",
-    "name": "Crucifixo com Halteres em Banco Declinado",
-    "targetMuscles": [
-      "Peito"
-    ],
-    "equipment": "Variado",
-    "difficulty": "Intermediário",
-    "description": "O Decline Dumbbell Fly é um exercício de isolamento que foca nos músculos peitorais, especialmente na parte inferior do peito. Envolve deitar-se em um...",
-    "instructions": "O Decline Dumbbell Fly é um exercício de isolamento que foca nos músculos peitorais, especialmente na parte inferior do peito. Envolve deitar-se em um banco declinado e realizar um movimento de fly com halteres, o que ajuda a melhorar a definição e a força do peito.",
-    "commonErrors": [],
-    "substitutions": [],
-    "gifPlaceholder": "Crucifixo com Halteres em Banco Declinado",
-    "gifUrl": "https://api.smartworkout.app/asset/video/1805d036-6125-4455-a2f1-d7e789457916.mp4"
   },
   {
     "id": "flexao_de_bracos_com_peso_adicional",
@@ -1649,10 +2812,11 @@ if (typeof EXERCISE_DATABASE !== 'undefined') {
         equipment: dbItem.equipment === 'desconhecido' ? 'Peso Corporal' : dbItem.equipment,
         difficulty,
         description: `${dbItem.canonicalName}. Exercício focado principalmente em trabalhar ${titleCaseMuscle.toLowerCase()}.`,
-        instructions: `Siga as instruções padrão para um exercício biomecânico de ${dbItem.canonicalName}.`,
-        commonErrors: ["Amplitude de movimento incompleta", "Postura incorreta"],
+        instructions: `O exercício ${dbItem.canonicalName} foca em trabalhar fortemente os músculos alvo. Mantenha a forma correta e execute o movimento na amplitude completa para extrair o máximo do exercício.`,
+        commonErrors: ["Amplitude de movimento incompleta", "Postura incorreta", "Balanço desnecessário do corpo"],
         substitutions: [],
-        gifPlaceholder: "Corpo Todo"
+        gifPlaceholder: dbItem.canonicalName,
+        gifUrl: dbItem.media?.remote || dbItem.media?.local || undefined
       });
       existingNames.add(dbItem.canonicalName.toLowerCase());
     }

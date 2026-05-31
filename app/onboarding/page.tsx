@@ -27,26 +27,41 @@ type OnboardingAnswers = {
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const { profile, completeOnboarding } = useAppStore();
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<OnboardingAnswers>({
-    goals: [],
-    levels: {
-      Disciplina: 5,
-      'Energia diária': 5,
-      Sono: 5,
-      Alimentação: 5,
-      Foco: 5,
-      Organização: 5,
-      'Exercício físico': 5,
-      Consistência: 5
-    },
-    sleep: '',
-    exercise: '',
-    freetime: '',
-    difficulties: [],
-    aiTone: '',
-    mainGoal: ''
+  const [step, setStep] = useState(() => {
+    const saved = localStorage.getItem('onboarding_step');
+    return saved ? parseInt(saved, 10) : 0;
   });
+  const [answers, setAnswers] = useState<OnboardingAnswers>(() => {
+    const saved = localStorage.getItem('onboarding_answers');
+    return saved ? JSON.parse(saved) : {
+      goals: [],
+      levels: {
+        Disciplina: 5,
+        'Energia diária': 5,
+        Sono: 5,
+        Alimentação: 5,
+        Foco: 5,
+        Organização: 5,
+        'Exercício físico': 5,
+        Consistência: 5
+      },
+      sleep: '',
+      exercise: '',
+      freetime: '',
+      difficulties: [],
+      aiTone: '',
+      mainGoal: ''
+    };
+  });
+
+  useEffect(() => {
+    localStorage.setItem('onboarding_step', step.toString());
+  }, [step]);
+
+  useEffect(() => {
+    localStorage.setItem('onboarding_answers', JSON.stringify(answers));
+  }, [answers]);
+
   const [isFinishing, setIsFinishing] = useState(false);
   const [setupStep, setSetupStep] = useState(0);
 
@@ -172,6 +187,8 @@ export default function OnboardingPage() {
       }
 
       completeOnboarding(initialTasks);
+      localStorage.removeItem('onboarding_step');
+      localStorage.removeItem('onboarding_answers');
       
       setTimeout(() => {
         navigate('/dashboard');

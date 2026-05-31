@@ -8,7 +8,7 @@ import { EXERCISE_LIBRARY, searchExercises, findExerciseInLibrary } from '@/lib/
 import { getCommonErrorsForExercise } from '@/lib/errorGenerator';
 import { ExerciseMedia } from '@/components/workout/ExerciseMedia';
 import { motion, AnimatePresence } from 'motion/react';
-import { Play, Pause, CheckCircle, ArrowLeft, Clock, Dumbbell, AlertTriangle, FastForward, Plus, X, Search } from 'lucide-react';
+import { Play, Pause, CheckCircle, ArrowLeft, Clock, Dumbbell, AlertTriangle, FastForward, Plus, X, Search, Settings } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 const generateId = () => typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
@@ -18,16 +18,26 @@ export default function ActiveWorkoutPage() {
   const [searchParams] = useSearchParams();
   const dayIndex = parseInt(searchParams?.get('dayIndex') || '0', 10);
   
-  const { currentPlan, completeWorkout, updateDayPlan } = useWorkoutStore();
+  const { currentPlan, completeWorkout, updateDayPlan, settings, updateSettings } = useWorkoutStore();
   const { profile, addXp } = useAppStore();
   
   const [activeExerciseIndex, setActiveExerciseIndex] = useState(0);
   const [completedSets, setCompletedSets] = useState<number[]>([]);
   const [setLogs, setSetLogs] = useState<Record<string, { reps: string, weight: string }>>({});
+  
+  // Timers
   const [restTimer, setRestTimer] = useState(0);
   const [isResting, setIsResting] = useState(false);
+  const [prepTimer, setPrepTimer] = useState(settings?.preparationTimeSeconds || 15);
+  const [isPreparing, setIsPreparing] = useState(false);
+  const [execTimer, setExecTimer] = useState(settings?.estimatedSetTimeSeconds || 45);
+  const [isExecutingAuto, setIsExecutingAuto] = useState(false);
+
   const [workoutFinished, setWorkoutFinished] = useState(false);
   const [workoutSeconds, setWorkoutSeconds] = useState(0);
+
+  // Modal Settings
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   // For adding exercises mid-workout
   const [showAddMenu, setShowAddMenu] = useState(false);
@@ -39,6 +49,73 @@ export default function ActiveWorkoutPage() {
   const xpIdCounter = useRef(0);
 
   const addResults = searchExercises(addSearchQuery).slice(0, 50);
+
+  const playSound = (type: 'prep' | 'exec' | 'rest') => {
+    if (!settings?.soundEnabled) return;
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (type === 'prep') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, ctx.currentTime); // A4
+        gain.gain.setValueAtTime(0.5, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      } else if (type === 'exec') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        gain.gain.setValueAtTime(0.5, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
+      } else {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(300, ctx.currentTime);
+        gain.gain.setValueAtTime(0.5, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+      }
+
+      osc.start();
+      osc.stop(ctx.currentTime + 1);
+    } catch (e) {
+      console.log('Audio disabled by browser', e);
+    }
+  };
+
+  const triggerVibration = (type: 'prep' | 'exec' | 'rest') => {
+    if (!settings?.vibrationEnabled || !navigator.vibrate) return;
+    if (type === 'prep') navigator.vibrate([100]);
+    if (type === 'exec') navigator.vibrate([200, 100, 200]);
+    if (type === 'rest') navigator.vibrate([300]);
+  };
+
+  // Phase Handlers
+  function startPrep() {
+    if (settings?.preparationEnabled) {
+      setPrepTimer(settings.preparationTimeSeconds);
+      setIsPreparing(true);
+      playSound('prep');
+      triggerVibration('prep');
+    } else {
+      startExec();
+    }
+  }
+
+  function startExec() {
+    setIsPreparing(false);
+    if (settings?.autoAdvanceEnabled) {
+      setExecTimer(settings.estimatedSetTimeSeconds);
+      setIsExecutingAuto(true);
+      playSound('exec');
+      triggerVibration('exec');
+    }
+  }
+
+  const handlePhaseChange = () => {
+    // This effect handles the countdowns based on active state flags
+  };
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -76,23 +153,45 @@ export default function ActiveWorkoutPage() {
     return () => clearInterval(interval);
   }, [workoutFinished]);
 
-  // Rest Timer logic
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isResting && restTimer > 0) {
-      interval = setInterval(() => setRestTimer(t => t - 1), 1000);
-    } else if (isResting && restTimer === 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsResting(false);
-    }
-    return () => clearInterval(interval);
-  }, [isResting, restTimer]);
-
   useEffect(() => {
     if (!currentPlan || !todayPlan || exercises.length === 0 || !currentExercise) {
       navigate('/workouts');
     }
   }, [currentPlan, todayPlan, exercises.length, currentExercise, navigate]);
+
+  // Phase Timers logic
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    // RESTING
+    if (isResting && restTimer > 0) {
+      interval = setInterval(() => setRestTimer(t => t - 1), 1000);
+    } else if (isResting && restTimer === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsResting(false);
+      startPrep(); // Move to prep for next set
+    } 
+    // PREPARING
+    else if (isPreparing && prepTimer > 0) {
+      interval = setInterval(() => setPrepTimer(t => t - 1), 1000);
+    } else if (isPreparing && prepTimer === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsPreparing(false);
+      startExec(); // Move to execution
+    }
+    // EXECUTING (Auto)
+    else if (isExecutingAuto && execTimer > 0) {
+      interval = setInterval(() => setExecTimer(t => t - 1), 1000);
+    } else if (isExecutingAuto && execTimer === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsExecutingAuto(false);
+      const nextSetId = completedSets.length + 1;
+      handleCompleteSet(nextSetId);
+    }
+
+    return () => clearInterval(interval);
+  }, [isResting, restTimer, isPreparing, prepTimer, isExecutingAuto, execTimer]);
 
   if (!currentPlan || !todayPlan || exercises.length === 0 || !currentExercise) {
     return (
@@ -160,16 +259,23 @@ export default function ActiveWorkoutPage() {
     }));
   };
 
-  const handleCompleteSet = (setNumber: number) => {
+  function handleCompleteSet(setNumber: number) {
     if (!completedSets.includes(setNumber)) {
       setCompletedSets([...completedSets, setNumber]);
+      setIsExecutingAuto(false); // Stop execution phase if active
       
       // Dopamine hit: popup XP text
       spawnXp(10);
       
       if (setNumber < currentExercise.sets) {
-        setRestTimer(currentExercise.restSeconds || 60);
-        setIsResting(true);
+        if (settings?.restTimeEnabled) {
+          setRestTimer(currentExercise.restSeconds || 60);
+          setIsResting(true);
+          playSound('rest');
+          triggerVibration('rest');
+        } else {
+          startPrep(); // Go straight to next set prep
+        }
       } else {
         // Exercicio completo
         confetti({
@@ -184,6 +290,16 @@ export default function ActiveWorkoutPage() {
            setTimeout(() => {
              setActiveExerciseIndex(i => i + 1);
              setCompletedSets([]);
+             
+             // After advancing exercise, do we rest or prep? Usually rest first
+             if (settings?.restTimeEnabled) {
+               setRestTimer((currentExercise.restSeconds || 60) + 30); // slightly longer between exercises
+               setIsResting(true);
+               playSound('rest');
+               triggerVibration('rest');
+             } else {
+               startPrep();
+             }
            }, 800);
         } else {
            setTimeout(() => finishWorkout(), 800);
@@ -287,9 +403,14 @@ export default function ActiveWorkoutPage() {
                </span>
              </div>
           </div>
-          <button onClick={finishWorkout} className="text-[10px] text-amber-500 font-bold uppercase tracking-widest border border-amber-500/30 bg-amber-500/10 px-3 py-2 rounded-lg hover:bg-amber-500 hover:text-background transition-colors">
-            Encerrar
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowSettingsModal(true)} className="p-2 text-text-secondary hover:text-white bg-surface border border-surface-light rounded-lg transition-all focus:outline-none">
+              <Settings size={18} />
+            </button>
+            <button onClick={finishWorkout} className="text-[10px] text-amber-500 font-bold uppercase tracking-widest border border-amber-500/30 bg-amber-500/10 px-3 py-2 rounded-lg hover:bg-amber-500 hover:text-background transition-colors">
+              Encerrar
+            </button>
+          </div>
        </div>
 
        {/* MAIN WORKOUT VIEW */}
@@ -459,7 +580,7 @@ export default function ActiveWorkoutPage() {
 
        </div>
 
-       {/* REST OVERLAY (Slide up from bottom) */}
+       {/* OVERLAYS (Slide up from bottom) */}
        <AnimatePresence>
          {isResting && (
             <motion.div 
@@ -475,13 +596,117 @@ export default function ActiveWorkoutPage() {
                
                <div className="flex gap-4 w-full max-w-sm">
                  <button onClick={() => setRestTimer(t => t + 15)} className="flex-1 bg-surface-light border border-surface-light py-4 rounded-xl text-sm font-bold uppercase hover:bg-white/5 transition-colors">+15s</button>
-                 <button onClick={() => setIsResting(false)} className="flex-1 bg-white text-black py-4 rounded-xl text-sm font-bold uppercase flex items-center justify-center gap-1 hover:bg-gray-200 transition-colors"><FastForward size={16} /> Pular</button>
+                 <button onClick={() => { setIsResting(false); startPrep(); }} className="flex-1 bg-white text-black py-4 rounded-xl text-sm font-bold uppercase flex items-center justify-center gap-1 hover:bg-gray-200 transition-colors"><FastForward size={16} /> Pular</button>
                </div>
-               
                <div className="mt-8 text-xs text-text-secondary px-8">
                  Pressione <span className="font-bold text-white">Pular</span> caso já esteja pronto para a próxima série.
                </div>
             </motion.div>
+         )}
+         
+         {isPreparing && (
+            <motion.div 
+               initial={{ y: '100%' }}
+               animate={{ y: 0 }}
+               exit={{ y: '100%' }}
+               className="fixed bottom-0 left-0 right-0 max-h-[50vh] bg-surface border-t border-amber-500 shadow-[0_-10px_40px_rgba(0,0,0,0.8)] z-50 rounded-t-3xl p-6 px-4 md:px-8 flex flex-col items-center justify-center text-center"
+            >
+               <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2"><AlertTriangle className="text-amber-500" /> Prepare-se</h3>
+               <div className="text-7xl font-mono font-bold text-amber-500 mb-8 tracking-tighter" style={{ textShadow: '0 0 20px rgba(245, 158, 11, 0.5)' }}>
+                 {formatTime(prepTimer)}
+               </div>
+               <div className="flex gap-4 w-full max-w-sm">
+                 <button onClick={() => { setIsPreparing(false); startExec(); }} className="flex-1 bg-amber-500 text-black py-4 rounded-xl text-sm font-bold uppercase flex items-center justify-center gap-1 hover:bg-amber-400 transition-colors"><Play size={16} /> Iniciar Agora</button>
+               </div>
+            </motion.div>
+         )}
+
+         {isExecutingAuto && (
+            <motion.div 
+               initial={{ y: '100%' }}
+               animate={{ y: 0 }}
+               exit={{ y: '100%' }}
+               className="fixed bottom-0 left-0 right-0 max-h-[50vh] bg-surface border-t border-emerald-500 shadow-[0_-10px_40px_rgba(0,0,0,0.8)] z-50 rounded-t-3xl p-6 px-4 md:px-8 flex flex-col items-center justify-center text-center"
+            >
+               <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2"><Dumbbell className="text-emerald-500" /> Em Execução</h3>
+               <div className="text-7xl font-mono font-bold text-emerald-500 mb-8 tracking-tighter" style={{ textShadow: '0 0 20px rgba(16, 185, 129, 0.5)' }}>
+                 {formatTime(execTimer)}
+               </div>
+               <div className="flex gap-4 w-full max-w-sm">
+                 <button onClick={() => { setIsExecutingAuto(false); handleCompleteSet(completedSets.length + 1); }} className="flex-1 bg-emerald-500 text-black py-4 rounded-xl text-sm font-bold uppercase flex items-center justify-center gap-1 hover:bg-emerald-400 transition-colors"><CheckCircle size={16} /> Concluir Série</button>
+               </div>
+            </motion.div>
+         )}
+       </AnimatePresence>
+
+       {/* SETTINGS MODAL */}
+       <AnimatePresence>
+         {showSettingsModal && (
+           <motion.div
+             initial={{ opacity: 0, scale: 0.95 }}
+             animate={{ opacity: 1, scale: 1 }}
+             exit={{ opacity: 0, scale: 0.95 }}
+             className="fixed inset-0 bg-background/95 backdrop-blur-xl z-[60] flex items-center justify-center p-4"
+           >
+             <div className="bg-surface border border-surface-light rounded-3xl p-6 w-full max-w-sm shadow-2xl relative">
+               <button onClick={() => setShowSettingsModal(false)} className="absolute top-4 right-4 text-text-secondary hover:text-white">
+                 <X size={20} />
+               </button>
+               <h2 className="text-xl font-bold text-white mb-6 tracking-tight">Cofigurações de Execução</h2>
+               
+               <div className="space-y-5">
+                 {/* Auto Advance Toggle */}
+                 <div className="flex items-center justify-between">
+                   <div>
+                     <p className="text-white font-bold text-sm">Avanço Automático</p>
+                     <p className="text-[10px] text-text-secondary">Fluidez Preparation → Execução → Descanso</p>
+                   </div>
+                   <button onClick={() => updateSettings({ autoAdvanceEnabled: !settings?.autoAdvanceEnabled })} className={`w-12 h-6 rounded-full transition-colors relative ${settings?.autoAdvanceEnabled ? 'bg-neon-blue' : 'bg-surface-light'}`}>
+                     <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${settings?.autoAdvanceEnabled ? 'left-7' : 'left-1'}`} />
+                   </button>
+                 </div>
+
+                 {/* Preparation Toggle */}
+                 <div className="flex items-center justify-between">
+                   <div>
+                     <p className="text-white font-bold text-sm">Tempo de Preparação</p>
+                   </div>
+                   <button onClick={() => updateSettings({ preparationEnabled: !settings?.preparationEnabled })} className={`w-12 h-6 rounded-full transition-colors relative ${settings?.preparationEnabled ? 'bg-neon-blue' : 'bg-surface-light'}`}>
+                     <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${settings?.preparationEnabled ? 'left-7' : 'left-1'}`} />
+                   </button>
+                 </div>
+                 {settings?.preparationEnabled && (
+                   <input type="number" value={settings?.preparationTimeSeconds || 15} onChange={(e) => updateSettings({ preparationTimeSeconds: parseInt(e.target.value)||0 })} className="w-full bg-background rounded-xl p-3 text-white border border-surface-light text-sm" placeholder="Segundos" />
+                 )}
+
+                 {/* Execution Timer (Only visible if auto advance) */}
+                 {settings?.autoAdvanceEnabled && (
+                   <div>
+                     <p className="text-white font-bold text-sm mb-2">Tempo Estimado de Execução (s)</p>
+                     <input type="number" value={settings?.estimatedSetTimeSeconds || 45} onChange={(e) => updateSettings({ estimatedSetTimeSeconds: parseInt(e.target.value)||0 })} className="w-full bg-background rounded-xl p-3 text-white border border-surface-light text-sm" placeholder="Segundos" />
+                   </div>
+                 )}
+
+                 {/* Sounds & Vibrations */}
+                 <div className="pt-4 border-t border-surface-light flex items-center justify-between">
+                   <p className="text-white font-bold text-sm">Sons e Alertas</p>
+                   <button onClick={() => updateSettings({ soundEnabled: !settings?.soundEnabled })} className={`w-12 h-6 rounded-full transition-colors relative ${settings?.soundEnabled ? 'bg-neon-purple' : 'bg-surface-light'}`}>
+                     <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${settings?.soundEnabled ? 'left-7' : 'left-1'}`} />
+                   </button>
+                 </div>
+                 <div className="flex items-center justify-between">
+                   <p className="text-white font-bold text-sm">Vibração Haptic</p>
+                   <button onClick={() => updateSettings({ vibrationEnabled: !settings?.vibrationEnabled })} className={`w-12 h-6 rounded-full transition-colors relative ${settings?.vibrationEnabled ? 'bg-neon-purple' : 'bg-surface-light'}`}>
+                     <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${settings?.vibrationEnabled ? 'left-7' : 'left-1'}`} />
+                   </button>
+                 </div>
+               </div>
+               
+               <button onClick={() => setShowSettingsModal(false)} className="w-full mt-8 bg-white text-black py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-gray-200">
+                 Salvar Ajustes
+               </button>
+             </div>
+           </motion.div>
          )}
        </AnimatePresence>
 

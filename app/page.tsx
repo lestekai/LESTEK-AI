@@ -118,7 +118,7 @@ export default function SplashPage() {
               <div className="font-display font-black text-4xl tracking-[0.3em] text-white text-glow-blue uppercase">
                 EVOLUX
               </div>
-              <img src="/logo.png" alt="Evolux" className="w-16 h-16 mt-4 object-contain opacity-90 drop-shadow-[0_0_15px_rgba(0,240,255,0.5)]" />
+              <img src="/logo.png" alt="Evolux" className="w-28 h-28 mt-6 object-contain opacity-90 drop-shadow-[0_0_15px_rgba(0,240,255,0.5)]" />
             </div>
           </div>
 

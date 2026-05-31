@@ -62,7 +62,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
       
       if (parsed.amount && parsed.description && parsed.type) {
         const newTx: Transaction = {
-          id: Date.now().toString(),
+          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           type: parsed.type,
           amount: parseFloat(parsed.amount),
           description: parsed.description,
@@ -143,7 +143,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
     if (!amount || !description) return;
 
     const newTx: Transaction = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       type,
       amount: parseFloat(amount.replace(',', '.')),
       description,

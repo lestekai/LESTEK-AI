@@ -97,8 +97,30 @@ export const useAppStore = create<AppState>()(
       premiumModalMessage: '',
       zoomLevel: 100,
 
-      setTasks: (tasks) => set({ tasks }),
-      setGoals: (goals) => set({ goals }),
+      setTasks: (tasks) => {
+        const seenIds = new Set<string>();
+        const sanitizedTasks = (tasks || []).map((t) => {
+          let id = t.id;
+          if (!id || seenIds.has(id)) {
+            id = `${id || 'task'}-${Math.random().toString(36).substr(2, 9)}`;
+          }
+          seenIds.add(id);
+          return { ...t, id };
+        });
+        set({ tasks: sanitizedTasks });
+      },
+      setGoals: (goals) => {
+        const seenIds = new Set<string>();
+        const sanitizedGoals = (goals || []).map((g) => {
+          let id = g.id;
+          if (!id || seenIds.has(id)) {
+            id = `${id || 'goal'}-${Math.random().toString(36).substr(2, 9)}`;
+          }
+          seenIds.add(id);
+          return { ...g, id };
+        });
+        set({ goals: sanitizedGoals });
+      },
 
       setZoomLevel: (zoom) => set({ zoomLevel: zoom }),
 
@@ -304,7 +326,7 @@ export const useAppStore = create<AppState>()(
         }
 
         const newTask: Task = {
-          id: Date.now().toString(),
+          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           title: taskData.title || 'Nova Missão',
           completed: false,
           date: taskData.isLongTerm ? 'long_term' : (taskData.date || today),
@@ -322,7 +344,7 @@ export const useAppStore = create<AppState>()(
       },
 
       addGoal: (title, type) => set((state) => ({
-        goals: [...state.goals, { id: Date.now().toString(), title, type, completed: false }]
+        goals: [...state.goals, { id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, title, type, completed: false }]
       })),
 
       toggleGoal: (id) => set((state) => {
