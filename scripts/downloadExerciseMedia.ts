@@ -35,30 +35,38 @@ async function run() {
   let skippedSet = 0;
 
   for (const ex of exercises) {
-    if (ex.media.remote && ex.media.local) {
-      const destPath = path.join(process.cwd(), 'public', ex.media.local);
+    if (ex.media.remote) {
+      if (!ex.media.local) {
+        const ext = ex.media.type === 'mp4' ? 'mp4' : 'gif';
+        const normName = ex.normalizedName.replace(/[\s\/]+/g, '-');
+        ex.media.local = `/exercises/${ex.muscleGroup || 'outros'}/${normName}.${ext}`;
+      }
+
+      const destPath = path.join(publicExercisesDir, ex.media.local.replace(/^\/exercises/, ''));
       const dir = path.dirname(destPath);
       
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
 
-      // ONLY for the first few or testing to prevent massive hanging in the browser, let's create a placeholder
-      // For a real production app, we would download sequentially here.
       if (!fs.existsSync(destPath)) {
-        // Actually download!
-        // console.log(`Downloading ${ex.canonicalName}...`);
-        // await downloadMedia(ex.media.remote, destPath);
-        
-        // Simulating the pipeline creation (SVG generation) so we don't blow up the network quota in the AI agent sandbox
-        const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="100%" height="100%" fill="#1e2333"/><text x="50%" y="50%" font-family="sans-serif" font-size="24" fill="#a2a8b9" text-anchor="middle" dominant-baseline="middle">${ex.canonicalName}</text></svg>`;
-        const ext = path.extname(destPath);
-        const placeholderPath = destPath.replace(ext, '.svg'); 
-        
-        fs.writeFileSync(placeholderPath, svgContent);
-        // Also update local path to the placeholder during development
-        ex.media.local = ex.media.local.replace(ext, '.svg');
-        downloadedCount++;
+        const criticalDownloads = ['agachamento-livre', 'leg-press-45', 'stiff-com-barra'];
+        const isCritical = criticalDownloads.some(slug => destPath.includes(slug));
+
+        if (isCritical) {
+          console.log(`Downloading CRITICAL MEDIA: ${ex.media.remote}`);
+          await downloadMedia(ex.media.remote, destPath);
+          downloadedCount++;
+        } else {
+          // Placeholder code unchanged
+          const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="100%" height="100%" fill="#1e2333"/><text x="50%" y="50%" font-family="sans-serif" font-size="24" fill="#a2a8b9" text-anchor="middle" dominant-baseline="middle">${ex.canonicalName}</text></svg>`;
+          const ext = path.extname(destPath);
+          const placeholderPath = destPath.replace(ext, '.svg'); 
+          
+          fs.writeFileSync(placeholderPath, svgContent);
+          ex.media.local = ex.media.local.replace(ext, '.svg');
+          downloadedCount++;
+        }
       } else {
         skippedSet++;
       }

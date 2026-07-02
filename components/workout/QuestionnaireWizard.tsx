@@ -88,28 +88,68 @@ export function QuestionnaireWizard({ setStoreQuestionnaire, setPlan }: { setSto
     if (checkAILimits()) generatePlanManual(manualText);
   };
 
-  const planSystemInstruction = `Você é o Evolux AI. Gere o plano de treino o mais rápido possível e envie APENAS um JSON válido.
-IMPORTANTE: Limite as respostas para ser enxuto. Use nomes técnicos simples e padronizados.
-Se um exercício solicitado não existir ou tiver o nome longo/composto, OBRIGATORIAMENTE substitua-o pelo seu equivalente mais próximo e simples. (ex: "Supino com halter" -> "Supino halter", "Leg press 45" -> "Leg press máquina", "Mesa flexora" -> "Cadeira flexora máquina").
-Sua missão é criar ou parsear um plano de treinamento extremamente preciso. Se "includeCardio" for true, adicione 1 cardio (sets: 1, reps: "15min").
-Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
+  const planSystemInstruction = `Você é o Evolux AI, um Personal Trainer, Fisiologista e Treinador de Alta Performance de elite mundial.
+Sua missão é criar o planejamento de treino mais estruturado, científico, biomecanicamente correto e eficiente possível para o usuário.
+Você tem profundo conhecimento sobre periodização, hipertrofia, força, mobilidade e nutrição esportiva. 
+Crie protocolos de nível profissional (com aquecimento específico, mobilidade, técnicas avançadas como Drop-set, Rest-Pause, Bi-set, etc., quando apropriado).
+Seja técnico, direto, motivacional e focado na evolução absoluta.
+
+IMPORTANTE: Responda APENAS E EXCLUSIVAMENTE com um objeto JSON estritamente válido, sem blocos de código markdown (\`\`\`) ou texto fora do JSON.
+
+REGRAS ESTRUTURAIS:
+- Crie um "programName" impactante.
+- "planPromptDescription": Uma descrição de alto impacto sobre o protocolo.
+- Gere exatamente 3 a 4 fases lógicas em "phases" (ex: Adaptação/Tensão, Hipertrofia Metabólica, Choque/Força).
+- Cada fase deve ter "id", "name", "description", "durationWeeks" e "schedule".
+- O "schedule" deve cobrir a frequência de dias (ex: ABC, ABCD, ABCDE, FullBody) solicitada pelo usuário. Os dias de descanso DEVEM ser preenchidos ("isRest": true).
+- Dias de treino devem incluir "warmup" (array de strings com mobilidade/aquecimento específico) e "cooldown" (array de strings).
+- Cada exercício deve ser extremamente detalhado.
+
+FORMATO DO JSON EXIGIDO:
 {
-  "phaseName": "Nome",
-  "planPromptDescription": "Curto",
-  "schedule": [
+  "programName": "Nome do Programa",
+  "planPromptDescription": "Descrição inspiradora e técnica geral.",
+  "phases": [
     {
-      "dayName": "Segunda-feira",
-      "focus": "Foco",
-      "isRest": false,
-      "intensity": "Alta",
-      "exercises": [
+      "id": "fase_1",
+      "name": "Fase 1: Tensão e Controle",
+      "description": "Foco na execução, ativação neuromuscular e progressão de carga linear.",
+      "durationWeeks": 4,
+      "schedule": [
         {
-          "id": "identificador_unico",
-          "name": "Nome",
-          "sets": 3,
-          "reps": "8-12",
-          "restSeconds": 60,
-          "targetMuscles": ["Perna"]
+          "dayName": "Segunda-feira",
+          "focus": "Peitoral e Tríceps",
+          "isRest": false,
+          "intensity": "Alta",
+          "warmup": ["Aquecimento Manguito Rotador 3x15", "Flexão escapular 2x12", "Aquecimento no 1º exercício com 50% da carga"],
+          "cooldown": ["Alongamento peitoral na parede 2x30s", "Alongamento tríceps 2x30s"],
+          "exercises": [
+            {
+              "id": "ex_1",
+              "name": "Supino Reto com Barra",
+              "sets": 4,
+              "reps": "8-10",
+              "restSeconds": 90,
+              "targetMuscles": ["Peitoral Maior", "Tríceps", "Deltoide Anterior"],
+              "instructions": "Desça controlando a carga (fase excêntrica) por 3s. Pausa de 1s no peito. Explosão na concêntrica.",
+              "substitutions": ["Supino Reto com Halteres", "Supino Máquina"],
+              "difficulty": "Intermediário",
+              "equipment": "Barra e Banco",
+              "tempo": "3010",
+              "rir": "1-2",
+              "advancedTechnique": "",
+              "supersetGroup": ""
+            }
+          ]
+        },
+        {
+          "dayName": "Terça-feira",
+          "focus": "Descanso Ativo",
+          "isRest": true,
+          "intensity": "Baixa",
+          "warmup": [],
+          "cooldown": [],
+          "exercises": []
         }
       ]
     }
@@ -127,6 +167,25 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
       });
 
       const planItem = JSON.parse(data.text);
+      
+      if (!planItem.phases) {
+        planItem.phases = [{
+          id: 'fase_1',
+          name: planItem.phaseName || 'Fase 1',
+          description: planItem.planPromptDescription || '',
+          durationWeeks: 4,
+          schedule: planItem.schedule || []
+        }];
+        planItem.programName = planItem.phaseName || 'Programa de Treino';
+      }
+      
+      if (!planItem.schedule && planItem.phases && planItem.phases.length > 0) {
+        planItem.schedule = planItem.phases[0].schedule;
+      }
+      
+      planItem.currentPhaseIndex = 0;
+      planItem.currentWeekIndex = 0;
+
       _setPlan({
         ...planItem,
         id: generateId(),
@@ -158,45 +217,45 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
   if (isGenerating) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center h-[60vh]">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} className="mb-6">
+        <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} className="mb-6 bg-surface p-6 rounded-full border border-white/5 shadow-[0_0_50px_rgba(0,210,255,0.15)]">
           <BrainCircuit className="w-16 h-16 text-neon-blue" />
         </motion.div>
-        <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Processando Informações...</h3>
-        <p className="text-text-secondary text-sm leading-relaxed max-w-sm">Estruturando o plano ideal. Cada série, repetição e variável perfeitamente ajustada para seu perfil.</p>
+        <h3 className="text-xl font-black text-white mb-2 tracking-tight">Processando Protocolo...</h3>
+        <p className="text-slate-400 font-medium text-sm leading-relaxed max-w-sm">Estruturando o plano ideal. Cada série, repetição e variável sendo perfeitamente ajustada para seu perfil.</p>
       </div>
     );
   }
 
   if (!method) {
     return (
-      <div className="max-w-2xl mx-auto w-full pt-12">
-        <h2 className="text-3xl font-bold text-white mb-2 text-center tracking-tight">Criação do Protocolo</h2>
-        <p className="text-text-secondary text-center mb-12 text-sm font-mono uppercase tracking-widest">Selecione o método de inicialização</p>
+      <div className="max-w-3xl mx-auto w-full pt-12">
+        <h2 className="text-3xl font-black text-white mb-2 text-center tracking-tight">Criação do Protocolo</h2>
+        <p className="text-neon-blue text-center mb-12 text-[11px] font-black uppercase tracking-widest">Selecione o método de inicialização</p>
 
         <div className="grid md:grid-cols-2 gap-4">
           <button 
             onClick={() => setMethod('ai')}
-            className="bg-surface border border-white/5 p-8 rounded-[2rem] text-left hover:border-neon-blue/30 transition-all group flex flex-col items-start gap-6 shadow-lg active:scale-[0.98]"
+            className="bg-surface border border-white/5 p-8 rounded-[32px] text-left hover:border-neon-blue/50 transition-all group flex flex-col items-start gap-6 shadow-lg active:scale-95"
           >
-            <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-neon-blue/10 transition-colors">
-              <BrainCircuit className="text-neon-blue" size={28} />
+            <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-neon-blue/10 transition-colors shadow-inner">
+              <BrainCircuit className="text-neon-blue" size={32} />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Construção com IA</h3>
-              <p className="text-xs text-text-secondary leading-relaxed opacity-60">Responda um questionário rápido e deixe nossa inteligência criar o treino perfeito para seu biotipo e rotina.</p>
+              <h3 className="text-xl font-black text-white mb-2 tracking-tight">Construção com IA</h3>
+              <p className="text-xs text-slate-400 font-medium leading-relaxed opacity-80">Responda um questionário rápido e deixe nossa inteligência criar o treino perfeito para seu biotipo e rotina.</p>
             </div>
           </button>
 
           <button 
             onClick={() => setMethod('manual')}
-            className="bg-surface border border-white/5 p-8 rounded-[2rem] text-left hover:border-neon-purple/30 transition-all group flex flex-col items-start gap-6 shadow-lg active:scale-[0.98]"
+            className="bg-surface border border-white/5 p-8 rounded-[32px] text-left hover:border-neon-purple/50 transition-all group flex flex-col items-start gap-6 shadow-lg active:scale-95"
           >
-            <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-neon-purple/10 transition-colors">
-              <Type className="text-neon-purple" size={28} />
+            <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-neon-purple/10 transition-colors shadow-inner">
+              <Type className="text-neon-purple" size={32} />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white mb-2 tracking-tight">Importar Fila de Treino em Texto</h3>
-              <p className="text-xs text-text-secondary leading-relaxed opacity-60">Já tem um treino escrito? Cole o texto aqui e a IA converterá para o formato otimizado do sistema.</p>
+              <h3 className="text-xl font-black text-white mb-2 tracking-tight">Importar Fila de Treino</h3>
+              <p className="text-xs text-slate-400 font-medium leading-relaxed opacity-80">Já tem um treino escrito? Cole o texto aqui e a IA converterá para o formato otimizado do sistema.</p>
             </div>
           </button>
         </div>
@@ -206,24 +265,24 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
 
   if (method === 'manual') {
     return (
-      <div className="max-w-xl mx-auto w-full pt-8 px-4">
+      <div className="max-w-2xl mx-auto w-full pt-8 px-4">
         <div className="mb-8 flex justify-between items-center">
            <div>
-             <h2 className="text-xl font-bold text-white tracking-tight">Treino em Texto</h2>
-             <p className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-widest">Módulo de Conversão</p>
+             <h2 className="text-2xl font-black text-white tracking-tight">Treino em Texto</h2>
+             <p className="text-[10px] font-black text-neon-blue uppercase tracking-widest mt-1">Módulo de Conversão</p>
            </div>
-           <button onClick={() => setMethod(null)} className="w-10 h-10 flex items-center justify-center text-text-secondary hover:text-white rounded-xl bg-surface border border-white/5">
-             <ArrowLeft size={18} />
+           <button onClick={() => setMethod(null)} className="w-12 h-12 flex items-center justify-center text-slate-400 hover:text-white rounded-2xl bg-surface border border-white/5 active:scale-95 transition-all">
+             <ArrowLeft size={20} />
            </button>
         </div>
 
-        <div className="bg-surface border border-white/5 p-6 rounded-[2rem] shadow-xl">
-          <p className="text-xs text-text-secondary mb-6 leading-relaxed opacity-70">Cole abaixo a sua ficha de treino. O processamento neural identificará divisões, exercícios e periodicidade.</p>
+        <div className="bg-surface border border-white/5 p-8 rounded-[32px] shadow-xl">
+          <p className="text-xs text-slate-400 font-medium mb-6 leading-relaxed opacity-90">Cole abaixo a sua ficha de treino. O processamento neural identificará divisões, exercícios e periodicidade automaticamente.</p>
           <textarea 
-            rows={10} 
+            rows={12} 
             value={manualText} 
             onChange={(e) => setManualText(e.target.value)}
-            className="w-full bg-background border border-white/5 rounded-[1.5rem] p-5 text-white focus:outline-none focus:border-neon-purple/50 leading-relaxed resize-none text-sm placeholder:text-white/10" 
+            className="w-full bg-background border border-white/5 rounded-[24px] p-6 text-white font-medium focus:outline-none focus:border-neon-blue/50 leading-relaxed resize-none text-sm placeholder:text-white/20 shadow-inner" 
             placeholder="Exemplo:&#10;Segunda: Peito e Tríceps&#10;- Supino Reto 4x10..." 
           />
         </div>
@@ -232,9 +291,9 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
           <button 
             onClick={handleManualSubmit}
             disabled={!manualText.trim()}
-            className="w-full bg-white text-background py-5 rounded-[1.5rem] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-neon-purple hover:text-white transition-all disabled:opacity-30 shadow-xl"
+            className="w-full bg-neon-blue text-black py-5 rounded-[20px] font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:brightness-110 transition-all disabled:opacity-30 shadow-lg active:scale-95"
           >
-            Processar Ficha <ArrowRight size={18} />
+            Processar Ficha <ArrowRight size={20} />
           </button>
         </div>
       </div>
@@ -244,25 +303,25 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
   const StepIcon = currentStepInfo.icon;
 
   return (
-    <div className="max-w-xl mx-auto w-full pt-4 px-4">
+    <div className="max-w-xl mx-auto w-full pt-4 px-4 font-sans text-white">
        <div className="mb-10">
           <div className="flex justify-between items-end mb-6">
              <div>
                <div className="flex items-center gap-2 mb-2">
-                 <StepIcon size={14} className="text-neon-blue" />
-                 <span className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.2em]">Passo</span>
+                 <StepIcon size={16} className="text-neon-blue" />
+                 <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Etapa Atual</span>
                </div>
-               <h2 className="text-2xl font-bold text-white tracking-tight">
+               <h2 className="text-3xl font-black text-white tracking-tight">
                  {currentStepInfo.title}
                </h2>
              </div>
-             <span className="text-[10px] font-mono font-bold text-neon-blue bg-neon-blue/5 border border-neon-blue/20 px-3 py-1 rounded-full">{stepIndex + 1} / {STEPS.length}</span>
+             <span className="text-[11px] font-black text-neon-blue bg-neon-blue/10 border border-neon-blue/20 px-3 py-1.5 rounded-xl">{stepIndex + 1} / {STEPS.length}</span>
           </div>
           <div className="flex gap-2 w-full">
             {STEPS.map((s, i) => (
-              <div key={s.id} className="h-1 flex-1 bg-white/5 rounded-full overflow-hidden">
+              <div key={s.id} className="h-1.5 flex-1 bg-white/5 rounded-full overflow-hidden">
                 <motion.div 
-                  className={`h-full ${i <= stepIndex ? 'bg-neon-blue shadow-[0_0_10px_rgba(0,240,255,0.3)]' : ''}`}
+                  className={`h-full ${i <= stepIndex ? 'bg-neon-blue' : ''}`}
                   initial={{ width: 0 }}
                   animate={{ width: i <= stepIndex ? '100%' : '0%' }}
                 />
@@ -274,43 +333,40 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
        <AnimatePresence mode="wait">
           <motion.div
             key={currentStepInfo.id}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="bg-surface border border-white/5 p-6 md:p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden"
+            exit={{ opacity: 0, y: -15 }}
+            className="bg-surface border border-white/5 p-6 md:p-10 rounded-[32px] shadow-2xl relative overflow-visible"
           >
-            {/* Subtle light effect inside the card */}
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-neon-blue/5 blur-[50px] rounded-full pointer-events-none" />
-
             {stepIndex === 0 && ( /* Pessoais */
-              <div className="space-y-8 relative z-10">
+              <div className="space-y-6 relative z-10">
                  <div>
-                   <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.15em] mb-3 block">Nome de Usuário</label>
-                   <input type="text" value={data.name || ''} onChange={e => update('name', e.target.value)} className="w-full bg-background border border-white/5 rounded-xl p-4 text-white focus:outline-none focus:border-neon-blue/50 transition-colors text-base" placeholder="Nome do Aluno" />
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Nome de Usuário</label>
+                   <input type="text" value={data.name || ''} onChange={e => update('name', e.target.value)} className="w-full bg-background border border-white/5 rounded-[20px] p-5 text-white font-black outline-none focus:border-neon-blue/50 transition-colors text-base shadow-inner" placeholder="Nome do Aluno" />
                  </div>
                  <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-6">
                      <div>
-                       <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.15em] mb-3 block">Idade</label>
-                       <input type="number" value={data.age || ''} onChange={e => update('age', parseInt(e.target.value))} className="w-full bg-background border border-white/5 rounded-xl p-4 text-white focus:outline-none focus:border-neon-blue/50 text-base" placeholder="Idade" />
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Idade</label>
+                       <input type="number" value={data.age || ''} onChange={e => update('age', parseInt(e.target.value))} className="w-full bg-background border border-white/5 rounded-[20px] p-5 text-white font-black outline-none focus:border-neon-blue/50 text-base shadow-inner" placeholder="Ex: 25" />
                      </div>
                      <div>
-                       <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.15em] mb-3 block">Altura (CM)</label>
-                       <input type="number" value={data.height || ''} onChange={e => update('height', parseInt(e.target.value))} className="w-full bg-background border border-white/5 rounded-xl p-4 text-white focus:outline-none focus:border-neon-blue/50 text-base" placeholder="Ex: 175" />
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Altura (CM)</label>
+                       <input type="number" value={data.height || ''} onChange={e => update('height', parseInt(e.target.value))} className="w-full bg-background border border-white/5 rounded-[20px] p-5 text-white font-black outline-none focus:border-neon-blue/50 text-base shadow-inner" placeholder="Ex: 175" />
                      </div>
                    </div>
                    <div className="space-y-6">
                      <div>
-                       <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.15em] mb-3 block">Perfil Biológico</label>
-                       <select value={data.gender || ''} onChange={e => update('gender', e.target.value)} className="w-full bg-background border border-white/5 rounded-xl p-4 text-white focus:outline-none focus:border-neon-blue/50 appearance-none text-base">
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Perfil Biológico</label>
+                       <select value={data.gender || ''} onChange={e => update('gender', e.target.value)} className="w-full bg-background border border-white/5 rounded-[20px] p-5 text-white font-black outline-none focus:border-neon-blue/50 appearance-none text-base cursor-pointer shadow-inner">
                          <option value="">Selecione...</option>
                          <option value="Masculino">Masculino</option>
                          <option value="Feminino">Feminino</option>
                        </select>
                      </div>
                      <div>
-                       <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.15em] mb-3 block">Peso (KG)</label>
-                       <input type="number" value={data.weight || ''} onChange={e => update('weight', parseInt(e.target.value))} className="w-full bg-background border border-white/5 rounded-xl p-4 text-white focus:outline-none focus:border-neon-blue/50 text-base" placeholder="Ex: 80" />
+                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Peso (KG)</label>
+                       <input type="number" value={data.weight || ''} onChange={e => update('weight', parseInt(e.target.value))} className="w-full bg-background border border-white/5 rounded-[20px] p-5 text-white font-black outline-none focus:border-neon-blue/50 text-base shadow-inner" placeholder="Ex: 80" />
                      </div>
                    </div>
                  </div>
@@ -319,7 +375,7 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
 
             {stepIndex === 1 && ( /* Objetivo Principal */
               <div className="space-y-3 relative z-10">
-                 <p className="text-[10px] font-mono text-text-secondary uppercase tracking-[0.15em] mb-8 text-center opacity-60">Objetivo Principal</p>
+                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 text-center">Objetivo Principal</p>
                  {[
                    { label: 'Emagrecimento & Definição', desc: 'Perda acelerada de gordura corporal.' },
                    { label: 'Hipertrofia Muscular', desc: 'Volume máximo, focado em quebra de fibras.' },
@@ -329,25 +385,25 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
                    <button 
                      key={opt.label}
                      onClick={() => { update('mainGoal', opt.label); setTimeout(handleNext, 300) }}
-                     className={`w-full text-left p-6 rounded-2xl border transition-all duration-300 active:scale-[0.98] ${data.mainGoal === opt.label ? 'border-neon-blue/50 bg-neon-blue/5 shadow-[0_0_20px_rgba(0,240,255,0.05)]' : 'border-white/5 bg-background/50 hover:border-white/10'}`}
+                     className={`w-full text-left p-6 sm:p-8 rounded-[24px] border transition-all duration-300 active:scale-95 ${data.mainGoal === opt.label ? 'border-neon-blue bg-neon-blue/10 shadow-lg' : 'border-white/5 bg-background hover:border-white/20'}`}
                    >
-                     <h4 className={`text-base font-bold mb-1 ${data.mainGoal === opt.label ? 'text-neon-blue' : 'text-white'}`}>{opt.label}</h4>
-                     <p className="text-[10px] text-text-secondary uppercase tracking-widest font-mono opacity-50">{opt.desc}</p>
+                     <h4 className={`text-base font-black mb-1 ${data.mainGoal === opt.label ? 'text-neon-blue' : 'text-white'}`}>{opt.label}</h4>
+                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{opt.desc}</p>
                    </button>
                  ))}
               </div>
             )}
 
             {stepIndex === 2 && ( /* Meta Específica e Experiencia */
-              <div className="space-y-10 relative z-10">
+              <div className="space-y-8 relative z-10">
                  <div>
-                   <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.15em] mb-5 block">Nível de Experiência</label>
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Nível de Experiência</label>
                    <div className="grid grid-cols-1 gap-3">
                      {['Iniciante (< 6 meses)', 'Intermediário (1-3 anos)', 'Avançado (3+ anos)', 'Retornando agora'].map(opt => (
                        <button
                          key={opt}
                          onClick={() => update('experienceLevel', opt)}
-                         className={`p-5 rounded-2xl border text-sm font-bold transition-all text-left ${data.experienceLevel === opt ? 'bg-white text-background border-white' : 'bg-background border-white/5 text-text-secondary hover:border-white/10'}`}
+                         className={`p-5 rounded-[20px] border text-sm font-black transition-all text-left uppercase tracking-wider ${data.experienceLevel === opt ? 'bg-white text-black border-white shadow-lg' : 'bg-background border-white/5 text-slate-400 hover:border-white/20'}`}
                        >
                          {opt}
                        </button>
@@ -356,22 +412,22 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
                  </div>
                  
                  <div>
-                   <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.15em] mb-4 block">Detalhes Adicionais (Opcional)</label>
-                   <textarea rows={4} value={data.specificGoal || ''} onChange={e => update('specificGoal', e.target.value)} className="w-full bg-background border border-white/5 rounded-2xl p-5 text-white focus:outline-none focus:border-neon-blue/50 leading-relaxed resize-none text-sm placeholder:text-white/10" placeholder="Tem alguma especificidade? Dores ou restrições?" />
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Detalhes Adicionais (Opcional)</label>
+                   <textarea rows={4} value={data.specificGoal || ''} onChange={e => update('specificGoal', e.target.value)} className="w-full bg-background border border-white/5 rounded-[24px] p-6 text-white font-medium outline-none focus:border-neon-blue/50 leading-relaxed resize-none text-sm placeholder:text-white/20 shadow-inner" placeholder="Tem alguma especificidade? Dores ou restrições?" />
                  </div>
               </div>
             )}
 
             {stepIndex === 3 && ( /* Customization / Equipment */
-              <div className="space-y-10 relative z-10">
+              <div className="space-y-8 relative z-10">
                  <div>
-                   <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.15em] mb-5 block">Ambiente Principal de Treino</label>
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Ambiente Principal de Treino</label>
                    <div className="grid grid-cols-1 gap-3">
                      {['Academia Completa', 'Academia de Prédio', 'Em Casa (Com Equipamento)', 'Em Casa (Sem Equipamento)'].map(opt => (
                        <button
                          key={opt}
                          onClick={() => update('location', opt)}
-                         className={`p-5 rounded-2xl border text-sm font-bold transition-all text-left ${data.location === opt ? 'bg-neon-purple/20 text-neon-purple border-neon-purple' : 'bg-background border-white/5 text-text-secondary hover:border-white/10'}`}
+                         className={`p-5 rounded-[20px] border text-sm font-black transition-all text-left uppercase tracking-wider ${data.location === opt ? 'bg-neon-blue/20 text-neon-blue border-neon-blue shadow-lg' : 'bg-background border-white/5 text-slate-400 hover:border-white/20'}`}
                        >
                          {opt}
                        </button>
@@ -380,8 +436,8 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
                  </div>
 
                  {['Academia de Prédio', 'Em Casa (Com Equipamento)'].includes(data.location || '') && (
-                   <motion.div animate={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 5 }}>
-                     <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.15em] mb-5 block">Equipamentos Disponíveis</label>
+                   <motion.div animate={{ opacity: 1, y: 0 }} initial={{ opacity: 0, y: 10 }}>
+                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Equipamentos Disponíveis</label>
                      <div className="flex flex-wrap gap-2">
                        {['Halteres', 'Barra', 'Anilhas', 'Banco Inclinável', 'Máquina Multifuncional', 'Elásticos', 'Kettlebell', 'Esteira'].map(opt => {
                          const isSelected = (data.equipment || []).includes(opt);
@@ -392,7 +448,7 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
                                const eq = data.equipment || [];
                                update('equipment', isSelected ? eq.filter(e => e !== opt) : [...eq, opt]);
                              }}
-                             className={`px-4 py-2 rounded-xl border text-[10px] font-mono font-bold transition-all uppercase tracking-wider ${isSelected ? 'border-amber-500 bg-amber-500/20 text-white' : 'border-white/5 bg-background text-text-secondary opacity-60 hover:opacity-100'}`}
+                             className={`px-5 py-3 rounded-xl border text-[10px] font-black transition-all uppercase tracking-widest ${isSelected ? 'border-neon-blue bg-neon-blue/20 text-white' : 'border-white/5 bg-background text-slate-500 hover:text-white'}`}
                            >
                              {opt}
                            </button>
@@ -405,26 +461,26 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
             )}
 
             {stepIndex === 4 && ( /* Lifestyle / Frequency */
-              <div className="space-y-10 relative z-10 text-center">
+              <div className="space-y-8 relative z-10 text-center">
                  <div>
-                   <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.15em] mb-8 block font-center">Metas de Treino Semanais</label>
-                   <div className="flex justify-center items-center gap-10 bg-background/50 rounded-[2rem] p-8 border border-white/5 w-full max-w-xs mx-auto shadow-inner">
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 block font-center">Metas de Treino Semanais</label>
+                   <div className="flex justify-center items-center gap-10 bg-background rounded-[32px] p-8 border border-white/5 w-full max-w-[280px] mx-auto shadow-inner">
                      <button 
                        onClick={() => update('daysPerWeek', Math.max(1, (data.daysPerWeek || 3) - 1))}
-                       className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors text-2xl"
+                       className="w-14 h-14 flex items-center justify-center bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors text-2xl active:scale-95"
                      >-</button>
-                     <div className="text-5xl font-bold text-white tracking-tighter">{data.daysPerWeek || 3}</div>
+                     <div className="text-6xl font-black text-white tracking-tighter">{data.daysPerWeek || 3}</div>
                      <button 
                        onClick={() => update('daysPerWeek', Math.min(7, (data.daysPerWeek || 3) + 1))}
-                       className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors text-2xl"
+                       className="w-14 h-14 flex items-center justify-center bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors text-2xl active:scale-95"
                      >+</button>
                    </div>
                  </div>
 
                  <div className="grid grid-cols-2 gap-4 text-left">
                    <div>
-                     <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.1em] mb-3 block">Duração (Min)</label>
-                     <select value={data.minutesPerSession || ''} onChange={e => update('minutesPerSession', parseInt(e.target.value))} className="w-full bg-background border border-white/5 rounded-xl p-4 text-white focus:outline-none focus:border-neon-blue/50 text-sm appearance-none">
+                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Duração (Min)</label>
+                     <select value={data.minutesPerSession || ''} onChange={e => update('minutesPerSession', parseInt(e.target.value))} className="w-full bg-background border border-white/5 rounded-[20px] p-5 text-white font-black outline-none focus:border-neon-blue/50 text-sm appearance-none shadow-inner cursor-pointer">
                        <option value={30}>30 min</option>
                        <option value={45}>45 min</option>
                        <option value={60}>60 min</option>
@@ -432,8 +488,8 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
                      </select>
                    </div>
                    <div>
-                     <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.1em] mb-3 block">Nível de Energia</label>
-                     <select value={data.energyLevel || ''} onChange={e => update('energyLevel', e.target.value)} className="w-full bg-background border border-white/5 rounded-xl p-4 text-white focus:outline-none focus:border-neon-blue/50 text-sm appearance-none">
+                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Nível de Energia</label>
+                     <select value={data.energyLevel || ''} onChange={e => update('energyLevel', e.target.value)} className="w-full bg-background border border-white/5 rounded-[20px] p-5 text-white font-black outline-none focus:border-neon-blue/50 text-sm appearance-none shadow-inner cursor-pointer">
                        <option value="Oscilante">Normal / Oscilante</option>
                        <option value="Energia Alta">Alta Perfomance</option>
                        <option value="Sempre Cansado">Sempre Cansado</option>
@@ -441,8 +497,8 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
                    </div>
                  </div>
 
-                 <div className="pt-4">
-                   <label className="text-[10px] font-mono font-bold text-text-secondary uppercase tracking-[0.15em] mb-6 block">Incluir Cardio?</label>
+                 <div className="pt-2 text-left">
+                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 block">Incluir Cardio?</label>
                    <div className="grid grid-cols-2 gap-3">
                      {[
                        { value: true, label: 'Sim, incluir' },
@@ -451,10 +507,10 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
                        <button
                          key={opt.label}
                          onClick={() => update('includeCardio', opt.value)}
-                         className={`p-5 rounded-2xl border text-[10px] font-mono font-bold tracking-[0.1em] uppercase transition-all flex flex-col items-center justify-center gap-3 ${data.includeCardio === opt.value ? 'bg-amber-500/10 text-amber-500 border-amber-500' : 'bg-background border-white/5 text-text-secondary opacity-60 hover:opacity-100'}`}
+                         className={`p-6 rounded-[24px] border text-[10px] font-black tracking-widest uppercase transition-all flex justify-start items-center gap-3 ${data.includeCardio === opt.value ? 'bg-neon-blue/10 text-neon-blue border-neon-blue shadow-lg' : 'bg-background border-white/5 text-slate-500 hover:text-white'}`}
                        >
-                         {opt.value && <HeartPulse size={18} className={data.includeCardio === opt.value ? 'text-amber-500' : 'text-text-secondary'} />}
-                         {!opt.value && <Zap size={18} className={data.includeCardio === opt.value ? 'text-amber-500' : 'text-text-secondary'} />}
+                         {opt.value && <HeartPulse size={20} className={data.includeCardio === opt.value ? 'text-neon-blue' : 'text-slate-500'} />}
+                         {!opt.value && <Zap size={20} className={data.includeCardio === opt.value ? 'text-neon-blue' : 'text-slate-500'} />}
                          {opt.label}
                        </button>
                      ))}
@@ -468,18 +524,17 @@ Formato OBRIGATÓRIO (apenas JSON estruturado, sem crasas):
        <div className="flex gap-4 items-center mt-12 pb-10">
          <button 
            onClick={handleBack}
-           className="w-20 h-16 flex items-center justify-center text-text-secondary hover:text-white bg-surface border border-white/5 rounded-[1.5rem] transition-all active:scale-[0.9] overflow-hidden"
+           className="w-16 h-16 flex items-center justify-center text-slate-400 hover:text-white bg-surface border border-white/5 rounded-2xl transition-all active:scale-95 shadow-lg"
          >
            <ArrowLeft size={22} />
          </button>
          <button 
            onClick={handleNext}
-           className="flex-1 h-16 bg-white text-background rounded-[1.5rem] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-neon-blue hover:text-white transition-all shadow-xl active:scale-[0.98]"
+           className="flex-1 h-16 bg-neon-blue text-black rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:brightness-110 transition-all shadow-lg active:scale-95 text-sm"
          >
-           {stepIndex < STEPS.length - 1 ? 'Próxima Etapa' : 'Finalizar Treino'} <ArrowRight size={22} />
+           {stepIndex < STEPS.length - 1 ? 'Próxima Etapa' : 'Gerar Protocolo'} <ArrowRight size={22} />
          </button>
        </div>
     </div>
   );
 }
-

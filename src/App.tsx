@@ -24,6 +24,8 @@ import SetupAppPage from '../app/setup/page';
 import WorkoutHistoryPage from '../app/workouts/history/page';
 import WorkoutLibraryPage from '../app/workouts/library/page';
 import WorkoutTemplatesPage from '../app/workouts/templates/page';
+import WorkoutFreePage from '../app/workouts/free/page';
+import ProgressionPage from '../app/workouts/progression/page';
 import AICoachPage from '../app/ai-coach/page';
 
 const queryClient = new QueryClient();
@@ -53,6 +55,8 @@ function Layout() {
         <Route path="/workouts/history" element={<WorkoutHistoryPage />} />
         <Route path="/workouts/library" element={<WorkoutLibraryPage />} />
         <Route path="/workouts/templates" element={<WorkoutTemplatesPage />} />
+        <Route path="/workouts/free" element={<WorkoutFreePage />} />
+        <Route path="/workouts/progression" element={<ProgressionPage />} />
         <Route path="/ranking" element={<RankingPage />} />
         <Route path="/finance" element={<FinancePage />} />
         <Route path="/avatar" element={<AvatarPage />} />

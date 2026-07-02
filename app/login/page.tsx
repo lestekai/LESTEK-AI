@@ -127,7 +127,7 @@ export default function LoginPage() {
       <header className="fixed top-0 left-0 right-0 p-4 lg:p-6 z-50 bg-[#050505]/70 backdrop-blur-2xl border-b border-white/5">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="font-display font-black text-2xl tracking-[0.2em] text-white flex items-center gap-3 drop-shadow-[0_0_15px_rgba(0,240,255,0.8)]">
-            <img src="/logo.png" alt="Evolux" className="w-8 h-8 object-contain" />
+            <img src="/logo.png" alt="Evolux" width={32} height={32} className="w-8 h-8 object-contain" />
             EVOLUX
           </div>
           <div className="flex gap-4">
@@ -401,7 +401,7 @@ export default function LoginPage() {
             
             <div className="text-center mb-10 relative z-10">
                <div className="inline-flex justify-center items-center w-24 h-24 mb-6 drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]">
-                 <img src="/logo.png" alt="Evolux" className="w-full h-full object-contain" />
+                 <img src="/logo.png" alt="Evolux" width={96} height={96} className="w-full h-full object-contain overflow-hidden" />
                </div>
                <h2 className="text-4xl font-display font-black mb-3 text-glow-blue uppercase tracking-widest">Inicialize</h2>
                <p className="text-text-secondary text-[11px] font-bold uppercase tracking-[0.2em]">Sincronize com a base de dados central.</p>

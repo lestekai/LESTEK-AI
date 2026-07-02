@@ -15,7 +15,7 @@ export function Header({ title, subtitle, showLogo = false }: HeaderProps) {
        <div className="flex-1">
          {showLogo ? (
            <div className="flex items-center gap-3">
-             <img src="/logo.png" alt="Evolux" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(0,240,255,0.6)]" />
+             <img src="/logo.png" alt="Evolux" width={32} height={32} className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(0,240,255,0.6)]" />
              <div className="font-display font-bold text-xl tracking-widest text-glow-blue">EVOLUX</div>
            </div>
          ) : (

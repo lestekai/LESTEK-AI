@@ -165,27 +165,46 @@ export async function generateAI(
             console.log('[Gemini Service] Fallback: Retornando plano de treino adaptativo offline estruturado.');
             return {
               text: JSON.stringify({
-                name: "Plano de Evolução Adaptativa (Modo de Segurança)",
-                description: "Seu plano adaptativo de treino e hábitos está rodando em modo offline devido a uma instabilidade temporária na API.",
-                habits: ["Consumir 3L de Água", "Dormir 8 Horas", "Praticar 30 min de Foco", "Treino Físico Constante"],
-                weeks: [{
-                  weekNumber: 1,
-                  days: [
+                programName: "Plano de Evolução Adaptativa (Modo Segurança)",
+                planPromptDescription: "Protocolo adaptativo offline ativado devido a instabilidade de rede.",
+                phases: [{
+                  id: "fase_1_offline",
+                  name: "Adaptação e Segurança",
+                  description: "Foco em execução e controle motor com peso corporal e básico.",
+                  durationWeeks: 4,
+                  schedule: [
                     { 
-                      dayOfWeek: "Segunda-feira", 
-                      focus: "Força e Condicionamento Geral (Full Body)", 
+                      dayName: "Segunda-feira", 
+                      focus: "Força e Condicionamento Geral (Full Body)",
+                      isRest: false,
+                      intensity: "Moderada",
+                      warmup: ["Polichinelos 1 min", "Rotação de Tronco 20 reps"],
+                      cooldown: ["Alongamento completo 2 min"],
                       exercises: [
-                        { name: "Agachamento Livre", reps: "3x15", instructions: "Mantenha a postura e contraia o core.", targetMuscles: ["Quadríceps", "Glúteos"], equipment: "Peso Corporal", difficulty: "Fácil" },
-                        { name: "Flexão de Braços", reps: "3x12", instructions: "Mantenha o corpo alinhado, descendo até o peito quase tocar o chão.", targetMuscles: ["Peito", "Tríceps", "Ombros"], equipment: "Peso Corporal", difficulty: "Intermediário" },
-                        { name: "Prancha Abdominal", reps: "3x45s", instructions: "Mantenha o corpo paralelo ao chão, sem elevar a pelve.", targetMuscles: ["Abdômen", "Core"], equipment: "Peso Corporal", difficulty: "Fácil" }
+                        { id: "e1", name: "Agachamento Livre", sets: 3, reps: "15", restSeconds: 60, instructions: "Mantenha a postura e contraia o core.", targetMuscles: ["Quadríceps", "Glúteos"], equipment: "Peso Corporal", difficulty: "Fácil" },
+                        { id: "e2", name: "Flexão de Braços", sets: 3, reps: "12", restSeconds: 60, instructions: "Mantenha o corpo alinhado, descendo até o peito quase tocar o chão.", targetMuscles: ["Peito", "Tríceps", "Ombros"], equipment: "Peso Corporal", difficulty: "Intermediário" },
+                        { id: "e3", name: "Prancha Abdominal", sets: 3, reps: "45s", restSeconds: 60, instructions: "Mantenha o corpo paralelo ao chão, sem elevar a pelve.", targetMuscles: ["Abdômen", "Core"], equipment: "Peso Corporal", difficulty: "Fácil" }
                       ]
                     },
+                    {
+                      dayName: "Terça-feira",
+                      focus: "Descanso Ativo",
+                      isRest: true,
+                      intensity: "Baixa",
+                      warmup: [],
+                      cooldown: [],
+                      exercises: []
+                    },
                     { 
-                      dayOfWeek: "Quarta-feira", 
-                      focus: "Hipertrofia e Resistência Superior", 
+                      dayName: "Quarta-feira", 
+                      focus: "Hipertrofia e Resistência Superior",
+                      isRest: false,
+                      intensity: "Alta",
+                      warmup: ["Rotação de ombros 20 reps"],
+                      cooldown: ["Alongamento dorsais 1 min"],
                       exercises: [
-                        { name: "Barra Fixa ou Remada", reps: "3x8", instructions: "Inicie o movimento ativando as escápulas.", targetMuscles: ["Dorsais", "Bíceps"], equipment: "Peso Corporal / Barra de Porta", difficulty: "Difícil" },
-                        { name: "Tríceps Banco", reps: "3x12", instructions: "Mantenha os cotovelos paralelos e próximos ao corpo.", targetMuscles: ["Tríceps"], equipment: "Cadeira / Banco", difficulty: "Fácil" }
+                        { id: "e4", name: "Barra Fixa ou Remada", sets: 3, reps: "8", restSeconds: 90, instructions: "Inicie o movimento ativando as escápulas.", targetMuscles: ["Dorsais", "Bíceps"], equipment: "Peso Corporal / Barra de Porta", difficulty: "Difícil" },
+                        { id: "e5", name: "Tríceps Banco", sets: 3, reps: "12", restSeconds: 60, instructions: "Mantenha os cotovelos paralelos e próximos ao corpo.", targetMuscles: ["Tríceps"], equipment: "Cadeira / Banco", difficulty: "Fácil" }
                       ]
                     }
                   ]

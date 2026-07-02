@@ -78,6 +78,8 @@ interface AppState {
   hidePremiumModal: () => void;
   zoomLevel: number;
   setZoomLevel: (zoom: number) => void;
+  isElderlyMode: boolean;
+  toggleElderlyMode: () => void;
   setTasks: (tasks: Task[]) => void;
   setGoals: (goals: Goal[]) => void;
 }
@@ -96,6 +98,8 @@ export const useAppStore = create<AppState>()(
       premiumModalOpen: false,
       premiumModalMessage: '',
       zoomLevel: 100,
+      isElderlyMode: true,
+      toggleElderlyMode: () => set((state) => ({ isElderlyMode: !state.isElderlyMode })),
 
       setTasks: (tasks) => {
         const seenIds = new Set<string>();
@@ -386,8 +390,36 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'evolux_storage',
-      // We can map the old localstorage keys inside a custom storage or just use the new one.
-      // Since it's local storage, we'll just let Zustand create the unified 'evolux_storage' key.
+      merge: (persistedState: any, currentState: AppState) => {
+        if (!persistedState) return currentState;
+        
+        const seenTaskIds = new Set<string>();
+        const sanitizedTasks = (persistedState.tasks || []).map((t: any) => {
+          let id = t.id;
+          if (!id || seenTaskIds.has(id)) {
+            id = `${id || 'task'}-${Math.random().toString(36).substr(2, 9)}`;
+          }
+          seenTaskIds.add(id);
+          return { ...t, id };
+        });
+
+        const seenGoalIds = new Set<string>();
+        const sanitizedGoals = (persistedState.goals || []).map((g: any) => {
+          let id = g.id;
+          if (!id || seenGoalIds.has(id)) {
+            id = `${id || 'goal'}-${Math.random().toString(36).substr(2, 9)}`;
+          }
+          seenGoalIds.add(id);
+          return { ...g, id };
+        });
+
+        return {
+          ...currentState,
+          ...persistedState,
+          tasks: sanitizedTasks,
+          goals: sanitizedGoals
+        };
+      }
     }
   )
 );

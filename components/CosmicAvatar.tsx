@@ -15,7 +15,7 @@ export function CosmicAvatar({ profile }: CosmicAvatarProps) {
   const rank = getRankTier(avatarLevel);
 
   // We find which cosmetics are really EQUIPPED
-  const equippedList = Object.values(equippedCosmetics).filter(Boolean) as string[];
+  const equippedList = Object.values(equippedCosmetics || {}).filter(Boolean) as string[];
   const myCosmetics = COSMETICS.filter(c => equippedList.includes(c.id));
   
   // Best aura color

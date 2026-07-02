@@ -77,7 +77,7 @@ export function validateExerciseDatabase(): ValidationReport {
 
 export function detectMediaType(url: string | null | undefined): 'video' | 'image' | 'placeholder' | 'unknown' {
   if (!url) return 'unknown';
-  if (url.includes('/anatomy/') || url.includes('/placeholder')) return 'placeholder';
+  if (url.includes('/anatomy/') || url.includes('/placeholder') || url.includes('/bodyPart/') || url.endsWith('.svg')) return 'placeholder';
   if (url.endsWith('.mp4') || url.endsWith('.webm')) return 'video';
   if (url.endsWith('.gif') || url.endsWith('.webp') || url.endsWith('.png') || url.endsWith('.jpg')) return 'image';
   return 'image'; // default assumption

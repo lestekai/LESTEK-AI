@@ -91,11 +91,9 @@ export const ExerciseMedia = ({
         <img
           src={resolvedMedia.url}
           alt={exerciseNameOrId}
-          className={`w-full h-full object-center transition-all duration-700 ${objectFitStyle} ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+          className={`w-full h-full object-center transition-all duration-700 ${objectFitStyle} ${isLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'} absolute top-0 left-0`}
           onLoad={handleMediaLoad}
           onError={handleMediaError}
-          loading={priority ? 'eager' : 'lazy'}
-          fetchPriority={priority ? 'high' : 'low'}
           referrerPolicy="no-referrer"
         />
       )}

@@ -129,7 +129,7 @@ export default function AvatarPage() {
                     <h3 className="font-bold text-sm tracking-widest uppercase text-text-secondary mb-4">{title}</h3>
                     <div className="grid grid-cols-2 gap-3">
                       {items.map(item => {
-                        const isEquipped = profile.equippedCosmetics[cat as CosmeticType] === item.id;
+                        const isEquipped = profile.equippedCosmetics?.[cat as CosmeticType] === item.id;
                         const achievement = ACHIEVEMENTS.find(a => a.rewardCosmeticId === item.id);
                         const isUnlocked = item.unlockCondition.toLowerCase() === 'padrão' || (achievement && achievement.requirement(profile)) || profile.unlockedCosmetics?.includes(item.id);
                         

@@ -9,7 +9,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const pathname = useLocation().pathname;
   const { setProfile, setTasks, setGoals, profile, tasks, goals } = useAppStore();
-  const { setPlan, setQuestionnaireData, setWorkoutHistory, currentPlan, workoutHistory, questionnaire } = useWorkoutStore();
+  const { 
+    setPlan, setQuestionnaireData, setWorkoutHistory, setFreeWorkout, setUserTemplates, updateSettings, setSelectedProgressionWeek,
+    currentPlan, workoutHistory, questionnaire, userTemplates, activeFreeWorkout, settings, selectedProgressionWeek 
+  } = useWorkoutStore();
   
   // Track last loaded state to prevent redundant sync loops
   const syncLock = useRef(false);
@@ -20,7 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error(`Error fetching profile (retry ${retryCount}):`, error);
@@ -82,13 +85,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (backup) {
         if (backup.tasks) setTasks(backup.tasks);
         if (backup.goals) setGoals(backup.goals);
-        if (backup.workoutPlan) setPlan(backup.workoutPlan);
+        if (backup.workoutPlan !== undefined) setPlan(backup.workoutPlan);
         if (backup.workoutHistory) setWorkoutHistory(backup.workoutHistory);
         if (backup.questionnaire) setQuestionnaireData(backup.questionnaire);
+        if (backup.userTemplates) setUserTemplates(backup.userTemplates);
+        if (backup.activeFreeWorkout !== undefined) setFreeWorkout(backup.activeFreeWorkout);
+        if (backup.settings) updateSettings(backup.settings);
+        if (backup.selectedProgressionWeek !== undefined) setSelectedProgressionWeek(backup.selectedProgressionWeek);
       }
     }
     syncLock.current = false;
-  }, [setGoals, setPlan, setProfile, setQuestionnaireData, setTasks, setWorkoutHistory]);
+  }, [setGoals, setPlan, setProfile, setQuestionnaireData, setTasks, setWorkoutHistory, setUserTemplates, setFreeWorkout, updateSettings, setSelectedProgressionWeek]);
 
   useEffect(() => {
     if (useAppStore.getState().profile?.id === 'test-admin-id') return;
@@ -126,7 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     const syncBackup = async () => {
       try {
-        const { data } = await supabaseAdmin.from('profiles').select('equipped_cosmetics').eq('id', profile.id).single();
+        const { data } = await supabaseAdmin.from('profiles').select('equipped_cosmetics').eq('id', profile.id).maybeSingle();
         const currentCosmetics = data?.equipped_cosmetics || {};
         
         await supabaseAdmin.from('profiles').update({
@@ -141,7 +148,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               goals,
               workoutPlan: currentPlan,
               workoutHistory,
-              questionnaire
+              questionnaire,
+              userTemplates,
+              activeFreeWorkout,
+              settings,
+              selectedProgressionWeek
             }
           }
         }).eq('id', profile.id);
@@ -152,7 +163,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const debounce = setTimeout(syncBackup, 2000); // 2 second debounce
     return () => clearTimeout(debounce);
-  }, [tasks, goals, currentPlan, workoutHistory, questionnaire, profile?.id]);
+  }, [tasks, goals, currentPlan, workoutHistory, questionnaire, userTemplates, activeFreeWorkout, settings, selectedProgressionWeek, profile?.id, profile?.xp, profile?.streak, profile?.totalTasksCompleted, profile?.avatarLevel]);
 
   return <>{children}</>;
 }
