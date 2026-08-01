@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
+import { useAppStore } from '@/lib/store';
+import { logAdminAction } from '@/lib/admin';
 import { MessageSquare, CheckCircle, XCircle } from 'lucide-react';
 
 export default function AdminFeedbacks() {
+  const { profile } = useAppStore();
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     setLoading(true);
-    const { data } = await supabase.from('feedbacks').select('*, profiles(name, username)').order('created_at', { ascending: false });
+    const { data } = await supabaseAdmin.from('feedbacks').select('*, profiles(name, username)').order('created_at', { ascending: false });
     if (data) setFeedbacks(data);
     setLoading(false);
   };
@@ -19,7 +22,8 @@ export default function AdminFeedbacks() {
   }, []);
 
   const updateFeedbackStatus = async (id: string, status: string) => {
-    await supabase.from('feedbacks').update({ status }).eq('id', id);
+    await supabaseAdmin.from('feedbacks').update({ status }).eq('id', id);
+    if (profile) logAdminAction(profile.id, 'RESOLVE_FEEDBACK', id, { status });
     fetchData();
   };
 

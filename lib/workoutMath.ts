@@ -17,7 +17,7 @@ export function getSuggestedLoad(
   exerciseName: string, 
   workoutHistory: any[]
 ): { weight: number | null, reps: number | null } {
-  if (!workoutHistory || workoutHistory.length === 0) return { weight: null, reps: null };
+  if (!workoutHistory || !Array.isArray(workoutHistory) || workoutHistory.length === 0) return { weight: null, reps: null };
   
   // Find the last time this exercise was performed
   for (let i = workoutHistory.length - 1; i >= 0; i--) {

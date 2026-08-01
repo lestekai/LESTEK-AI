@@ -53,11 +53,12 @@ export function getProgressionStats(
   history: WorkoutLog[]
 ): ProgressionStats {
   const normCurrent = normalizeName(exerciseName);
+  const safeHistory = Array.isArray(history) ? history : [];
   
   // 1. Gather all logs for this specific exercise
   const exerciseHistory: { date: string; setsLog: SetLog[] }[] = [];
   
-  for (const log of history) {
+  for (const log of safeHistory) {
     const logs = (log as any).exerciseLogs as ExerciseLog[] | undefined;
     if (!logs) continue;
     
@@ -228,8 +229,9 @@ export function getPersonalRecords(exerciseName: string, history: WorkoutLog[]):
   let maxWeight = 0;
   let maxReps = 0;
   let maxVolume = 0;
+  const safeHistory = Array.isArray(history) ? history : [];
 
-  for (const log of history) {
+  for (const log of safeHistory) {
     const logs = log.exerciseLogs;
     if (!logs) continue;
     const match = logs.find(ex => normalizeName(ex.exerciseName) === normCurrent);

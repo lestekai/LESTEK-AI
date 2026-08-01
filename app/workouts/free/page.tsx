@@ -131,28 +131,28 @@ export default function FreeWorkoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32 text-white relative flex flex-col">
+    <div className="min-h-screen bg-background pb-32 text-text-primary relative flex flex-col">
       {/* Sticky Header */}
-      <header className="p-5 sticky top-0 bg-background/95 backdrop-blur-xl z-30 border-b border-white/5 flex items-center justify-between">
+      <header className="p-5 sticky top-0 bg-background/95 backdrop-blur-xl z-30 border-b border-surface-light flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate('/workouts')}
-            className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-slate-300 hover:text-white transition-all active:scale-95"
+            className="w-12 h-12 flex items-center justify-center bg-white/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95"
           >
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-xl font-black text-white">Treino Rápido</h1>
+            <h1 className="text-xl font-black text-text-primary">Treino Rápido</h1>
             <p className="text-[11px] text-[#e57d3b] font-bold uppercase tracking-widest mt-0.5">Monte e Inicie</p>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 p-5 max-w-2xl mx-auto w-full space-y-8">
+      <main className="flex-1 p-5 max-w-2xl mx-auto w-full space-y-4">
 
         {/* Quick Starts */}
         {addedExercises.length === 0 && (
-          <section className="space-y-4 animate-fade-in bg-surface/30 p-5 rounded-3xl border border-white/5">
+          <section className="space-y-4 animate-fade-in bg-surface/30 p-5 rounded-2xl border border-surface-light">
             <button 
               onClick={() => setIsQuickTemplatesOpen(!isQuickTemplatesOpen)}
               className="w-full flex items-center justify-between text-left"
@@ -160,7 +160,7 @@ export default function FreeWorkoutPage() {
               <h2 className="text-xs font-black uppercase tracking-widest text-[#e57d3b] flex items-center gap-2">
                 <Zap size={16} /> Templates Rápidos
               </h2>
-              {isQuickTemplatesOpen ? <ArrowUp size={16} className="text-slate-400" /> : <ArrowDown size={16} className="text-slate-400" />}
+              {isQuickTemplatesOpen ? <ArrowUp size={16} className="text-text-secondary" /> : <ArrowDown size={16} className="text-text-secondary" />}
             </button>
             
             <AnimatePresence>
@@ -174,49 +174,49 @@ export default function FreeWorkoutPage() {
                   <div className="space-y-4 mt-4">
                     {/* Full Body */}
                     <div>
-                      <h3 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2">Corpo Inteiro (Full Body)</h3>
+                      <h3 className="text-[10px] text-text-secondary font-bold uppercase tracking-widest mb-2">Corpo Inteiro (Full Body)</h3>
                       <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => loadQuickRoutine('fullbody_1')} className="p-3 rounded-2xl bg-surface border border-white/5 text-left hover:border-white/20 active:scale-95 transition-all">
-                          <span className="block text-white font-bold text-sm mb-1">Básico</span>
+                        <button onClick={() => loadQuickRoutine('fullbody_1')} className="p-3 rounded-2xl bg-surface border border-surface-light text-left hover:border-white/20 active:scale-95 transition-all">
+                          <span className="block text-text-primary font-bold text-sm mb-1">Básico</span>
                         </button>
-                        <button onClick={() => loadQuickRoutine('fullbody_2')} className="p-3 rounded-2xl bg-surface border border-white/5 text-left hover:border-white/20 active:scale-95 transition-all">
-                          <span className="block text-white font-bold text-sm mb-1">Variação 2</span>
+                        <button onClick={() => loadQuickRoutine('fullbody_2')} className="p-3 rounded-2xl bg-surface border border-surface-light text-left hover:border-white/20 active:scale-95 transition-all">
+                          <span className="block text-text-primary font-bold text-sm mb-1">Variação 2</span>
                         </button>
                       </div>
                     </div>
                     {/* Push */}
                     <div>
-                      <h3 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2">Empurrar (Push)</h3>
+                      <h3 className="text-[10px] text-text-secondary font-bold uppercase tracking-widest mb-2">Empurrar (Push)</h3>
                       <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => loadQuickRoutine('push_1')} className="p-3 rounded-2xl bg-surface border border-white/5 text-left hover:border-white/20 active:scale-95 transition-all">
-                          <span className="block text-white font-bold text-sm mb-1">Foco Peito</span>
+                        <button onClick={() => loadQuickRoutine('push_1')} className="p-3 rounded-2xl bg-surface border border-surface-light text-left hover:border-white/20 active:scale-95 transition-all">
+                          <span className="block text-text-primary font-bold text-sm mb-1">Foco Peito</span>
                         </button>
-                        <button onClick={() => loadQuickRoutine('push_2')} className="p-3 rounded-2xl bg-surface border border-white/5 text-left hover:border-white/20 active:scale-95 transition-all">
-                          <span className="block text-white font-bold text-sm mb-1">Foco Ombro</span>
+                        <button onClick={() => loadQuickRoutine('push_2')} className="p-3 rounded-2xl bg-surface border border-surface-light text-left hover:border-white/20 active:scale-95 transition-all">
+                          <span className="block text-text-primary font-bold text-sm mb-1">Foco Ombro</span>
                         </button>
                       </div>
                     </div>
                     {/* Pull */}
                     <div>
-                      <h3 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2">Puxar (Pull)</h3>
+                      <h3 className="text-[10px] text-text-secondary font-bold uppercase tracking-widest mb-2">Puxar (Pull)</h3>
                       <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => loadQuickRoutine('pull_1')} className="p-3 rounded-2xl bg-surface border border-white/5 text-left hover:border-white/20 active:scale-95 transition-all">
-                          <span className="block text-white font-bold text-sm mb-1">Foco Costas</span>
+                        <button onClick={() => loadQuickRoutine('pull_1')} className="p-3 rounded-2xl bg-surface border border-surface-light text-left hover:border-white/20 active:scale-95 transition-all">
+                          <span className="block text-text-primary font-bold text-sm mb-1">Foco Costas</span>
                         </button>
-                        <button onClick={() => loadQuickRoutine('pull_2')} className="p-3 rounded-2xl bg-surface border border-white/5 text-left hover:border-white/20 active:scale-95 transition-all">
-                          <span className="block text-white font-bold text-sm mb-1">Foco Bíceps</span>
+                        <button onClick={() => loadQuickRoutine('pull_2')} className="p-3 rounded-2xl bg-surface border border-surface-light text-left hover:border-white/20 active:scale-95 transition-all">
+                          <span className="block text-text-primary font-bold text-sm mb-1">Foco Bíceps</span>
                         </button>
                       </div>
                     </div>
                     {/* Legs */}
                     <div>
-                      <h3 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2">Pernas (Legs)</h3>
+                      <h3 className="text-[10px] text-text-secondary font-bold uppercase tracking-widest mb-2">Pernas (Legs)</h3>
                       <div className="grid grid-cols-2 gap-3">
-                        <button onClick={() => loadQuickRoutine('legs_1')} className="p-3 rounded-2xl bg-surface border border-white/5 text-left hover:border-white/20 active:scale-95 transition-all">
-                          <span className="block text-white font-bold text-sm mb-1">Foco Quadríceps</span>
+                        <button onClick={() => loadQuickRoutine('legs_1')} className="p-3 rounded-2xl bg-surface border border-surface-light text-left hover:border-white/20 active:scale-95 transition-all">
+                          <span className="block text-text-primary font-bold text-sm mb-1">Foco Quadríceps</span>
                         </button>
-                        <button onClick={() => loadQuickRoutine('legs_2')} className="p-3 rounded-2xl bg-surface border border-white/5 text-left hover:border-white/20 active:scale-95 transition-all">
-                          <span className="block text-white font-bold text-sm mb-1">Posterior / Glúteo</span>
+                        <button onClick={() => loadQuickRoutine('legs_2')} className="p-3 rounded-2xl bg-surface border border-surface-light text-left hover:border-white/20 active:scale-95 transition-all">
+                          <span className="block text-text-primary font-bold text-sm mb-1">Posterior / Glúteo</span>
                         </button>
                       </div>
                     </div>
@@ -230,8 +230,8 @@ export default function FreeWorkoutPage() {
         {/* Step 2: Added exercises / current routine */}
         <section className="space-y-4">
           <div className="flex justify-between items-center px-2">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-300 flex items-center gap-2">
-              Lista Atual <span className="bg-white/10 px-2 py-0.5 rounded-md text-white">{addedExercises.length}</span>
+            <h2 className="text-xs font-black uppercase tracking-widest text-text-secondary flex items-center gap-2">
+              Lista Atual <span className="bg-white/10 px-2 py-0.5 rounded-md text-text-primary">{addedExercises.length}</span>
             </h2>
           </div>
 
@@ -243,14 +243,14 @@ export default function FreeWorkoutPage() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="bg-surface border border-white/5 rounded-[24px] p-5 shadow-lg relative overflow-hidden"
+                  className="bg-surface border border-surface-light rounded-[24px] p-5 shadow-lg relative overflow-hidden"
                 >
                   <div className="flex justify-between items-start gap-4 mb-4">
-                    <div className="w-[120px] h-[120px] rounded-xl overflow-hidden shrink-0 border border-white/10 bg-background/50 relative">
+                    <div className="w-[120px] h-[120px] rounded-xl overflow-hidden shrink-0 border border-surface-light bg-background/50 relative">
                       <ExerciseMedia exerciseNameOrId={ex.id || ex.name} fallbackMuscle={ex.targetMuscles?.[0]} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-white text-[15px] leading-tight break-words mb-1">{idx + 1}. {ex.name}</h4>
+                      <h4 className="font-bold text-text-primary text-[15px] leading-tight break-words mb-1">{idx + 1}. {ex.name}</h4>
                       <span className="text-[10px] uppercase font-bold text-[#e57d3b]">
                         {(ex.targetMuscles || [])[0]}
                       </span>
@@ -264,15 +264,15 @@ export default function FreeWorkoutPage() {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 bg-background/50 rounded-2xl p-3 border border-white/5">
+                  <div className="grid grid-cols-2 gap-3 bg-background/50 rounded-2xl p-3 border border-surface-light">
                     <div className="flex flex-col items-center">
-                      <span className="text-[10px] uppercase text-slate-400 tracking-widest font-bold mb-1">Séries</span>
+                      <span className="text-[10px] uppercase text-text-secondary tracking-widest font-bold mb-1">Séries</span>
                       <div className="flex items-center gap-3">
                         <button 
                           onClick={() => updateExerciseParam(idx, 'sets', Math.max(1, (ex.sets || 3) - 1))}
                           className="w-8 h-8 rounded-full bg-surface text-lg flex items-center justify-center font-black active:scale-90 transition-transform"
                         >-</button>
-                        <span className="font-black text-xl w-6 text-center text-white">{ex.sets}</span>
+                        <span className="font-black text-xl w-6 text-center text-text-primary">{ex.sets}</span>
                         <button 
                           onClick={() => updateExerciseParam(idx, 'sets', (ex.sets || 3) + 1)}
                           className="w-8 h-8 rounded-full bg-surface text-lg flex items-center justify-center font-black active:scale-90 transition-transform"
@@ -281,12 +281,12 @@ export default function FreeWorkoutPage() {
                     </div>
 
                     <div className="flex flex-col items-center">
-                      <span className="text-[10px] uppercase text-slate-400 tracking-widest font-bold mb-1">Reps</span>
+                      <span className="text-[10px] uppercase text-text-secondary tracking-widest font-bold mb-1">Reps</span>
                       <input 
                         type="text" 
                         value={ex.reps}
                         onChange={(e) => updateExerciseParam(idx, 'reps', e.target.value)}
-                        className="w-16 bg-surface rounded-xl text-center font-black text-xl text-white outline-none py-1 border border-transparent focus:border-[#e57d3b]"
+                        className="w-16 bg-surface rounded-xl text-center font-black text-xl text-text-primary outline-none py-1 border border-transparent focus:border-[#e57d3b]"
                       />
                     </div>
                   </div>
@@ -295,8 +295,8 @@ export default function FreeWorkoutPage() {
             </AnimatePresence>
 
             {addedExercises.length === 0 && (
-              <div className="border border-dashed border-white/10 bg-surface/30 py-12 rounded-[32px] text-center text-slate-400 space-y-3">
-                <Dumbbell size={32} className="mx-auto text-slate-500/30" />
+              <div className="border border-dashed border-surface-light bg-surface/30 py-12 rounded-2xl text-center text-text-secondary space-y-3">
+                <Dumbbell size={32} className="mx-auto text-text-secondary/30" />
                 <p className="text-sm font-medium px-8">Sem exercícios. Adicione manualmente ou escolha um template acima.</p>
               </div>
             )}
@@ -309,13 +309,13 @@ export default function FreeWorkoutPage() {
           </h2>
 
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary w-5 h-5" />
             <input 
               type="text" 
               placeholder="Ex: supino, rosca..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-surface border border-white/10 rounded-[20px] py-4 pl-12 pr-4 text-white text-base font-bold outline-none focus:border-[#e57d3b] transition-colors"
+              className="w-full bg-surface border border-surface-light rounded-[20px] py-3 pl-12 pr-4 text-text-primary text-base font-bold outline-none focus:border-[#e57d3b] transition-colors"
             />
           </div>
 
@@ -328,20 +328,20 @@ export default function FreeWorkoutPage() {
                 className="space-y-2"
               >
                 {searchResults.map(ex => (
-                  <div key={ex.id} className="p-3 bg-surface border border-white/5 rounded-2xl flex justify-between items-center text-left">
-                    <div className="w-[104px] h-[104px] rounded-xl overflow-hidden shrink-0 border border-white/10 bg-background/50 relative mr-4">
+                  <div key={ex.id} className="p-3 bg-surface border border-surface-light rounded-2xl flex justify-between items-center text-left">
+                    <div className="w-[104px] h-[104px] rounded-xl overflow-hidden shrink-0 border border-surface-light bg-background/50 relative mr-4">
                       <ExerciseMedia exerciseNameOrId={ex.id} fallbackMuscle={ex.targetMuscles?.[0]} />
                     </div>
                     <div className="flex-1 min-w-0 pr-3">
-                      <h4 className="font-bold text-[15px] text-white break-words leading-tight mb-1">{ex.name}</h4>
-                      <p className="text-[10px] uppercase font-bold text-slate-400 mt-0.5 truncate">
+                      <h4 className="font-bold text-[15px] text-text-primary break-words leading-tight mb-1">{ex.name}</h4>
+                      <p className="text-[10px] uppercase font-bold text-text-secondary mt-0.5 truncate">
                         {ex.targetMuscles.join(', ')}
                       </p>
                     </div>
 
                     <button 
                       onClick={() => addExercise(ex)}
-                      className="w-10 h-10 bg-white/5 hover:bg-white/10 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 shrink-0 transition-transform"
+                      className="w-10 h-10 bg-white/5 hover:bg-white/10 text-text-primary rounded-full flex items-center justify-center shadow-lg active:scale-95 shrink-0 transition-transform"
                     >
                       <Plus size={20} />
                     </button>
@@ -354,19 +354,19 @@ export default function FreeWorkoutPage() {
       </main>
 
       {/* Floating Bottom Active Launcher */}
-      <div className="fixed bottom-0 left-0 right-0 p-5 bg-background/95 backdrop-blur-2xl border-t border-white/5 z-40">
+      <div className="fixed bottom-0 left-0 right-0 p-5 bg-background/95 backdrop-blur-2xl border-t border-surface-light z-40">
         <div className="max-w-2xl mx-auto flex gap-3">
           <button 
             onClick={handleSaveAsExtra}
             disabled={addedExercises.length === 0}
-            className="flex-1 py-4 bg-surface border border-white/10 text-white rounded-[20px] font-bold uppercase tracking-widest text-sm disabled:opacity-50 hover:bg-white/5 active:scale-95 transition-all"
+            className="flex-1 py-3 bg-surface border border-surface-light text-text-primary rounded-[20px] font-bold uppercase tracking-widest text-sm disabled:opacity-50 hover:bg-white/5 active:scale-95 transition-all"
           >
             SALVAR NO EXTRA
           </button>
           <button 
             onClick={handleStartWorkout}
             disabled={addedExercises.length === 0}
-            className="flex-[2] py-4 bg-gradient-to-r from-[#e57d3b] to-amber-500 disabled:from-surface disabled:to-surface disabled:text-slate-500 text-black rounded-[20px] font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(229,125,59,0.3)] disabled:shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all"
+            className="flex-[2] py-3 bg-gradient-to-r from-[#e57d3b] to-amber-500 disabled:from-surface disabled:to-surface disabled:text-text-secondary text-black rounded-[20px] font-black uppercase tracking-widest text-sm flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(229,125,59,0.3)] disabled:shadow-none hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
             <Play size={18} fill="currentColor" /> INICIAR AGORA
           </button>

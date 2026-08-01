@@ -432,7 +432,7 @@ export default function LoginPage() {
                     id="avatar-name-input"
                     type="text" 
                     placeholder="Ex: Sigma_01" 
-                    value={username}
+                    value={username || ""}
                     onChange={(e) => setUsername(e.target.value)}
                     className="w-full bg-background border border-white/10 rounded-2xl px-6 py-5 text-lg text-white font-bold placeholder:text-text-secondary/30 focus:outline-none focus:border-neon-blue/60 focus:bg-surface/50 transition-all shadow-inner"
                     required
@@ -460,7 +460,7 @@ export default function LoginPage() {
                   <input 
                     type="password" 
                     placeholder="••••••••" 
-                    value={password}
+                    value={password || ""}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full bg-background border border-white/10 rounded-2xl px-6 py-5 text-lg text-white font-bold placeholder:text-text-secondary/30 focus:outline-none focus:border-neon-blue/60 focus:bg-surface/50 transition-all shadow-inner"
                     required

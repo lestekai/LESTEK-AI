@@ -16,7 +16,13 @@ export default function TemplatesPage() {
   const [importError, setImportError] = useState('');
   const [copied, setCopied] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const categories = Array.from(new Set(PREMADE_TEMPLATES.map(t => t.category).filter(Boolean)));
+  const filteredTemplates = selectedCategory 
+    ? PREMADE_TEMPLATES.filter(t => t.category === selectedCategory) 
+    : PREMADE_TEMPLATES;
 
   const startFreeWorkoutFromTemplate = (day: any, templateName: string) => {
     const freeDay = {
@@ -94,14 +100,14 @@ export default function TemplatesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32 overflow-x-hidden text-white font-sans">
-      <header className="p-8 sticky top-0 bg-background/95 backdrop-blur-xl z-20 flex justify-between items-center border-b border-white/5 pt-12">
+    <div className="min-h-screen bg-background pb-32 overflow-x-hidden text-text-primary font-sans">
+      <header className="p-5 sticky top-0 bg-background/95 backdrop-blur-xl z-20 flex justify-between items-center border-b border-surface-light pt-12">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-slate-300 hover:text-white transition-all active:scale-95">
+          <button onClick={() => navigate(-1)} className="w-12 h-12 flex items-center justify-center bg-white/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95">
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-2xl font-black text-white tracking-wide">Templates</h1>
+            <h1 className="text-2xl font-black text-text-primary tracking-wide">Templates</h1>
             <p className="text-[11px] font-black text-neon-blue uppercase tracking-widest mt-0.5">Sistemas de Treino</p>
           </div>
         </div>
@@ -109,50 +115,78 @@ export default function TemplatesPage() {
 
       <main className="p-5 max-w-3xl mx-auto relative z-10 space-y-12 mt-4">
          <section className="relative z-10">
-            <h2 className="text-[11px] font-black tracking-widest uppercase text-slate-400 flex items-center gap-2 mb-6">
+            <h2 className="text-[11px] font-black tracking-widest uppercase text-text-secondary flex items-center gap-2 mb-4">
               <Zap size={16} className="text-neon-blue" /> Protocolos Homologados
             </h2>
+            
+            {categories.length > 0 && (
+              <div className="flex gap-2 overflow-x-auto pb-4 mb-2 no-scrollbar">
+                <button
+                  onClick={() => { setSelectedCategory(null); setExpandedIndex(null); }}
+                  className={`px-4 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${!selectedCategory ? 'bg-neon-blue text-black border-neon-blue' : 'bg-surface border-surface-light text-text-secondary hover:border-white/30'}`}
+                >
+                  Todos
+                </button>
+                {categories.map(cat => (
+                  <button
+                    key={cat as string}
+                    onClick={() => { setSelectedCategory(cat as string); setExpandedIndex(null); }}
+                    className={`px-4 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${selectedCategory === cat ? 'bg-neon-blue text-black border-neon-blue' : 'bg-surface border-surface-light text-text-secondary hover:border-white/30'}`}
+                  >
+                    {cat as string}
+                  </button>
+                ))}
+              </div>
+            )}
+
              <div className="space-y-4">
-              {PREMADE_TEMPLATES.map((tpl, i) => {
-                 const isExpanded = expandedIndex === i;
+              {filteredTemplates.map((tpl, idx) => {
+                 const originalIndex = PREMADE_TEMPLATES.indexOf(tpl);
+                 const isExpanded = expandedIndex === originalIndex;
                  return (
-                 <div key={i} className={`bg-surface transition-all duration-300 rounded-[32px] overflow-hidden border ${isExpanded ? 'border-neon-blue/50 shadow-lg shadow-neon-blue/10' : 'border-white/5 hover:border-white/20'}`}>
+                 <div key={tpl.id || originalIndex} className={`bg-surface transition-all duration-300 rounded-2xl overflow-hidden border ${isExpanded ? 'border-neon-blue/50 shadow-lg shadow-neon-blue/10' : 'border-surface-light hover:border-white/20'}`}>
                     <div 
-                      className="flex justify-between items-center cursor-pointer p-6 sm:p-8"
-                      onClick={() => setExpandedIndex(isExpanded ? null : i)}
+                      className="flex justify-between items-center cursor-pointer p-4 sm:p-5"
+                      onClick={() => setExpandedIndex(isExpanded ? null : originalIndex)}
                     >
                       <div className="pr-4">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-2 block">Template {String(i+1).padStart(2, '0')}</span>
-                        <h3 className={`text-xl font-black mb-2 leading-tight transition-colors ${isExpanded ? 'text-neon-blue' : 'text-white'}`}>{tpl.phaseName}</h3>
-                        <p className={`text-sm text-slate-400 font-medium transition-all ${isExpanded ? '' : 'line-clamp-2'}`}>{tpl.planPromptDescription}</p>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-neon-blue mb-2 block">{tpl.category || 'Template'} {tpl.subcategory ? `• ${tpl.subcategory}` : ''}</span>
+                        <h3 className={`text-xl font-black mb-2 leading-tight transition-colors ${isExpanded ? 'text-neon-blue' : 'text-text-primary'}`}>{tpl.phaseName}</h3>
+                        <p className={`text-sm text-text-secondary font-medium transition-all ${isExpanded ? '' : 'line-clamp-2'}`}>{tpl.planPromptDescription}</p>
+                        
+                        <div className="flex gap-2 mt-4 flex-wrap">
+                          {tpl.level && <span className="px-3 py-1 rounded-full bg-white/5 text-[9px] font-black uppercase tracking-widest text-text-secondary border border-surface-light">{tpl.level}</span>}
+                          {tpl.daysPerWeek && <span className="px-3 py-1 rounded-full bg-white/5 text-[9px] font-black uppercase tracking-widest text-text-secondary border border-surface-light">{tpl.daysPerWeek} Dias/Sem</span>}
+                          {tpl.durationWeeks && <span className="px-3 py-1 rounded-full bg-white/5 text-[9px] font-black uppercase tracking-widest text-text-secondary border border-surface-light">{tpl.durationWeeks} Semanas</span>}
+                        </div>
                       </div>
-                      <div className={`p-3 rounded-full border shrink-0 transition-all ${isExpanded ? 'bg-neon-blue/10 border-neon-blue/30 text-neon-blue' : 'bg-white/5 border-white/10 text-slate-400 group-hover:border-white/20'}`}>
+                      <div className={`p-3 rounded-full border shrink-0 transition-all ${isExpanded ? 'bg-neon-blue/10 border-neon-blue/30 text-neon-blue' : 'bg-white/5 border-surface-light text-text-secondary group-hover:border-white/20'}`}>
                         {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                       </div>
                     </div>
                     
                     {isExpanded && (
-                      <div className="p-6 sm:p-8 pt-0 space-y-8">
+                      <div className="p-4 sm:p-5 pt-0 space-y-4">
                         <div className="space-y-4">
-                          <h4 className="text-[9px] font-black uppercase text-slate-500 tracking-widest">Cronograma Semanal</h4>
+                          <h4 className="text-[9px] font-black uppercase text-text-secondary tracking-widest">Cronograma Semanal</h4>
                           <div className="grid gap-3">
                             {tpl.schedule.map((day: any, j: number) => (
-                              <div key={j} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-background border border-white/5 relative overflow-hidden group gap-4">
+                              <div key={j} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-background border border-surface-light relative overflow-hidden group gap-4">
                                 <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-white/5 group-hover:bg-neon-blue/50 transition-colors" />
                                 <div className="pl-3">
-                                  <span className="font-black text-white block text-sm">{day.dayName.split('-')[0]}</span>
-                                  <span className={`text-[11px] font-black uppercase tracking-widest ${day.isRest ? 'text-neon-purple' : 'text-slate-400'}`}>{day.focus}</span>
+                                  <span className="font-black text-text-primary block text-sm">{day.dayName.split('-')[0]}</span>
+                                  <span className={`text-[11px] font-black uppercase tracking-widest ${day.isRest ? 'text-neon-purple' : 'text-text-secondary'}`}>{day.focus}</span>
                                   
                                   {/* EXERCISE LIST (More Complete Display) */}
                                   {!day.isRest && day.exercises && (
                                     <div className="mt-3 flex flex-wrap gap-1.5">
                                       {day.exercises.slice(0, 4).map((ex: any, idx: number) => (
-                                        <span key={idx} className="text-[10px] bg-white/5 border border-white/5 text-slate-300 px-2 py-1 rounded-md line-clamp-1 max-w-[120px]" title={ex.name}>
+                                        <span key={idx} className="text-[10px] bg-white/5 border border-surface-light text-text-secondary px-2 py-1 rounded-md line-clamp-1 max-w-[120px]" title={ex.name}>
                                           {ex.sets}x {ex.name}
                                         </span>
                                       ))}
                                       {day.exercises.length > 4 && (
-                                        <span className="text-[10px] bg-white/5 border border-white/5 text-slate-400 px-2 py-1 rounded-md">
+                                        <span className="text-[10px] bg-white/5 border border-surface-light text-text-secondary px-2 py-1 rounded-md">
                                           +{day.exercises.length - 4} exs
                                         </span>
                                       )}
@@ -160,14 +194,14 @@ export default function TemplatesPage() {
                                   )}
                                 </div>
                                 <div className="flex flex-col items-end gap-3 pl-3 sm:pl-0 mt-3 sm:mt-0">
-                                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-surface px-3 py-1.5 rounded-lg border border-white/5">{day.exercises?.length || 0} exs</span>
+                                  <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest bg-surface px-3 py-1.5 rounded-lg border border-surface-light">{day.exercises?.length || 0} exs</span>
                                   {!day.isRest && (
                                     <button
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         startFreeWorkoutFromTemplate(day, tpl.phaseName);
                                       }}
-                                      className="py-1.5 px-4 bg-white/10 hover:bg-white text-white hover:text-black rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 shrink-0"
+                                      className="py-1.5 px-4 bg-white/10 hover:bg-white text-text-primary hover:text-black rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 shrink-0"
                                       title="Iniciar como Treino Livre"
                                     >
                                       <Activity size={12} /> Testar
@@ -192,7 +226,7 @@ export default function TemplatesPage() {
                               useWorkoutStore.getState().addUserTemplate(extraPlan as unknown as WorkoutPlan);
                               alert('Treino salvo nos Treinos Extras!');
                             }}
-                            className="flex-1 py-4 rounded-[20px] bg-surface border border-white/10 text-white font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-white/5 transition-all shadow-lg active:scale-95"
+                            className="flex-1 py-3 rounded-[20px] bg-surface border border-surface-light text-text-primary font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-white/5 transition-all shadow-lg active:scale-95"
                           >
                             <Save size={16}/> Salvar no Extra
                           </button>
@@ -201,7 +235,7 @@ export default function TemplatesPage() {
                               e.stopPropagation();
                               applyTemplate(tpl);
                             }}
-                            className="flex-[2] py-4 rounded-[20px] bg-neon-blue text-black font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-lg active:scale-95"
+                            className="flex-[2] py-3 rounded-[20px] bg-neon-blue text-black font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-lg active:scale-95"
                           >
                             <Check size={16}/> Aplicar Template
                           </button>
@@ -214,35 +248,35 @@ export default function TemplatesPage() {
             </div>
          </section>
 
-         <section className="border-t border-white/5 pt-10">
-            <h2 className="text-[11px] font-black tracking-widest uppercase text-emerald-500 mb-6 flex items-center gap-2">
+         <section className="border-t border-surface-light pt-10">
+            <h2 className="text-[11px] font-black tracking-widest uppercase text-emerald-500 mb-4 flex items-center gap-2">
               <Download size={16} /> Exportar Treino
             </h2>
             {currentPlan ? (
-              <div className="bg-surface border border-white/5 p-6 sm:p-8 rounded-[32px] flex flex-col sm:flex-row items-center justify-between gap-6 shadow-lg">
+              <div className="bg-surface border border-surface-light p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
                  <div className="text-center sm:text-left">
-                   <p className="font-black text-white text-lg">{currentPlan.phaseName}</p>
-                   <p className="text-xs text-slate-400 font-medium mt-1">Gere um backup completo</p>
+                   <p className="font-black text-text-primary text-lg">{currentPlan.phaseName}</p>
+                   <p className="text-xs text-text-secondary font-medium mt-1">Gere um backup completo</p>
                  </div>
                  <button 
                    onClick={handleExport}
-                   className="w-full sm:w-auto px-6 py-4 bg-background border border-white/10 rounded-[20px] text-white hover:border-neon-blue hover:text-neon-blue transition-all font-black uppercase tracking-widest text-[11px] flex gap-2 items-center justify-center shadow-inner"
+                   className="w-full sm:w-auto px-4 py-3 bg-background border border-surface-light rounded-[20px] text-text-primary hover:border-neon-blue hover:text-neon-blue transition-all font-black uppercase tracking-widest text-[11px] flex gap-2 items-center justify-center shadow-inner"
                  >
                    {copied ? <Check size={16} className="text-emerald-500" /> : <Download size={16} />} Salvar JSON
                  </button>
               </div>
             ) : (
-              <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-surface p-8 rounded-[32px] border border-white/5 border-dashed text-center">
+              <div className="text-[10px] font-black uppercase tracking-widest text-text-secondary bg-surface p-5 rounded-2xl border border-surface-light border-dashed text-center">
                 Você não possui um treino ativo para exportar.
               </div>
             )}
          </section>
 
-         <section className="border-t border-white/5 pt-10 pb-10">
-            <h2 className="text-[11px] font-black tracking-widest uppercase text-amber-500 mb-6 flex items-center gap-2">
+         <section className="border-t border-surface-light pt-10 pb-10">
+            <h2 className="text-[11px] font-black tracking-widest uppercase text-amber-500 mb-4 flex items-center gap-2">
               <Upload size={16} /> Importar Treino (JSON)
             </h2>
-            <div className="bg-surface border border-white/5 p-6 sm:p-8 rounded-[32px] space-y-6 shadow-lg">
+            <div className="bg-surface border border-surface-light p-4 sm:p-5 rounded-2xl space-y-4 shadow-lg">
               <input 
                  type="file" 
                  accept=".json"
@@ -252,21 +286,21 @@ export default function TemplatesPage() {
               />
               <button 
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full border-2 border-dashed border-white/10 text-slate-400 py-10 rounded-[24px] hover:border-amber-500/50 hover:bg-amber-500/5 hover:text-amber-500 transition-all text-sm font-black tracking-wider flex flex-col items-center gap-3"
+                className="w-full border-2 border-dashed border-surface-light text-text-secondary py-10 rounded-[24px] hover:border-amber-500/50 hover:bg-amber-500/5 hover:text-amber-500 transition-all text-sm font-black tracking-wider flex flex-col items-center gap-3"
               >
                  <Upload size={28} /> Escolher Arquivo .json
               </button>
               
               <div className="flex items-center gap-4 py-2 opacity-50">
                  <div className="h-px bg-white/10 flex-1" />
-                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Opção Manual</span>
+                 <span className="text-[9px] font-black text-text-secondary uppercase tracking-widest">Opção Manual</span>
                  <div className="h-px bg-white/10 flex-1" />
               </div>
 
               <textarea 
                 value={importJson}
                 onChange={e => { setImportJson(e.target.value); setImportError(''); }}
-                className="w-full bg-background border border-white/5 rounded-[20px] p-5 text-white focus:border-amber-500 outline-none text-xs font-mono font-medium h-40 resize-none shadow-inner"
+                className="w-full bg-background border border-surface-light rounded-[20px] p-5 text-text-primary focus:border-amber-500 outline-none text-xs font-mono font-medium h-40 resize-none shadow-inner"
                 placeholder="Cole o código JSON do treino aqui..."
               />
               {importError && (
@@ -275,7 +309,7 @@ export default function TemplatesPage() {
               <button 
                 onClick={handleImport}
                 disabled={!importJson.trim()}
-                className="w-full bg-amber-500 text-black py-5 rounded-[20px] font-black text-sm uppercase tracking-widest disabled:opacity-30 transition-all active:scale-95"
+                className="w-full bg-amber-500 text-black py-3 rounded-[20px] font-black text-sm uppercase tracking-widest disabled:opacity-30 transition-all active:scale-95"
               >
                 Importar e Aplicar
               </button>

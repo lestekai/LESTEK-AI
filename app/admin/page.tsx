@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { useAppStore } from '@/lib/store';
@@ -20,7 +20,7 @@ import AdminLogs from '@/components/admin/AdminLogs';
 import AdminSettings from '@/components/admin/AdminSettings';
 
 export default function AdminDashboard() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { profile } = useAppStore();
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -36,7 +36,7 @@ export default function AdminDashboard() {
 
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
-      navigate('/login');
+      router.push('/login');
       return;
     }
 
@@ -47,7 +47,7 @@ export default function AdminDashboard() {
       .single();
 
     if (error || data?.role !== 'admin') {
-      navigate('/dashboard');
+      router.push('/dashboard');
     } else {
       setIsAdmin(true);
       setLoading(false);
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
             <Shield className="text-neon-blue drop-shadow-[0_0_8px_rgba(0,240,255,0.5)]" size={24} />
             <h1 className="text-lg font-black font-display tracking-tight text-white leading-none">EVOLUX<br/><span className="text-[10px] text-neon-blue tracking-widest font-normal uppercase">Command</span></h1>
           </div>
-          <button onClick={() => navigate('/dashboard')} className="md:hidden p-2 text-text-secondary hover:text-white">
+          <button onClick={() => router.push('/dashboard')} className="md:hidden p-2 text-text-secondary hover:text-white">
             <ArrowLeft size={20} />
           </button>
         </div>
@@ -130,7 +130,7 @@ export default function AdminDashboard() {
         
         <div className="p-4 border-t border-surface-light">
           <button 
-            onClick={() => navigate('/dashboard')}
+            onClick={() => router.push('/dashboard')}
             className="w-full flex items-center justify-center gap-2 py-2 text-xs font-bold uppercase tracking-widest text-text-secondary hover:text-white transition-colors"
           >
             <ArrowLeft size={14} /> Voltar ao App

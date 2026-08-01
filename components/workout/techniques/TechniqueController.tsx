@@ -63,7 +63,7 @@ export function TechniqueController({ state, onAdvance, onComplete }: Props) {
           <span className="text-[10px] bg-neon-blue/20 text-neon-blue border border-neon-blue/40 px-2.5 py-1 rounded-lg uppercase font-black tracking-widest shadow-inner">
             {state.type.replace("_", " ")}
           </span>
-          <span className="text-[10px] text-slate-400 uppercase tracking-widest font-black">
+          <span className="text-[10px] text-text-secondary uppercase tracking-widest font-black">
             STAGE: {state.stage.replace(/_/g, " ")}
           </span>
         </div>
@@ -73,16 +73,16 @@ export function TechniqueController({ state, onAdvance, onComplete }: Props) {
       </div>
 
       {state.stage !== "completed" && internalTimeLeft > 0 ? (
-        <div className="flex flex-col items-center justify-center py-6 bg-background rounded-[16px] border border-white/5 shadow-inner">
+        <div className="flex flex-col items-center justify-center py-3 bg-background rounded-[16px] border border-surface-light shadow-inner">
             <span className="text-4xl font-black text-neon-blue tracking-tighter drop-shadow-[0_0_15px_rgba(0,210,255,0.5)]">
                 {internalTimeLeft}s
             </span>
-            <span className="text-[10px] text-slate-400 uppercase tracking-widest font-black mt-2">
+            <span className="text-[10px] text-text-secondary uppercase tracking-widest font-black mt-2">
                 Descanso Obrigatório
             </span>
             <button
                 onClick={handleAdvance}
-                className="text-[10px] mt-4 uppercase font-black text-slate-500 hover:text-white transition-colors tracking-widest bg-white/5 px-4 py-2 rounded-xl"
+                className="text-[10px] mt-4 uppercase font-black text-text-secondary hover:text-text-primary transition-colors tracking-widest bg-white/5 px-4 py-2 rounded-xl"
             >
                 Pular Rest
             </button>
@@ -91,7 +91,7 @@ export function TechniqueController({ state, onAdvance, onComplete }: Props) {
         <>
             <div className="flex items-center gap-3 w-full mt-2">
             <div className="flex-1">
-                <label className="text-[9px] text-slate-400 uppercase mb-2 font-black tracking-widest block text-center">
+                <label className="text-[9px] text-text-secondary uppercase mb-2 font-black tracking-widest block text-center">
                 Reps Feitas
                 </label>
                 <input
@@ -99,11 +99,11 @@ export function TechniqueController({ state, onAdvance, onComplete }: Props) {
                 value={reps}
                 onChange={(e) => setReps(e.target.value)}
                 placeholder="Reps"
-                className="w-full bg-background border border-white/5 rounded-[16px] py-4 text-center text-white text-lg font-black focus:border-neon-blue/50 outline-none shadow-inner transition-colors"
+                className="w-full bg-background border border-surface-light rounded-[16px] py-3 text-center text-text-primary text-lg font-black focus:border-neon-blue/50 outline-none shadow-inner transition-colors"
                 />
             </div>
             <div className="flex-1">
-                <label className="text-[9px] text-slate-400 uppercase mb-2 font-black tracking-widest block text-center">
+                <label className="text-[9px] text-text-secondary uppercase mb-2 font-black tracking-widest block text-center">
                 Carga (kg)
                 </label>
                 <input
@@ -111,13 +111,13 @@ export function TechniqueController({ state, onAdvance, onComplete }: Props) {
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
                 placeholder="Kg"
-                className="w-full bg-background border border-white/5 rounded-[16px] py-4 text-center text-white text-lg font-black focus:border-neon-blue/50 outline-none shadow-inner transition-colors"
+                className="w-full bg-background border border-surface-light rounded-[16px] py-3 text-center text-text-primary text-lg font-black focus:border-neon-blue/50 outline-none shadow-inner transition-colors"
                 />
             </div>
             </div>
             <button
                 onClick={handleAdvance}
-                className="w-full py-4 bg-neon-blue hover:brightness-110 text-black rounded-[16px] font-black text-xs uppercase tracking-widest mt-4 transition-all shadow-lg active:scale-95"
+                className="w-full py-3 bg-neon-blue hover:brightness-110 text-black rounded-[16px] font-black text-xs uppercase tracking-widest mt-4 transition-all shadow-lg active:scale-95"
             >
                 Avançar Etapa Técnica
             </button>
@@ -125,7 +125,7 @@ export function TechniqueController({ state, onAdvance, onComplete }: Props) {
       ) : (
         <button
           onClick={onComplete}
-          className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black rounded-[16px] font-black text-xs uppercase tracking-widest mt-4 transition-all shadow-lg active:scale-95"
+          className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-black rounded-[16px] font-black text-xs uppercase tracking-widest mt-4 transition-all shadow-lg active:scale-95"
         >
           Finalizar Técnica
         </button>

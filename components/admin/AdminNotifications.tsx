@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { Send, Users, Activity, CheckCircle, Search, Trash2 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
+import { logAdminAction } from '@/lib/admin';
 
 export default function AdminNotifications() {
   const [title, setTitle] = useState('');
@@ -43,6 +44,7 @@ export default function AdminNotifications() {
 
       if (error) throw error;
       alert('Notificação enviada com sucesso para todos os usuários!');
+      if (profile) logAdminAction(profile.id, 'SEND_GLOBAL_NOTIFICATION', 'all', { title, message });
       setTitle('');
       setMessage('');
       fetchHistory();
@@ -55,6 +57,7 @@ export default function AdminNotifications() {
   const deleteNotification = async (id: string) => {
     if(!confirm("Deletar notificação?")) return;
     await supabaseAdmin.from('notifications').delete().eq('id', id);
+    if (profile) logAdminAction(profile.id, 'DELETE_NOTIFICATION', id, {});
     fetchHistory();
   };
 

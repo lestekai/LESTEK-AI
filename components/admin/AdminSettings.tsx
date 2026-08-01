@@ -1,7 +1,10 @@
 import { Settings, Save, Server, Globe, Power } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAppStore } from '@/lib/store';
+import { logAdminAction } from '@/lib/admin';
 
 export default function AdminSettings() {
+  const { profile } = useAppStore();
   const [maintenance, setMaintenance] = useState(false);
   const [version, setVersion] = useState('1.5.0-beta');
   const [features, setFeatures] = useState({
@@ -9,9 +12,32 @@ export default function AdminSettings() {
     social_feed: false,
     store: true
   });
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    const loaded = localStorage.getItem('evolux_global_settings');
+    if (loaded) {
+      try {
+        const parsed = JSON.parse(loaded);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMaintenance(parsed.maintenance ?? false);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setVersion(parsed.version ?? '1.5.0-beta');
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (parsed.features) setFeatures(parsed.features);
+      } catch (e) {}
+    }
+  }, []);
 
   const handleSave = () => {
-    alert('Configurações do sistema atualizadas e propagadas para os servidores!');
+    localStorage.setItem('evolux_global_settings', JSON.stringify({
+      maintenance,
+      version,
+      features
+    }));
+    if (profile) logAdminAction(profile.id, 'UPDATE_SETTINGS', 'global', { maintenance, version, features });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
   };
 
   return (
@@ -63,7 +89,7 @@ export default function AdminSettings() {
               <div key={key} className="flex items-center justify-between p-4 bg-background border border-white/5 rounded-xl">
                 <span className="text-sm font-bold text-white capitalize">{key.replace('_', ' ')}</span>
                 <button 
-                  onClick={() => setFeatures({...features, [key]: !value})}
+                  onClick={() => setFeatures({...features, [key as keyof typeof features]: !value})}
                   className={`w-10 h-5 rounded-full relative transition-colors ${value ? 'bg-emerald-500' : 'bg-surface-light'}`}
                 >
                   <div className={`w-3 h-3 bg-white rounded-full absolute top-1 transition-transform ${value ? 'left-6' : 'left-1'}`} />
@@ -73,8 +99,7 @@ export default function AdminSettings() {
           </div>
           
           <button onClick={handleSave} className="mt-6 w-full py-3 bg-neon-blue text-black font-bold rounded-xl flex items-center justify-center gap-2 transition-transform hover:scale-105">
-            <Save size={18} />
-            Salvar Configurações
+            {saved ? <span className="text-emerald-900">Configurações Salvas!</span> : <><Save size={18} /> Salvar Configurações</>}
           </button>
         </div>
       </div>

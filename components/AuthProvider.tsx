@@ -8,7 +8,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const pathname = useLocation().pathname;
-  const { setProfile, setTasks, setGoals, profile, tasks, goals } = useAppStore();
+  const { setProfile, setTasks, setGoals, setTransactions, profile, tasks, goals, transactions } = useAppStore();
   const { 
     setPlan, setQuestionnaireData, setWorkoutHistory, setFreeWorkout, setUserTemplates, updateSettings, setSelectedProgressionWeek,
     currentPlan, workoutHistory, questionnaire, userTemplates, activeFreeWorkout, settings, selectedProgressionWeek 
@@ -85,8 +85,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (backup) {
         if (backup.tasks) setTasks(backup.tasks);
         if (backup.goals) setGoals(backup.goals);
+        if (backup.transactions) setTransactions(backup.transactions);
         if (backup.workoutPlan !== undefined) setPlan(backup.workoutPlan);
-        if (backup.workoutHistory) setWorkoutHistory(backup.workoutHistory);
+        if (backup.workoutHistory) setWorkoutHistory(Array.isArray(backup.workoutHistory) ? backup.workoutHistory : []);
         if (backup.questionnaire) setQuestionnaireData(backup.questionnaire);
         if (backup.userTemplates) setUserTemplates(backup.userTemplates);
         if (backup.activeFreeWorkout !== undefined) setFreeWorkout(backup.activeFreeWorkout);
@@ -95,7 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
     syncLock.current = false;
-  }, [setGoals, setPlan, setProfile, setQuestionnaireData, setTasks, setWorkoutHistory, setUserTemplates, setFreeWorkout, updateSettings, setSelectedProgressionWeek]);
+  }, [setGoals, setPlan, setProfile, setQuestionnaireData, setTasks, setWorkoutHistory, setUserTemplates, setFreeWorkout, updateSettings, setSelectedProgressionWeek, setTransactions]);
 
   useEffect(() => {
     if (useAppStore.getState().profile?.id === 'test-admin-id') return;
@@ -105,7 +106,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session) {
         fetchProfile(session.user.id);
       } else {
-        setProfile(null);
+                const { logout } = useAppStore.getState();
+        const { resetWorkoutSystem } = useWorkoutStore.getState();
+        logout();
+        resetWorkoutSystem();
+        localStorage.removeItem('workout_q_step');
+        localStorage.removeItem('workout_q_data');
+        localStorage.removeItem('onboarding_step');
+        localStorage.removeItem('onboarding_answers');
+        localStorage.removeItem('evolux_finance');
         if (pathname !== '/' && pathname !== '/login' && pathname !== '/plans') {
            navigate('/login');
         }
@@ -117,7 +126,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session) {
         fetchProfile(session.user.id);
       } else {
-        setProfile(null);
+                const { logout } = useAppStore.getState();
+        const { resetWorkoutSystem } = useWorkoutStore.getState();
+        logout();
+        resetWorkoutSystem();
+        localStorage.removeItem('workout_q_step');
+        localStorage.removeItem('workout_q_data');
+        localStorage.removeItem('onboarding_step');
+        localStorage.removeItem('onboarding_answers');
+        localStorage.removeItem('evolux_finance');
         if (pathname !== '/' && pathname !== '/login' && pathname !== '/plans') {
            navigate('/login');
         }
@@ -146,6 +163,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             _backup: {
               tasks, 
               goals,
+              transactions,
               workoutPlan: currentPlan,
               workoutHistory,
               questionnaire,
@@ -163,7 +181,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const debounce = setTimeout(syncBackup, 2000); // 2 second debounce
     return () => clearTimeout(debounce);
-  }, [tasks, goals, currentPlan, workoutHistory, questionnaire, userTemplates, activeFreeWorkout, settings, selectedProgressionWeek, profile?.id, profile?.xp, profile?.streak, profile?.totalTasksCompleted, profile?.avatarLevel]);
+  }, [tasks, goals, transactions, currentPlan, workoutHistory, questionnaire, userTemplates, activeFreeWorkout, settings, selectedProgressionWeek, profile?.id, profile?.xp, profile?.streak, profile?.totalTasksCompleted, profile?.avatarLevel]);
 
   return <>{children}</>;
 }

@@ -60,7 +60,7 @@ export default function ActiveWorkoutPage() {
     updateSettings,
     activeFreeWorkout,
     updateFreeWorkout,
-    workoutHistory,
+    workoutHistory: rawWorkoutHistory,
     setWorkoutHistory,
     selectedProgressionWeek,
     questionnaire,
@@ -69,6 +69,7 @@ export default function ActiveWorkoutPage() {
     setActiveWorkoutSession,
     updateActiveWorkoutSession
   } = useWorkoutStore();
+  const workoutHistory = Array.isArray(rawWorkoutHistory) ? rawWorkoutHistory : [];
   const { profile, addXp } = useAppStore();
 
   const [activeExerciseIndex, setActiveExerciseIndex] = useState(activeWorkoutSession?.activeExerciseIndex || 0);
@@ -325,6 +326,7 @@ export default function ActiveWorkoutPage() {
 
   // For adding exercises mid-workout
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [fullscreenExercise, setFullscreenExercise] = useState<ExerciseDefinition | null>(null);
   const [addSearchQuery, setAddSearchQuery] = useState("");
 
   const [showDemo, setShowDemo] = useState(false);
@@ -523,17 +525,17 @@ export default function ActiveWorkoutPage() {
     : !currentPlan || !todayPlan;
   if (isPlanMissing || exercises.length === 0 || !currentExercise) {
     return (
-      <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-center p-6 text-center pb-24">
+      <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-center p-4 text-center pb-24">
         <Dumbbell size={48} className="text-surface-light mb-4" />
-        <h1 className="text-xl font-bold text-white mb-2">
+        <h1 className="text-xl font-bold text-text-primary mb-2">
           Treino não encontrado
         </h1>
-        <p className="text-text-secondary text-sm mb-6">
+        <p className="text-text-secondary text-sm mb-4">
           Não foi possível carregar os exercícios de hoje.
         </p>
         <button
           onClick={() => navigate("/workouts")}
-          className="px-6 py-3 bg-neon-blue text-background font-bold rounded-xl active:scale-95 transition-all"
+          className="px-4 py-3 bg-neon-blue text-background font-bold rounded-xl active:scale-95 transition-all"
         >
           Voltar aos Treinos
         </button>
@@ -543,29 +545,29 @@ export default function ActiveWorkoutPage() {
 
   if (!exercises.length || workoutFinished) {
     return (
-      <div className="min-h-[100dvh] bg-background p-6 flex flex-col items-center justify-center text-center">
+      <div className="min-h-[100dvh] bg-background p-4 flex flex-col items-center justify-center text-center">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring" }}
-          className="w-24 h-24 bg-gradient-to-br from-neon-blue to-neon-purple rounded-full flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(0,210,255,0.4)] border border-neon-blue/40"
+          className="w-24 h-24 bg-gradient-to-br from-neon-blue to-neon-purple rounded-full flex items-center justify-center mb-4 shadow-[0_0_40px_rgba(0,210,255,0.4)] border border-neon-blue/40"
         >
           <CheckCircle size={48} className="text-black" />
         </motion.div>
         
-        <h1 className="text-4xl font-black text-white tracking-tight mb-2">
+        <h1 className="text-4xl font-black text-text-primary tracking-tight mb-2">
           Treino Concluído!
         </h1>
-        <p className="text-sm text-slate-300 font-medium mb-6 px-4 max-w-sm">
+        <p className="text-sm text-text-secondary font-medium mb-4 px-4 max-w-sm">
           Excelente trabalho! Você deu mais um passo em direção ao seu objetivo. O descanso agora é fundamental.
         </p>
 
-        <div className="p-5 rounded-3xl w-full max-w-sm flex justify-around bg-surface border border-white/10 shadow-xl mb-8">
+        <div className="p-5 rounded-2xl w-full max-w-sm flex justify-around bg-surface border border-surface-light shadow-xl mb-4">
           <div className="flex flex-col items-center gap-1">
             <span className="uppercase text-[10px] font-black text-neon-blue tracking-wider">
               Tempo Total
             </span>
-            <span className="font-bold text-white text-2xl font-mono">
+            <span className="font-bold text-text-primary text-2xl font-mono">
               {Math.floor(workoutSeconds / 60)} min
             </span>
           </div>
@@ -574,7 +576,7 @@ export default function ActiveWorkoutPage() {
             <span className="uppercase text-[10px] font-black text-neon-blue tracking-wider">
               Exercícios
             </span>
-            <span className="font-bold text-white text-2xl font-mono">
+            <span className="font-bold text-text-primary text-2xl font-mono">
               {exercises.length}
             </span>
           </div>
@@ -582,7 +584,7 @@ export default function ActiveWorkoutPage() {
 
         <button
           onClick={() => navigate("/workouts")}
-          className="w-full max-w-sm py-4 rounded-3xl uppercase tracking-widest cursor-pointer bg-gradient-to-r from-neon-blue to-neon-purple text-black font-black text-sm shadow-[0_10px_30px_rgba(0,210,255,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-transform"
+          className="w-full max-w-sm py-3 rounded-2xl uppercase tracking-widest cursor-pointer bg-gradient-to-r from-neon-blue to-neon-purple text-black font-black text-sm shadow-[0_10px_30px_rgba(0,210,255,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-transform"
         >
           VOLTAR AOS TREINOS
         </button>
@@ -958,18 +960,17 @@ export default function ActiveWorkoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative flex flex-col">
+    <div className="min-h-screen bg-background relative flex flex-col text-sm">
       {/* FLOATING XP */}
       <AnimatePresence>
         {floatingXps.map((fx) => (
           <motion.div
             key={fx.id}
             initial={{ opacity: 1, y: fx.y, x: fx.x, scale: 0.5 }}
-            animate={{ opacity: 0, y: fx.y - 100, scale: 1.5 }}
+            animate={{ opacity: 0, y: fx.y - 80, scale: 1.2 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="fixed z-50 font-bold font-display pointer-events-none drop-shadow-[0_0_10px_rgba(245,158,11,0.8)] text-amber-400"
-            style={{ textShadow: "0 0 10px rgba(245,158,11,0.8)" }}
+            transition={{ duration: 1 }}
+            className="fixed z-50 font-black pointer-events-none drop-shadow-[0_0_8px_rgba(245,158,11,0.8)] text-amber-400"
           >
             +{fx.xp} XP
           </motion.div>
@@ -983,828 +984,332 @@ export default function ActiveWorkoutPage() {
             initial={{ opacity: 0, scale: 0.8, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -50 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
           >
-            <div className="bg-surface border border-amber-500/40 rounded-3xl p-6 w-full max-w-xs shadow-[0_0_30px_rgba(245,158,11,0.25)] text-center relative overflow-hidden">
+            <div className="bg-surface border border-amber-500/40 rounded-2xl p-4 w-full max-w-xs shadow-[0_0_30px_rgba(245,158,11,0.25)] text-center relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
-              <div className="w-16 h-16 bg-amber-500/10 border border-amber-500/30 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-                <span className="text-3xl">🏆</span>
+              <div className="w-12 h-12 bg-amber-500/10 border border-amber-500/30 rounded-full flex items-center justify-center mx-auto mb-3 animate-bounce">
+                <span className="text-2xl">🏆</span>
               </div>
-              <h2 className="text-amber-500 font-extrabold text-lg uppercase tracking-wider">
-                Novo Recorde !
+              <h2 className="text-amber-500 font-extrabold text-base uppercase tracking-wider">
+                Novo Recorde!
               </h2>
-              <p className="text-[11px] text-text-secondary mt-1 uppercase font-bold tracking-widest">
+              <p className="text-xs text-text-secondary mt-1 uppercase font-bold tracking-widest truncate">
                 {prCelebration.name}
               </p>
-              <div className="mt-4 bg-background/50 border border-white/5 p-3 rounded-xl">
+              <div className="mt-4 bg-background/50 border border-surface-light p-3 rounded-xl flex flex-col items-center">
                 <span className="text-[10px] text-text-secondary uppercase font-bold block mb-1">
-                  Novo Marco de {prCelebration.type}
+                  {prCelebration.type}
                 </span>
-                <span className="text-2xl font-extrabold font-mono text-white">
-                  {prCelebration.val}{" "}
-                  {prCelebration.type === "Repetições" ? "Reps" : "kg"}
+                <span className="text-xl font-extrabold font-mono text-text-primary">
+                  {prCelebration.val} {prCelebration.type === "Repetições" ? "Reps" : "kg"}
                 </span>
               </div>
-              <p className="text-[10px] text-text-secondary mt-3 leading-relaxed">
-                Você superou seus limites do passado. Continue subindo de nível!
-              </p>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* HEADER */}
-      <div className="bg-surface/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between sticky top-0 z-40 shadow-sm px-5 py-4">
-        <button
-          onClick={() => setShowCancelModal(true)}
-          className="w-12 h-12 rounded-full flex items-center justify-center bg-white/5 text-white hover:bg-white/10 transition-colors"
-        >
-          <ArrowLeft size={24} />
-        </button>
-        
-        <div className="text-center flex flex-col items-center">
-          {currentPlan?.phases && currentPlan.phases.length > 0 && (
-            <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1 bg-white/5 px-2 py-0.5 rounded">
-              Fase {(currentPlan.currentPhaseIndex || 0) + 1} • Sem {(currentPlan.currentWeekIndex || 0) + 1}
-            </span>
-          )}
-          <h3 className="font-black uppercase tracking-widest leading-none mb-1 text-[13px] text-neon-blue">
-            {todayPlan.dayName}
-          </h3>
-          <div className="flex gap-2 items-center">
-            <span className="font-mono flex items-center gap-1.5 text-xs text-neon-blue bg-neon-blue/10 border border-neon-blue/20 px-2 py-0.5 rounded font-bold">
-              <Clock size={12} /> {formatedWorkoutTimer()}
-            </span>
-            <span
-              className="font-extrabold cursor-pointer transition-colors text-xs text-white bg-white/5 border border-white/10 px-2 py-0.5 rounded hover:bg-white/10"
-              onClick={() => setShowOverview(true)}
-            >
-              {activeExerciseIndex + 1} / {exercises.length}{" "}
-              <Search size={12} className="inline ml-1" />
+      {/* HEADER COMPACT */}
+      <div className="bg-surface/90 backdrop-blur-md border-b border-surface-light flex items-center justify-between sticky top-0 z-40 px-4 py-2">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowCancelModal(true)}
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 text-text-primary hover:bg-white/10 transition-colors"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <div className="flex flex-col">
+            <h3 className="font-bold uppercase tracking-widest text-[11px] text-neon-blue">
+              {todayPlan?.dayName || "Treino Livre"}
+            </h3>
+            <span className="font-mono flex items-center gap-1 text-[10px] text-text-secondary">
+              <Clock size={10} /> {formatedWorkoutTimer()}
             </span>
           </div>
         </div>
-        
-        <div className="flex items-center gap-2">
+                
+        <div className="flex items-center gap-3">
+           <span
+              className="font-extrabold cursor-pointer transition-colors text-[10px] text-text-primary bg-white/5 border border-surface-light px-2 py-1 rounded hover:bg-white/10 flex items-center gap-1"
+              onClick={() => setShowOverview(true)}
+            >
+              {activeExerciseIndex + 1}/{exercises.length} <Search size={10} />
+            </span>
           <button
             onClick={() => setShowSettingsModal(true)}
-            className="w-12 h-12 flex items-center justify-center text-text-secondary hover:text-white bg-white/5 border border-white/5 hover:bg-white/10 rounded-full transition-all focus:outline-none"
+            className="w-8 h-8 flex items-center justify-center text-text-secondary hover:text-text-primary bg-white/5 rounded-full transition-colors"
           >
-            <Settings size={20} />
+            <Settings size={14} />
           </button>
-          
           <button
             onClick={finishWorkout}
-            className="text-[11px] text-white bg-gradient-to-r from-emerald-500 to-emerald-600 font-extrabold uppercase tracking-widest px-4 py-3 rounded-2xl shadow-[0_2px_10px_rgba(16,185,129,0.3)] hover:brightness-110 transition-colors active:scale-95"
+            className="text-[10px] text-black bg-emerald-500 font-extrabold uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-[0_0_10px_rgba(16,185,129,0.2)] hover:bg-emerald-400 transition-colors"
           >
-            CONCLUIR
+            Concluir
           </button>
         </div>
       </div>
 
       {/* MAIN WORKOUT VIEW */}
-      <div className="flex-1 overflow-y-auto p-4 pb-32">
-        {/* CONSOLE DE TESTES (SIMPLIFICADO) */}
-        <div className="mb-4 bg-surface border border-surface-light rounded-2xl overflow-hidden shadow-sm">
-          <button
-            onClick={() => setShowConsole(!showConsole)}
-            className="w-full p-4 flex items-center justify-between text-left focus:outline-none cursor-pointer hover:bg-white/[0.02] transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-white font-bold uppercase tracking-wider flex items-center gap-2">
-                🚀 Controle de Testes
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-text-secondary text-sm font-medium">
-              {showConsole ? "Ocultar" : "Mostrar"}
-            </div>
-          </button>
+      <div className="flex-1 overflow-y-auto px-2 py-3 pb-32 space-y-2">
+         {exercises.map((currentExercise, index) => {
+            const isExpanded = activeExerciseIndex === index;
+            const isCompletedBefore = index < activeExerciseIndex;
+            const libraryExercise = EXERCISE_LIBRARY.find(
+              (ex) =>
+                ex.id === currentExercise.libraryId ||
+                ex.name.toLowerCase() === currentExercise.name.toLowerCase()
+            );
 
-          <motion.div
-            initial={false}
-            animate={{
-              opacity: showConsole ? 1 : 0,
-              height: showConsole ? "auto" : 0,
-            }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
-            <div className="p-4 pt-0 space-y-6 border-t border-surface-light">
-              
-              {/* TÉCNICAS RÁPIDAS */}
-              <div className="space-y-3 pt-4">
-                <label className="text-xs text-text-secondary font-bold uppercase tracking-wider">
-                  Testar Técnicas Avançadas
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    onClick={() => seedPhase4Scenario("superset")}
-                    className={`py-3 px-2 rounded-xl text-sm font-bold transition-colors ${exercises[0]?.supersetGroup === "A1" ? "bg-neon-blue text-black" : "bg-surface-light hover:bg-white/10 text-white"}`}
+            return (
+              <div key={`${currentExercise.id}-${index}`} className={`bg-surface/60 border transition-all duration-300 overflow-hidden ${isExpanded ? 'border-neon-blue/30 rounded-2xl shadow-[0_0_15px_rgba(0,210,255,0.05)]' : 'border-surface-light rounded-xl opacity-80'}`}>
+                
+                {/* Accordion Header */}
+                <div 
+                  onClick={() => {
+                    setActiveExerciseIndex(index);
+                    setCompletedSets(completedSetsMap[index] || []);
+                  }}
+                  className={`flex items-stretch gap-3 p-2 cursor-pointer transition-colors ${isExpanded ? 'bg-white/5' : 'hover:bg-white/[0.02]'}`}
+                >
+                  <div 
+                    className="w-12 h-12 rounded-lg shrink-0 relative overflow-hidden bg-background border border-surface-light group flex items-center justify-center"
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      setFullscreenExercise(currentExercise);
+                    }}
                   >
-                    Superset A1-A2
-                  </button>
-                  <button
-                    onClick={() => seedPhase4Scenario("Drop Set")}
-                    className={`py-3 px-2 rounded-xl text-sm font-bold transition-colors ${currentExercise?.advancedTechnique === "Drop Set" ? "bg-neon-purple text-white" : "bg-surface-light hover:bg-white/10 text-white"}`}
-                  >
-                    Drop Set
-                  </button>
-                  <button
-                    onClick={() => seedPhase4Scenario("Rest Pause")}
-                    className={`py-3 px-2 rounded-xl text-sm font-bold transition-colors ${currentExercise?.advancedTechnique === "Rest Pause" ? "bg-white text-black" : "bg-surface-light hover:bg-white/10 text-white"}`}
-                  >
-                    Rest Pause
-                  </button>
-                  <button
-                    onClick={() => seedPhase4Scenario("Cluster Set")}
-                    className={`py-3 px-2 rounded-xl text-sm font-bold transition-colors ${currentExercise?.advancedTechnique === "Cluster Set" ? "bg-emerald-500 text-black" : "bg-surface-light hover:bg-white/10 text-white"}`}
-                  >
-                    Cluster Set
-                  </button>
-                  <button
-                    onClick={() => seedPhase4Scenario("Myo Reps")}
-                    className={`py-3 px-2 rounded-xl text-sm font-bold transition-colors ${currentExercise?.advancedTechnique === "Myo Reps" ? "bg-amber-500 text-black" : "bg-surface-light hover:bg-white/10 text-white"}`}
-                  >
-                    Myo Reps
-                  </button>
-                  <button
-                    onClick={() => seedPhase4Scenario("FST-7")}
-                    className={`py-3 px-2 rounded-xl text-sm font-bold transition-colors ${currentExercise?.advancedTechnique === "FST-7" ? "bg-red-500 text-white" : "bg-surface-light hover:bg-white/10 text-white"}`}
-                  >
-                    FST-7
-                  </button>
-                </div>
-              </div>
-
-              {/* SIMULAR HISTÓRICO */}
-              <div className="space-y-3 pt-2 border-t border-surface-light/30">
-                <label className="text-xs text-text-secondary font-bold uppercase tracking-wider">
-                  Simular Nível do Atleta
-                </label>
-                <div className="grid grid-cols-3 gap-3">
-                  <button
-                    onClick={() => seedScenario("novo")}
-                    className={`py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-colors ${activeScenario === "novo" ? "bg-neon-blue text-black" : "bg-surface-light hover:bg-white/10 text-white"}`}
-                  >
-                    Iniciante
-                  </button>
-                  <button
-                    onClick={() => seedScenario("intermediario")}
-                    className={`py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-colors ${activeScenario === "intermediario" ? "bg-amber-500 text-black" : "bg-surface-light hover:bg-white/10 text-white"}`}
-                  >
-                    Intermediário
-                  </button>
-                  <button
-                    onClick={() => seedScenario("avancado")}
-                    className={`py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-colors ${activeScenario === "avancado" ? "bg-red-500 text-white" : "bg-surface-light hover:bg-white/10 text-white"}`}
-                  >
-                    Avançado
-                  </button>
-                </div>
-              </div>
-
-              {/* AJUSTES RELÂMPAGO DO EXERCÍCIO */}
-              {currentExercise && (
-                <div className="space-y-4 pt-2 border-t border-surface-light/30">
-                  <label className="text-xs text-text-secondary font-bold uppercase tracking-wider">
-                    Ajustar Exercício Atual ({currentExercise.name})
-                  </label>
-
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-surface-light rounded-xl p-3 flex flex-col items-center justify-center">
-                      <span className="text-xs text-text-secondary mb-2">Séries</span>
-                      <div className="flex w-full items-center justify-between">
-                        <button
-                          onClick={() => handleEditExercise(activeExerciseIndex, "sets", Math.max(1, (currentExercise.sets || 3) - 1))}
-                          className="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-white/20 rounded-lg text-white font-bold"
-                        >
-                          -
-                        </button>
-                        <span className="text-white font-bold text-lg">{currentExercise.sets}</span>
-                        <button
-                          onClick={() => handleEditExercise(activeExerciseIndex, "sets", (currentExercise.sets || 3) + 1)}
-                          className="w-8 h-8 flex items-center justify-center bg-white/5 hover:bg-white/20 rounded-lg text-white font-bold"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="bg-surface-light rounded-xl p-3 flex flex-col items-center justify-center">
-                      <span className="text-xs text-text-secondary mb-2">Repetições</span>
-                      <input
-                        type="text"
-                        value={currentExercise.reps || ""}
-                        onChange={(e) => handleEditExercise(activeExerciseIndex, "reps", e.target.value)}
-                        className="w-full bg-transparent text-white font-bold text-center text-lg outline-none placeholder:text-white/30"
-                        placeholder="Ex: 10"
-                      />
-                    </div>
-
-                    <div className="bg-surface-light rounded-xl p-3 flex flex-col items-center justify-center">
-                      <span className="text-xs text-text-secondary mb-2">Descanso (s)</span>
-                      <input
-                        type="number"
-                        value={currentExercise.restSeconds || 0}
-                        onChange={(e) => handleEditExercise(activeExerciseIndex, "restSeconds", parseInt(e.target.value) || 0)}
-                        className="w-full bg-transparent text-white font-bold text-center text-lg outline-none placeholder:text-white/30"
-                        placeholder="60"
-                      />
-                    </div>
+                     <ExerciseMedia
+                        exerciseNameOrId={currentExercise.libraryId || currentExercise.name || currentExercise.id}
+                        fallbackMuscle={currentExercise.targetMuscles?.[0] || currentExercise.target || "Corpo Todo"}
+                        priority={isExpanded}
+                     />
+                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                       <Play size={16} className="text-text-primary" />
+                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      onClick={() => {
-                        setCompletedSets([]);
-                        const newCompletedMap = { ...completedSetsMap, [activeExerciseIndex]: [] };
-                        setCompletedSetsMap(newCompletedMap);
-                        setSeedingFeedback("Séries apagadas.");
-                      }}
-                      className="py-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl text-sm font-bold transition-colors"
-                    >
-                      Zerar Progresso
-                    </button>
-                    
-                    <button
-                      onClick={() => {
-                        const w = selectedProgressionWeek >= 4 ? 0 : selectedProgressionWeek + 1;
-                        setSelectedProgressionWeek(w);
-                      }}
-                      className="py-3 bg-surface-light hover:bg-white/10 rounded-xl text-sm font-bold text-white transition-colors"
-                    >
-                      Ciclo: {selectedProgressionWeek === 0 ? "Auto" : `Semana ${selectedProgressionWeek}`}
-                    </button>
+                  <div className="flex-1 min-w-0 flex flex-col justify-center py-1">
+                     <h3 className={`text-xs font-bold truncate ${isExpanded ? 'text-neon-blue' : isCompletedBefore ? 'text-emerald-500' : 'text-text-primary'}`}>{currentExercise.name}</h3>
+                     <div className="flex items-center gap-2 mt-0.5">
+                       <p className="text-[9px] text-text-secondary uppercase font-bold tracking-widest">{currentExercise.sets}x{currentExercise.reps}</p>
+                       {currentExercise.supersetGroup && (
+                          <span className="text-[8px] bg-neon-blue/20 text-neon-blue uppercase px-1 rounded font-extrabold">
+                             🔄 {currentExercise.supersetGroup}
+                          </span>
+                       )}
+                       {currentExercise.advancedTechnique && currentExercise.advancedTechnique !== "Nenhuma" && (
+                          <span className="text-[8px] bg-red-500/20 text-red-500 uppercase px-1 rounded font-extrabold">
+                             🔥 {currentExercise.advancedTechnique}
+                          </span>
+                       )}
+                     </div>
                   </div>
-                </div>
-              )}
 
-              {seedingFeedback && (
-                <div className="bg-emerald-500/10 text-emerald-500 p-3 rounded-xl text-sm text-center font-medium">
-                  {seedingFeedback}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        </div>
-
-        <AnimatePresence mode="wait">
-          {currentExercise && (
-            <motion.div
-              key={`${currentExercise.id}-${activeExerciseIndex}`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
-            >
-              {/* Exercise Info */}
-              <div className="text-center mt-2 mb-4">
-                {/* TECHNIQUE & SUPERSET BADGES */}
-                <div className="flex flex-wrap justify-center gap-2 mb-2">
-                  {currentExercise.supersetGroup && (
-                    <span className="text-[10px] bg-neon-blue/20 border border-neon-blue text-neon-blue font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-[0_0_15px_rgba(0,210,255,0.3)]">
-                      🔄 Execução Combinada ({currentExercise.supersetGroup})
-                    </span>
-                  )}
-                  {currentExercise.advancedTechnique &&
-                    currentExercise.advancedTechnique !== "Nenhuma" && (
-                      <span className="text-[10px] bg-red-500/20 border border-red-500 text-red-500 font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-pulse">
-                        🔥 Técnica Otimizada: {currentExercise.advancedTechnique}
-                      </span>
-                    )}
-                </div>
-                <h1 className="text-3xl font-black text-white mb-1.5 leading-tight px-4 drop-shadow-md">
-                  {currentExercise.name}
-                </h1>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                  Foco Primário: <span className="text-neon-blue">{currentExercise.targetMuscles?.join(", ") || "Corpo Todo"}</span>
-                </p>
-              </div>
-
-              <div className="bg-surface/60 backdrop-blur-md border border-white/10 rounded-2xl p-4 text-center space-y-2 shadow-xl">
-                <div className="text-[9px] uppercase tracking-widest text-slate-400 font-black">
-                  🎯 OBJETIVO DA SÉRIE
-                </div>
-                <div className="flex justify-around items-center">
-                  <div className="flex flex-col items-center">
-                    <span className="text-[9px] uppercase text-neon-blue font-black mb-1">Repetições</span>
-                    <span className="text-3xl font-black text-white drop-shadow-md">{currentExercise.reps}</span>
-                  </div>
-                  <div className="w-px h-10 bg-white/10" />
-                  <div className="flex flex-col items-center">
-                    <span className="text-[9px] uppercase text-neon-blue font-black mb-1">Descanso</span>
-                    <span className="text-2xl font-black text-neon-blue mt-0.5">{currentExercise.restSeconds || 60}s</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Botão de Como Realizar */}
-              <button
-                onClick={() => setShowDemo(!showDemo)}
-                className="w-full py-3 bg-surface border border-surface-light hover:border-white/20 transition-all rounded-xl text-sm font-bold text-text-secondary flex items-center justify-center gap-2"
-              >
-                <Play size={16} className={showDemo ? "text-neon-blue" : ""} />{" "}
-                {showDemo ? "Ocultar Instruções" : "Como Realizar?"}
-              </button>
-
-              <motion.div
-                initial={false}
-                animate={{
-                  opacity: showDemo ? 1 : 0,
-                  height: showDemo ? "auto" : 0,
-                }}
-                className="space-y-4 overflow-hidden"
-              >
-                {/* Video Demonstrativo / Visual Placeholder */}
-                <div className="bg-background border border-surface-light rounded-2xl overflow-hidden aspect-video relative p-0 shadow-inner group mt-4">
-                  <ExerciseMedia
-                    exerciseNameOrId={
-                      currentExercise.libraryId ||
-                      currentExercise.name ||
-                      currentExercise.id
-                    }
-                    fallbackMuscle={
-                      libraryExercise?.targetMuscles?.[0] ||
-                      currentExercise.targetMuscles?.[0] ||
-                      currentExercise.target ||
-                      "Corpo Todo"
-                    }
-                    priority={true}
-                  />
-                  <div className="absolute bottom-2 right-2 bg-background/80 px-2 py-1 rounded text-[10px] font-bold text-neon-blue uppercase backdrop-blur-sm shadow border border-neon-blue/20">
-                    Demonstração
-                  </div>
-                </div>
-
-                {/* Interactive Mode Selector: View vs Edit */}
-                <div className="flex items-center justify-between border-b border-white/5 pb-2 mt-2">
-                  <span className="text-[10px] uppercase font-bold text-text-secondary tracking-wider">
-                    Guia de Exercício
-                  </span>
-                  <div className="flex gap-1.5">
-                    <button
-                      onClick={() => {
-                        setIsEditingInstructions(false);
-                      }}
-                      className={`px-3 py-1 rounded text-[10px] font-extrabold uppercase tracking-wider transition-colors cursor-pointer ${
-                        !isEditingInstructions
-                          ? "bg-neon-blue/15 text-neon-blue border border-neon-blue/20"
-                          : "bg-surface text-text-secondary hover:text-white"
-                      }`}
-                    >
-                      📖 Aula
-                    </button>
-                    <button
-                      onClick={() => {
-                        const actualInst = currentExercise.instructions || libraryExercise?.instructions || "";
-                        const actualErrors = currentExercise.commonErrors && currentExercise.commonErrors.length > 0
-                          ? currentExercise.commonErrors
-                          : libraryExercise?.commonErrors && libraryExercise.commonErrors.length > 0
-                            ? libraryExercise.commonErrors
-                            : getCommonErrorsForExercise(currentExercise.name, currentExercise.targetMuscles || []);
-
-                        setTempInstructions(actualInst);
-                        setTempErrorsText(actualErrors.join("\n"));
-                        setIsEditingInstructions(true);
-                      }}
-                      className={`px-3 py-1 rounded text-[10px] font-extrabold uppercase tracking-wider transition-colors cursor-pointer ${
-                        isEditingInstructions
-                          ? "bg-neon-purple/15 text-neon-purple border border-neon-purple/20"
-                          : "bg-surface text-text-secondary hover:text-white"
-                      }`}
-                    >
-                      ✏️ Editar Guia
-                    </button>
-                  </div>
-                </div>
-
-                {!isEditingInstructions ? (
-                  <>
-                    {/* VIEW MODE */}
-                    {(currentExercise.instructions || libraryExercise?.instructions) && (
-                      <div className="bg-surface/50 border-l-2 border-neon-purple p-3 rounded-r text-xs text-text-secondary">
-                        <span className="font-bold text-neon-purple uppercase tracking-widest block mb-1">
-                          Instruções de Execução
-                        </span>
-                        <ul className="space-y-1">
-                          {(currentExercise.instructions || libraryExercise?.instructions)
-                            ?.split(".")
-                            .map((s: string) => s.trim())
-                            .filter((s: string) => s.length > 5)
-                            .map((inst: string, i: number) => (
-                              <li key={i} className="flex items-start gap-1">
-                                <span className="text-neon-purple mt-0.5">•</span>{" "}
-                                <span>{inst}.</span>
-                              </li>
-                            ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    <div className="bg-surface/50 border-l-2 border-amber-500 p-3 rounded-r text-text-secondary text-xs">
-                      <span className="font-bold text-amber-500 uppercase tracking-widest block mb-1 flex items-center gap-1">
-                        <AlertTriangle size={12} /> Erros Comuns
-                      </span>
-                      <ul className="space-y-1">
-                        {(currentExercise.commonErrors && currentExercise.commonErrors.length > 0
-                          ? currentExercise.commonErrors
-                          : libraryExercise?.commonErrors && libraryExercise.commonErrors.length > 0
-                            ? libraryExercise.commonErrors
-                            : getCommonErrorsForExercise(
-                                currentExercise.name,
-                                currentExercise.targetMuscles || [],
-                              )
-                        ).map((error, i) => (
-                          <li key={i} className="flex items-start gap-1">
-                            <span className="text-amber-500 mt-0.5">•</span>{" "}
-                            <span>{error}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </>
-                ) : (
-                  /* EDIT MODE */
-                  <div className="space-y-3 pt-1">
-                    <div className="space-y-1">
-                      <label className="text-[10px] text-neon-purple font-extrabold uppercase tracking-widest block">
-                        Instruções (separando os passos com pontos finais)
-                      </label>
-                      <textarea
-                        value={tempInstructions}
-                        onChange={(e) => setTempInstructions(e.target.value)}
-                        rows={4}
-                        className="w-full bg-background border border-surface-light rounded-xl p-2.5 text-xs text-white outline-none focus:border-neon-purple font-sans leading-relaxed"
-                        placeholder="Ex: Mantenha as escápulas retraídas. Desça a barra de forma controlada até o peito. Empurre explosivamente."
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[10px] text-amber-500 font-extrabold uppercase tracking-widest block">
-                        Erros Comuns (um erro por linha)
-                      </label>
-                      <textarea
-                        value={tempErrorsText}
-                        onChange={(e) => setTempErrorsText(e.target.value)}
-                        rows={3}
-                        className="w-full bg-background border border-surface-light rounded-xl p-2.5 text-xs text-white outline-none focus:border-amber-500 font-sans leading-relaxed"
-                        placeholder="Ex: Tirar glúteos do banco&#10;Bater a barra no peito&#10;Desalinhar ombros"
-                      />
-                    </div>
-
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          const errorsList = tempErrorsText
-                            .split("\n")
-                            .map((s) => s.trim())
-                            .filter((s) => s.length > 2);
-
-                          handleEditExercise(activeExerciseIndex, "instructions", tempInstructions);
-                          handleEditExercise(activeExerciseIndex, "commonErrors", errorsList);
-                          setIsEditingInstructions(false);
-                        }}
-                        className="flex-1 py-2 bg-gradient-to-r from-neon-purple to-neon-blue text-background font-black text-xs uppercase tracking-wider rounded-xl hover:opacity-90 transition-opacity cursor-pointer text-center"
-                      >
-                        💾 Salvar Alterações
-                      </button>
-                      <button
-                        onClick={() => setIsEditingInstructions(false)}
-                        className="px-4 py-2 bg-surface-light hover:bg-white/10 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-colors cursor-pointer"
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-
-              {/* SISTEMA DE PROGRESSÃO INTELIGENTE DE CARGA EVOLUX */}
-              {progressionStats && (
-                <div className="bg-surface border border-surface-light rounded-2xl p-4 space-y-4 shadow-sm relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-neon-blue/5 rounded-full blur-[30px] pointer-events-none" />
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-neon-blue/10 border border-neon-blue/30 flex items-center justify-center text-neon-blue">
-                        <Zap size={12} className="fill-neon-blue/20" />
-                      </div>
-                      <span className="text-[10px] font-bold text-white uppercase tracking-wider">
-                        Sugestão Evolux
-                      </span>
-                    </div>
-                    {progressionStats.status === "new" ? (
-                      <span className="text-[9px] font-extrabold uppercase bg-surface-light border border-white/10 px-2 py-0.5 rounded text-text-secondary animate-pulse">
-                        Estágio Inicial
-                      </span>
-                    ) : progressionStats.status === "progressed" ? (
-                      <span className="text-[9px] font-extrabold uppercase bg-neon-blue/10 border border-neon-blue/30 px-2 py-0.5 rounded text-neon-blue animate-pulse">
-                        Sinal de Evolução
-                      </span>
-                    ) : progressionStats.status === "maintain" ||
-                      progressionStats.status === "maintained" ? (
-                      <span className="text-[9px] font-extrabold uppercase bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded text-amber-500">
-                        Estabilização
-                      </span>
+                  <div className="shrink-0 flex items-center justify-center w-8 text-text-primary/30">
+                    {isCompletedBefore ? (
+                       <CheckCircle size={16} className="text-emerald-500" />
                     ) : (
-                      <span className="text-[9px] font-extrabold uppercase bg-rose-500/10 border border-rose-500/30 px-2 py-0.5 rounded text-rose-400">
-                        Regeneração
-                      </span>
+                       <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                       </motion.div>
                     )}
                   </div>
-
-                  <div className="grid grid-cols-3 gap-3 text-center">
-                    <div className="bg-background/40 p-2.5 rounded-xl border border-surface-light/40">
-                      <span className="block text-[8px] font-bold text-text-secondary uppercase mb-1">
-                        Última Carga
-                      </span>
-                      <span className="text-sm font-bold font-mono text-white">
-                        {progressionStats.lastWeight !== null
-                          ? `${progressionStats.lastWeight} kg`
-                          : "--"}
-                      </span>
-                    </div>
-                    <div className="bg-background/40 p-2.5 rounded-xl border border-surface-light/40">
-                      <span className="block text-[8px] font-bold text-text-secondary uppercase mb-1">
-                        Melhor Carga
-                      </span>
-                      <span className="text-sm font-bold font-mono text-white">
-                        {progressionStats.bestWeight !== null
-                          ? `${progressionStats.bestWeight} kg`
-                          : "--"}
-                      </span>
-                    </div>
-                    <div
-                      className={`p-2.5 rounded-xl border ${
-                        progressionStats.status === "progressed"
-                          ? "bg-neon-blue/10 border-neon-blue/30 text-neon-blue shadow-[0_0_15px_rgba(0,240,255,0.1)]"
-                          : progressionStats.status === "deload"
-                            ? "bg-rose-500/15 border-rose-500/20 text-rose-400"
-                            : "bg-amber-500/10 border-amber-500/30 text-amber-500"
-                      }`}
-                    >
-                      <span className="block text-[8px] font-bold uppercase mb-1 opacity-70">
-                        Sugestão
-                      </span>
-                      <span className="text-sm font-extrabold font-mono">
-                        {progressionStats.suggestedWeight} kg
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-2 px-3 bg-background/60 rounded-xl border border-surface-light text-[11px] text-text-secondary flex items-start gap-2">
-                    <div className="mt-0.5 text-amber-500">
-                      <AlertTriangle size={12} />
-                    </div>
-                    <p className="leading-normal">{progressionStats.reason}</p>
-                  </div>
                 </div>
-              )}
 
-              {/* ⚡ INTERACTIVE CONSOLE FOR ADVANCED TECHNICAL PROTOCOLS */}
-              {techniqueEngine.state.isActive && techniqueEngine.state.type !== null && techniqueEngine.state.type !== "Nenhuma" && (
-                <div className="mb-4">
-                  <TechniqueController
-                    state={techniqueEngine.state}
-                    onAdvance={(payload) => {
-                      // Optional: save to internal logs so History can extract it later
-                      const stepKey = `${activeExerciseIndex}-tech-${techniqueEngine.state.completedStages}`;
-                      setSetLogs(prev => ({
-                        ...prev,
-                        [stepKey]: { reps: String(payload.reps), weight: String(payload.weight) }
-                      }));
+                {/* Accordion Body */}
+                <AnimatePresence>
+                   {isExpanded && (
+                      <motion.div
+                         initial={{ height: 0, opacity: 0 }}
+                         animate={{ height: "auto", opacity: 1 }}
+                         exit={{ height: 0, opacity: 0 }}
+                         className="border-t border-surface-light bg-background/20"
+                      >
+                         <div className="p-3">
+                            <div className="flex items-center justify-between mb-3">
+                               <div className="flex gap-4">
+                                 <div className="flex flex-col">
+                                   <span className="text-[9px] uppercase text-text-secondary font-bold mb-0.5">Repetições</span>
+                                   <span className="text-sm font-black text-text-primary">{currentExercise.reps}</span>
+                                 </div>
+                                 <div className="flex flex-col">
+                                   <span className="text-[9px] uppercase text-text-secondary font-bold mb-0.5">Descanso</span>
+                                   <span className="text-sm font-black text-text-primary">{currentExercise.restSeconds || 60}s</span>
+                                 </div>
+                               </div>
+                               <button
+                                  onClick={(e) => { e.stopPropagation(); setFullscreenExercise(currentExercise); }}
+                                  className="text-[9px] uppercase font-bold text-neon-blue border border-neon-blue/30 px-2 py-1 rounded bg-neon-blue/10 flex items-center gap-1"
+                               >
+                                  <Play size={10} /> Dicas
+                               </button>
+                            </div>
 
-                      techniqueEngine.advanceStage(payload);
-                      spawnXp(25);
-                      confetti({
-                        particleCount: 30,
-                        spread: 40,
-                        colors: ["#b026ff", "#00f0ff"],
-                      });
-                    }}
-                    onComplete={() => {
-                      // Finalize the whole set inside the system
-                      handleCompleteSet(completedSets.length + 1);
-                      techniqueEngine.resetTechnique();
-                    }}
-                  />
-                </div>
-              )}
+                            {/* SETS */}
+                            <div className="space-y-1.5">
+                              {/* Headers */}
+                              <div className="flex items-center text-[9px] font-bold text-text-secondary uppercase px-2 mb-1">
+                                <div className="w-8 text-center">Série</div>
+                                <div className="flex-1 text-center">Metas</div>
+                                <div className="flex-1 text-center">Realizado</div>
+                                <div className="w-10"></div>
+                              </div>
+                              {Array.from({ length: currentExercise.sets }).map((_, i) => {
+                                const setNumber = i + 1;
+                                const isCompleted = completedSets.includes(setNumber);
+                                const isCurrent = !isCompleted && (completedSets.length === i || (i === 0 && completedSets.length === 0));
+                                
+                                const logKey = `${index}-${setNumber}`;
+                                const log = setLogs[logKey] || { reps: "", weight: "" };
+                                
+                                const pStats = getProgressionStats(
+                                  currentExercise.libraryId || currentExercise.name,
+                                  setNumber
+                                );
+                                
+                                // Simplified progression targets
+                                let targetWeight = pStats?.weight ? pStats.weight : "";
+                                let targetReps = pStats?.reps ? pStats.reps : (parseInt(currentExercise.reps) || "");
+                                
+                                if (currentPlan?.phases && currentPlan.currentPhaseIndex !== undefined && currentPlan.currentWeekIndex !== undefined) {
+                                  const cPhase = currentPlan.phases[currentPlan.currentPhaseIndex];
+                                  const wRatio = selectedProgressionWeek === 0
+                                    ? ((currentPlan.currentWeekIndex + 1) / (cPhase.durationWeeks || 4))
+                                    : (selectedProgressionWeek / (cPhase.durationWeeks || 4));
+                                  const adj = adjustExerciseForWeek(
+                                    currentExercise.reps,
+                                    currentExercise.sets,
+                                    wRatio,
+                                    cPhase.progressionType || "linear",
+                                    currentExercise.advancedTechnique
+                                  );
+                                  targetReps = adj.reps;
+                                }
 
-              {/* Sets List */}
-              <div className="space-y-3 mt-6">
-                <div className="flex items-center justify-between mb-3 px-2">
-                  <h4 className="text-xs font-black uppercase tracking-widest text-neon-blue">
-                    Execução de Séries
-                  </h4>
-                  <span className="font-bold text-[10px] bg-white/5 border border-white/10 text-slate-300 px-2 py-1 rounded-lg">
-                    Série {completedSets.length + 1} de {currentExercise.sets}
-                  </span>
-                </div>
-                {Array.from({ length: currentExercise.sets }).map((_, i) => {
-                  const isCompleted = completedSets.includes(i + 1);
-                  const isCurrent = !isCompleted && completedSets.length === i; // The one you should be doing next
-                  const logKey = `${activeExerciseIndex}-${i + 1}`;
-                  const log = setLogs[logKey] || { reps: "", weight: "" };
-
-                  return (
-                    <div
-                      key={i}
-                      className={`flex flex-col rounded-2xl border transition-all duration-300 ${
-                        isCompleted 
-                          ? "bg-emerald-950/20 border-emerald-500/50 p-3 opacity-80" 
-                          : isCurrent 
-                            ? "bg-surface-light border-neon-blue border p-4 shadow-[0_0_20px_rgba(0,210,255,0.15)] transform scale-[1.01] z-10" 
-                            : "bg-surface/30 border-white/5 p-3 opacity-50"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <span
-                          className={`font-mono font-black text-sm uppercase tracking-wider ${isCompleted ? "text-emerald-400" : isCurrent ? "text-neon-blue" : "text-slate-500"}`}
-                        >
-                          SÉRIE {i + 1}
-                        </span>
-                        {isCompleted ? (
-                          <div className="font-bold uppercase flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded text-[10px] text-emerald-400">
-                            <CheckCircle size={12} /> Salvo
-                          </div>
-                        ) : isCurrent ? (
-                          <div className="font-bold uppercase flex items-center gap-1 animate-pulse text-xs text-neon-blue">
-                            🎯 Fazer Agora
-                          </div>
-                        ) : null}
-                      </div>
-
-                      <div className={`flex items-center ${isCurrent ? "flex-col gap-3" : "gap-3"}`}>
-                        <div className="flex-1 flex flex-col relative group w-full">
-                          <label className="uppercase mb-1 font-bold tracking-widest text-[9px] text-slate-400">
-                            Repetições
-                          </label>
-                          <input
-                            type="number"
-                            value={log.reps}
-                            onChange={(e) =>
-                              handleLogChange({
-                                exerciseIndex: activeExerciseIndex,
-                                setNumber: i + 1,
-                                field: "reps",
-                                value: e.target.value,
-                              })
-                            }
-                            placeholder={
-                              currentExercise.reps?.split("-")[0] || ""
-                            }
-                            className={`bg-background/80 backdrop-blur-sm border rounded-xl text-white font-mono font-bold outline-none transition-all w-full text-center ${
-                              isCurrent 
-                                ? "px-3 py-2.5 text-lg border-neon-blue/50 focus:border-neon-blue shadow-inner" 
-                                : "px-2.5 py-2 text-sm border-white/10 focus:border-white/30"
-                            }`}
-                          />
-                        </div>
-
-                        <div className="flex-1 flex flex-col relative group w-full">
-                          <label className="uppercase mb-1 font-bold tracking-widest flex items-center justify-between w-full text-[9px] text-slate-400">
-                            <span>Carga (kg)</span>
-                            {!isCompleted &&
-                              progressionStats?.suggestedWeight > 0 && (
-                                <span className="bg-neon-blue/10 px-1.5 rounded text-[9px] text-neon-blue font-black border border-neon-blue/20">
-                                  Rec: {progressionStats.suggestedWeight}
-                                </span>
-                              )}
-                          </label>
-                          <input
-                            type="number"
-                            value={log.weight}
-                            onChange={(e) =>
-                              handleLogChange({
-                                exerciseIndex: activeExerciseIndex,
-                                setNumber: i + 1,
-                                field: "weight",
-                                value: e.target.value,
-                              })
-                            }
-                            placeholder={
-                              progressionStats?.suggestedWeight > 0
-                                ? String(progressionStats.suggestedWeight)
-                                : "--"
-                            }
-                            className={`bg-background/80 backdrop-blur-sm border rounded-xl text-white font-mono font-bold outline-none transition-all w-full text-center ${
-                              isCurrent 
-                                ? "px-3 py-2.5 text-lg border-neon-blue/50 focus:border-neon-blue shadow-inner" 
-                                : "px-2.5 py-2 text-sm border-white/10 focus:border-white/30"
-                            }`}
-                          />
-                        </div>
-
-                        {!isCurrent && (
-                          <button
-                            onClick={() => handleCompleteSet(i + 1)}
-                            disabled={isCompleted}
-                            className={`mt-[18px] self-end p-2 h-[34px] w-[34px] shrink-0 flex items-center justify-center rounded-xl font-bold uppercase tracking-widest transition-all ${isCompleted ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 opacity-50 cursor-not-allowed" : "bg-surface-light text-slate-400 hover:text-white border border-white/10 hover:border-white/30"}`}
-                          >
-                            <CheckCircle size={16} />
-                          </button>
-                        )}
-                      </div>
-
-                      {/* GIGANTIC BUTTON FOR CURRENT SET */}
-                      {isCurrent && (
-                        <button
-                          onClick={() => handleCompleteSet(i + 1)}
-                          className="w-full mt-3 py-3 bg-gradient-to-r from-neon-blue to-neon-purple text-black rounded-xl font-black tracking-wider text-xs flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(0,210,255,0.3)] hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer"
-                        >
-                          <CheckCircle size={18} /> SALVAR SÉRIE {i + 1} ⚡
-                        </button>
-                      )}
-
-                      {/* 1RM Display below inputs */}
-                      {log.reps &&
-                        log.weight &&
-                        !isCompleted &&
-                        parseInt(log.reps) > 0 &&
-                        parseFloat(log.weight) > 0 && (
-                          <div className="mt-3 flex justify-between items-center text-[10px] bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
-                            <span className="text-slate-400 uppercase tracking-widest font-bold">
-                              Força Máxima Estimada
-                            </span>
-                            <span className="text-neon-blue font-mono font-bold text-xs">
-                              {Math.round(
-                                calculate1RM(
-                                  parseFloat(log.weight) || 0,
-                                  parseInt(log.reps) || 0,
-                                ),
-                              )}{" "}
-                              kg
-                            </span>
-                          </div>
-                        )}
-
-                      {isCompleted &&
-                        log.reps &&
-                        log.weight &&
-                        parseInt(log.reps) > 0 &&
-                        parseFloat(log.weight) > 0 && (
-                          <div className="mt-3 flex justify-between items-center text-[10px] bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg">
-                            <span className="text-emerald-500/70 uppercase tracking-widest font-bold">
-                              1RM
-                            </span>
-                            <span className="text-emerald-400 font-mono font-bold text-xs">
-                              {Math.round(
-                                calculate1RM(
-                                  parseFloat(log.weight) || 0,
-                                  parseInt(log.reps) || 0,
-                                ),
-                              )}{" "}
-                              kg
-                            </span>
-                          </div>
-                        )}
-                    </div>
-                  );
-                })}
+                                return (
+                                  <div
+                                    key={i}
+                                    className={`flex items-stretch rounded-lg border transition-colors ${
+                                      isCompleted 
+                                        ? "bg-emerald-500/10 border-emerald-500/20" 
+                                        : isCurrent 
+                                          ? "bg-surface border-neon-blue/50" 
+                                          : "bg-surface-light border-surface-light opacity-60"
+                                    }`}
+                                  >
+                                    <div className="w-8 flex items-center justify-center text-xs font-bold text-text-primary/50 border-r border-surface-light">
+                                      {setNumber}
+                                    </div>
+                                    <div className="flex-1 flex flex-col justify-center items-center text-[10px] text-text-secondary border-r border-surface-light">
+                                       <span className="font-mono">{targetWeight ? `${targetWeight}kg` : '-'}</span>
+                                       <span>{targetReps} reps</span>
+                                    </div>
+                                    <div className="flex-1 flex items-center gap-1 px-2 py-1">
+                                      <input
+                                        type="number"
+                                        inputMode="decimal"
+                                        placeholder="kg"
+                                        value={log.weight ?? ""}
+                                        onChange={(e) => {
+                                          setSetLogs(prev => ({
+                                            ...prev,
+                                            [logKey]: { ...prev[logKey], weight: e.target.value }
+                                          }));
+                                        }}
+                                        className="w-1/2 bg-background border border-surface-light rounded px-1 py-1.5 text-xs text-center text-text-primary outline-none focus:border-neon-blue"
+                                      />
+                                      <span className="text-text-secondary text-[10px]">x</span>
+                                      <input
+                                        type="number"
+                                        inputMode="numeric"
+                                        placeholder="reps"
+                                        value={log.reps ?? ""}
+                                        onChange={(e) => {
+                                          setSetLogs(prev => ({
+                                            ...prev,
+                                            [logKey]: { ...prev[logKey], reps: e.target.value }
+                                          }));
+                                        }}
+                                        className="w-1/2 bg-background border border-surface-light rounded px-1 py-1.5 text-xs text-center text-text-primary outline-none focus:border-neon-blue"
+                                      />
+                                    </div>
+                                    <button
+                                      onClick={() => {
+                                        if (isCompleted) {
+                                          const newSets = completedSets.filter(s => s !== setNumber);
+                                          setCompletedSets(newSets);
+                                          setCompletedSetsMap(prev => ({ ...prev, [activeExerciseIndex]: newSets }));
+                                        } else {
+                                          handleCompleteSet(setNumber);
+                                        }
+                                      }}
+                                      className={`w-10 flex items-center justify-center transition-colors rounded-r-lg ${
+                                        isCompleted ? "bg-emerald-500 text-text-primary" : "bg-white/5 text-text-primary/40 hover:bg-white/10"
+                                      }`}
+                                    >
+                                      <CheckCircle size={14} />
+                                    </button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            
+                            {techniqueEngine.state.isActive && (
+                               <div className="mt-4 border-t border-surface-light pt-4">
+                                 <TechniqueController
+                                    state={techniqueEngine.state}
+                                    onAdvance={techniqueEngine.advance}
+                                    onComplete={techniqueEngine.complete}
+                                 />
+                               </div>
+                            )}
+                         </div>
+                      </motion.div>
+                   )}
+                </AnimatePresence>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="mt-12 flex justify-center pb-8 border-t border-surface-light pt-8">
-          <button
-            onClick={() => setShowAddMenu(true)}
-            className="flex items-center gap-2 text-xs font-bold text-text-secondary hover:text-white uppercase tracking-widest bg-surface px-4 py-3 rounded-xl border border-surface-light hover:border-white/20 transition-all"
-          >
-            <Plus size={16} />
-            Adicionar Exercício
-          </button>
-        </div>
+            );
+          })}
+          
+          <div className="flex justify-center pt-4">
+            <button
+              onClick={() => setShowAddMenu(true)}
+              className="flex items-center gap-2 text-[10px] font-bold text-text-secondary hover:text-text-primary uppercase tracking-widest bg-surface px-4 py-2.5 rounded-xl border border-surface-light hover:border-white/20 transition-all"
+            >
+              <Plus size={14} />
+              Adicionar Exercício
+            </button>
+          </div>
       </div>
 
-      {/* OVERLAYS (Slide up from bottom) */}
-      {/* PHASE TIMERS - COMPACT BARS */}
+      {/* PHASE TIMERS */}
       <AnimatePresence>
         {isResting && (
            <motion.div
             initial={{ y: "100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
-            className="fixed bottom-0 left-0 right-0 p-4 bg-surface/95 backdrop-blur-3xl border-t border-white/10 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] z-50 flex items-center justify-between gap-4"
+            className="fixed bottom-0 left-0 right-0 p-3 bg-surface/95 backdrop-blur-xl border-t border-surface-light shadow-[0_-10px_30px_rgba(0,0,0,0.8)] z-50 flex items-center justify-between gap-3"
           >
-            <div className="flex items-center gap-4">
-               <div className="bg-neon-blue/10 text-neon-blue p-3 rounded-2xl">
-                 <Clock size={24} />
+            <div className="flex items-center gap-3">
+               <div className="bg-neon-blue/10 text-neon-blue p-2 rounded-lg">
+                 <Clock size={18} />
                </div>
                <div>
-                  <h3 className="font-bold text-slate-400 text-[10px] tracking-widest uppercase mb-0.5">
+                  <h3 className="font-bold text-text-secondary text-[9px] tracking-widest uppercase mb-0.5">
                     Descanso
                   </h3>
-                  <div className="font-mono font-black tracking-tighter text-2xl text-neon-blue">
+                  <div className="font-mono font-black text-xl text-neon-blue leading-none">
                     {formatTime(restTimer)}
                   </div>
                </div>
             </div>
-
             <div className="flex gap-2">
               <button
                 onClick={() => setRestTimer((t) => t + 15)}
-                className="rounded-xl font-bold transition-colors cursor-pointer bg-white/5 border border-white/10 px-4 py-2 text-white text-xs hover:bg-white/10"
+                className="rounded-lg font-bold transition-colors cursor-pointer bg-white/5 border border-surface-light px-3 py-1.5 text-text-primary text-[10px] hover:bg-white/10"
               >
                 +15s
               </button>
@@ -1813,77 +1318,127 @@ export default function ActiveWorkoutPage() {
                   setIsResting(false);
                   startPrep();
                 }}
-                className="rounded-xl uppercase font-black tracking-wider flex items-center justify-center transition-transform cursor-pointer bg-gradient-to-r from-neon-blue to-neon-purple text-black px-6 py-2 text-xs shadow-lg active:scale-95"
+                className="rounded-lg uppercase font-black tracking-wider transition-transform cursor-pointer bg-neon-blue text-black px-4 py-1.5 text-[10px] shadow-lg active:scale-95"
               >
-                PULAR
+                Pular
               </button>
             </div>
           </motion.div>
         )}
-
         {isPreparing && (
           <motion.div
             initial={{ y: "100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
-            className="fixed bottom-0 left-0 right-0 p-4 bg-neon-blue/10 backdrop-blur-3xl border-t border-neon-blue/50 shadow-[0_-10px_30px_rgba(0,210,255,0.2)] z-50 flex items-center justify-between gap-4"
+            className="fixed bottom-0 left-0 right-0 p-3 bg-neon-blue/10 backdrop-blur-xl border-t border-neon-blue/50 shadow-[0_-10px_30px_rgba(0,210,255,0.2)] z-50 flex items-center justify-between gap-3"
           >
-            <div className="flex items-center gap-4">
-               <div className="bg-neon-blue/20 text-neon-blue p-3 rounded-2xl animate-pulse">
-                 <AlertTriangle size={24} />
-               </div>
-               <div>
-                  <h3 className="font-bold text-neon-blue/70 text-[10px] tracking-widest uppercase mb-0.5">
-                    Prepare-se
-                  </h3>
-                  <div className="font-mono font-black tracking-tighter text-2xl text-neon-blue">
-                    {formatTime(prepTimer)}
-                  </div>
-               </div>
+            <div className="flex items-center gap-3">
+              <div className="bg-neon-blue/20 text-neon-blue p-2 rounded-lg animate-pulse">
+                <AlertTriangle size={18} />
+              </div>
+              <div>
+                <h3 className="font-bold text-neon-blue/70 text-[9px] tracking-widest uppercase mb-0.5">
+                  Preparar
+                </h3>
+                <div className="font-mono font-black text-xl text-neon-blue leading-none">
+                  {formatTime(prepTimer)}
+                </div>
+              </div>
             </div>
-
             <button
-                onClick={() => {
-                  setIsPreparing(false);
-                  startExec();
-                }}
-                className="rounded-xl font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-transform cursor-pointer bg-neon-blue px-8 py-2 text-black text-xs shadow-lg active:scale-95"
-              >
-                COMEÇAR
-              </button>
+              onClick={() => {
+                setIsPreparing(false);
+                startExec();
+              }}
+              className="rounded-lg uppercase font-black tracking-wider transition-transform cursor-pointer bg-neon-blue text-black px-4 py-1.5 text-[10px] shadow-lg active:scale-95 flex items-center gap-1"
+            >
+              <Play size={10} /> INICIAR
+            </button>
           </motion.div>
         )}
-
         {isExecutingAuto && (
           <motion.div
             initial={{ y: "100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
-            className="fixed bottom-0 left-0 right-0 p-4 bg-emerald-950/80 backdrop-blur-3xl border-t border-emerald-500/50 shadow-[0_-10px_30px_rgba(16,185,129,0.2)] z-50 flex items-center justify-between gap-4"
+            className="fixed bottom-0 left-0 right-0 p-3 bg-red-900/20 backdrop-blur-xl border-t border-red-500/50 shadow-[0_-10px_30px_rgba(239,68,68,0.2)] z-50 flex items-center justify-between gap-3"
           >
-            <div className="flex items-center gap-4">
-               <div className="bg-emerald-500/20 text-emerald-400 p-3 rounded-2xl">
-                 <Dumbbell size={24} />
-               </div>
-               <div>
-                  <h3 className="font-bold text-emerald-400/70 text-[10px] tracking-widest uppercase mb-0.5">
-                    Executando
-                  </h3>
-                  <div className="font-mono font-black tracking-tighter text-2xl text-emerald-400">
-                    {formatTime(execTimer)}
-                  </div>
-               </div>
+            <div className="flex items-center gap-3">
+              <div className="bg-red-500/20 text-red-500 p-2 rounded-lg animate-pulse">
+                <Zap size={18} />
+              </div>
+              <div>
+                <h3 className="font-bold text-red-500/70 text-[9px] tracking-widest uppercase mb-0.5">
+                  Execução
+                </h3>
+                <div className="font-mono font-black text-xl text-red-500 leading-none">
+                  {formatTime(execTimer)}
+                </div>
+              </div>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-            <button
-                onClick={() => {
-                  setIsExecutingAuto(false);
-                  handleCompleteSet(completedSets.length + 1);
-                }}
-                className="rounded-xl font-black uppercase flex items-center justify-center gap-2 tracking-wider transition-transform cursor-pointer bg-gradient-to-r from-emerald-400 to-emerald-500 px-8 py-2 text-black text-xs shadow-lg active:scale-95"
-              >
-                <CheckCircle size={16} /> CONCLUIR
-              </button>
+      {/* OVERVIEW MODAL */}
+      <AnimatePresence>
+        {showOverview && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4"
+          >
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              className="bg-surface border border-surface-light w-full max-w-md rounded-t-3xl sm:rounded-2xl p-4 max-h-[85vh] overflow-hidden flex flex-col shadow-2xl"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-text-primary font-bold uppercase tracking-wider text-sm flex items-center gap-2">
+                  <Activity size={16} className="text-neon-blue" /> Visão Geral
+                </h2>
+                <button
+                  onClick={() => setShowOverview(false)}
+                  className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-text-secondary hover:text-text-primary"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+                {exercises.map((ex, idx) => {
+                  const isCur = idx === activeExerciseIndex;
+                  const isDone = idx < activeExerciseIndex;
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => {
+                        setActiveExerciseIndex(idx);
+                        setCompletedSets(completedSetsMap[idx] || []);
+                        setShowOverview(false);
+                      }}
+                      className={`p-2 rounded-xl border flex items-center gap-3 cursor-pointer transition-colors ${
+                        isDone
+                          ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500"
+                          : isCur
+                          ? "bg-neon-blue/10 border-neon-blue text-text-primary"
+                          : "bg-surface-light border-surface-light text-text-secondary hover:text-text-primary"
+                      }`}
+                    >
+                      <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-surface-light bg-background/50">
+                        <ExerciseMedia exerciseNameOrId={ex.id || ex.name} fallbackMuscle={ex.targetMuscles?.[0]} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-[11px] truncate">{ex.name}</h4>
+                        <p className="text-[9px] uppercase tracking-widest">{ex.sets} séries</p>
+                      </div>
+                      {isDone && <CheckCircle size={14} />}
+                    </div>
+                  );
+                })}
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1891,41 +1446,35 @@ export default function ActiveWorkoutPage() {
       {/* CANCEL MODAL */}
       <AnimatePresence>
         {showCancelModal && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-background/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-surface w-full max-w-sm rounded-[32px] p-6 border border-white/10 shadow-2xl"
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-surface border border-surface-light rounded-2xl p-5 max-w-xs w-full shadow-2xl text-center"
             >
-              <h3 className="text-xl font-black mb-2 flex items-center gap-2 text-red-400">
-                <AlertTriangle size={20} />
-                Sair do Treino
-              </h3>
-              <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">
-                Tem certeza que deseja sair? O progresso não salvo deste treino será perdido e a sessão será encerrada.
+              <AlertTriangle size={36} className="text-red-500 mx-auto mb-3" />
+              <h2 className="text-text-primary font-bold text-sm mb-1">Encerrar Treino?</h2>
+              <p className="text-text-secondary text-xs mb-3">
+                Seu progresso até aqui não será salvo.
               </p>
-              
-              <div className="flex flex-col gap-3">
-                <button
-                  onClick={() => {
-                    setActiveWorkoutSession(null);
-                    navigate("/workouts");
-                  }}
-                  className="w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-transform active:scale-95 bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.3)]"
-                >
-                  Sim, Sair do Treino
-                </button>
+              <div className="flex gap-2">
                 <button
                   onClick={() => setShowCancelModal(false)}
-                  className="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-bold text-sm uppercase tracking-widest transition-colors"
+                  className="flex-1 py-2 bg-surface-light rounded-lg text-text-primary font-bold text-xs"
                 >
-                  Continuar Treinando
+                  Continuar
+                </button>
+                <button
+                  onClick={() => navigate("/workouts")}
+                  className="flex-1 py-2 bg-red-500/20 text-red-500 rounded-lg font-bold text-xs"
+                >
+                  Sair
                 </button>
               </div>
             </motion.div>
@@ -1937,496 +1486,222 @@ export default function ActiveWorkoutPage() {
       <AnimatePresence>
         {showSettingsModal && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-0 bg-background/95 backdrop-blur-xl z-[60] flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           >
-            <div className="bg-surface border border-surface-light rounded-3xl p-6 w-full max-w-sm shadow-2xl relative">
-              <button
-                onClick={() => setShowSettingsModal(false)}
-                className="absolute top-4 right-4 text-text-secondary hover:text-white"
-              >
-                <X size={20} />
-              </button>
-              <h2 className="text-xl font-bold text-white mb-6 tracking-tight">
-                Cofigurações de Execução
-              </h2>
-
-              <div className="space-y-5">
-                {/* Auto Advance Toggle */}
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-surface border border-surface-light rounded-2xl p-4 max-w-sm w-full shadow-2xl"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-text-primary font-bold uppercase tracking-wider text-xs flex items-center gap-2">
+                  <Settings size={14} className="text-neon-blue" /> Ajustes Rápidos
+                </h2>
+                <button
+                  onClick={() => setShowSettingsModal(false)}
+                  className="text-text-secondary hover:text-text-primary"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white font-bold text-sm">
-                      Avanço Automático
-                    </p>
-                    <p className="text-[10px] text-text-secondary">
-                      Fluidez Preparation → Execução → Descanso
-                    </p>
-                  </div>
+                  <span className="text-xs font-bold text-text-secondary">Sons de Alerta</span>
                   <button
-                    onClick={() =>
-                      updateSettings({
-                        autoAdvanceEnabled: !settings?.autoAdvanceEnabled,
-                      })
-                    }
-                    className={`w-12 h-6 rounded-full transition-colors relative ${settings?.autoAdvanceEnabled ? "bg-neon-blue" : "bg-surface-light"}`}
+                    onClick={() => updateSettings({ soundEnabled: !settings?.soundEnabled })}
+                    className={`w-10 h-6 rounded-full transition-colors relative ${settings?.soundEnabled ? "bg-neon-blue" : "bg-surface-light"}`}
                   >
-                    <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${settings?.autoAdvanceEnabled ? "left-7" : "left-1"}`}
-                    />
-                  </button>
-                </div>
-
-                {/* Preparation Toggle */}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white font-bold text-sm">
-                      Tempo de Preparação
-                    </p>
-                  </div>
-                  <button
-                    onClick={() =>
-                      updateSettings({
-                        preparationEnabled: !settings?.preparationEnabled,
-                      })
-                    }
-                    className={`w-12 h-6 rounded-full transition-colors relative ${settings?.preparationEnabled ? "bg-neon-blue" : "bg-surface-light"}`}
-                  >
-                    <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${settings?.preparationEnabled ? "left-7" : "left-1"}`}
-                    />
-                  </button>
-                </div>
-                {settings?.preparationEnabled && (
-                  <input
-                    type="number"
-                    value={settings?.preparationTimeSeconds || 15}
-                    onChange={(e) =>
-                      updateSettings({
-                        preparationTimeSeconds: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    className="w-full bg-background rounded-xl p-3 text-white border border-surface-light text-sm"
-                    placeholder="Segundos"
-                  />
-                )}
-
-                {/* Execution Timer (Only visible if auto advance) */}
-                {settings?.autoAdvanceEnabled && (
-                  <div>
-                    <p className="text-white font-bold text-sm mb-2">
-                      Tempo Estimado de Execução (s)
-                    </p>
-                    <input
-                      type="number"
-                      value={settings?.estimatedSetTimeSeconds || 45}
-                      onChange={(e) =>
-                        updateSettings({
-                          estimatedSetTimeSeconds:
-                            parseInt(e.target.value) || 0,
-                        })
-                      }
-                      className="w-full bg-background rounded-xl p-3 text-white border border-surface-light text-sm"
-                      placeholder="Segundos"
-                    />
-                  </div>
-                )}
-
-                {/* Sounds & Vibrations */}
-                <div className="pt-4 border-t border-surface-light flex items-center justify-between">
-                  <p className="text-white font-bold text-sm">Sons e Alertas</p>
-                  <button
-                    onClick={() =>
-                      updateSettings({ soundEnabled: !settings?.soundEnabled })
-                    }
-                    className={`w-12 h-6 rounded-full transition-colors relative ${settings?.soundEnabled ? "bg-neon-purple" : "bg-surface-light"}`}
-                  >
-                    <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${settings?.soundEnabled ? "left-7" : "left-1"}`}
-                    />
+                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${settings?.soundEnabled ? "left-5" : "left-1"}`} />
                   </button>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-white font-bold text-sm">
-                    Vibração Haptic
-                  </p>
+                  <span className="text-xs font-bold text-text-secondary">Temporizador Auto</span>
                   <button
-                    onClick={() =>
-                      updateSettings({
-                        vibrationEnabled: !settings?.vibrationEnabled,
-                      })
-                    }
-                    className={`w-12 h-6 rounded-full transition-colors relative ${settings?.vibrationEnabled ? "bg-neon-purple" : "bg-surface-light"}`}
+                    onClick={() => updateSettings({ restTimeEnabled: !settings?.restTimeEnabled })}
+                    className={`w-10 h-6 rounded-full transition-colors relative ${settings?.restTimeEnabled ? "bg-neon-blue" : "bg-surface-light"}`}
                   >
-                    <div
-                      className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${settings?.vibrationEnabled ? "left-7" : "left-1"}`}
-                    />
+                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${settings?.restTimeEnabled ? "left-5" : "left-1"}`} />
                   </button>
                 </div>
-
-                {/* CONSOLE DE VALIDAÇÃO DE CARGAS - FASE 2 */}
-                <div className="pt-4 border-t border-surface-light space-y-2">
-                  <p className="text-neon-blue font-bold text-xs uppercase tracking-widest flex items-center gap-1">
-                    <Zap
-                      size={12}
-                      className="fill-neon-blue/10 animate-bounce"
-                    />{" "}
-                    Console de Testes Evolux
-                  </p>
-                  <p className="text-[10px] text-text-secondary leading-normal">
-                    Selecione um cenário de validação para instanciar históricos
-                    reais no banco de dados local e verificar o cálculo de
-                    sugestões:
-                  </p>
-                  <div className="grid grid-cols-3 gap-2">
-                    <button
-                      onClick={() => seedScenario("novo")}
-                      className="py-1.5 px-1 bg-surface-light hover:bg-white/10 rounded-lg text-[9px] font-bold text-white border border-white/5 uppercase transition-all"
-                    >
-                      Novo
-                    </button>
-                    <button
-                      onClick={() => seedScenario("intermediario")}
-                      className="py-1.5 px-1 bg-neon-blue/15 hover:bg-neon-blue/20 rounded-lg text-[9px] font-bold text-neon-blue border border-neon-blue/20 uppercase transition-all"
-                    >
-                      Intermediário
-                    </button>
-                    <button
-                      onClick={() => seedScenario("avancado")}
-                      className="py-1.5 px-1 bg-neon-purple/15 hover:bg-neon-purple/20 rounded-lg text-[9px] font-bold text-neon-purple border border-neon-purple/20 uppercase transition-all"
-                    >
-                      Avançado
-                    </button>
-                  </div>
-                  {seedingFeedback && (
-                    <div className="mt-2 bg-background/50 border border-white/5 p-2 rounded-xl text-[10px] text-text-secondary leading-relaxed">
-                      <span className="text-white font-bold block mb-0.5">
-                        Status do Simulador:
-                      </span>
-                      {seedingFeedback}
-                    </div>
-                  )}
+                <div className="pt-2 border-t border-surface-light">
+                  <button
+                    onClick={() => { setShowSettingsModal(false); setShowConsole(true); }}
+                    className="w-full py-2 bg-surface-light text-text-secondary hover:text-text-primary rounded-lg text-xs font-bold transition-colors"
+                  >
+                    🔧 Console de Testes
+                  </button>
                 </div>
               </div>
-
-              <button
-                onClick={() => setShowSettingsModal(false)}
-                className="w-full mt-8 bg-white text-black py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-gray-200"
-              >
-                Salvar Ajustes
-              </button>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* OVERVIEW / EDIT MODAL */}
+      {/* CONSOLE MODAL (Replacing inline console) */}
       <AnimatePresence>
-        {showOverview && (
+        {showConsole && (
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="fixed inset-0 bg-background z-50 flex flex-col"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           >
-            <div className="p-4 border-b border-surface-light flex items-center justify-between bg-surface sticky top-0 z-20">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Search size={20} className="text-neon-blue" />
-                Visão Geral do Treino
-              </h2>
-              <button
-                onClick={() => setShowOverview(false)}
-                className="p-2 text-text-secondary hover:text-white bg-surface-light rounded-full"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {todayPlan?.warmup && todayPlan.warmup.length > 0 && (
-                <div className="p-4 rounded-xl border bg-surface border-surface-light mb-6">
-                  <h3 className="font-bold text-white text-[15px] mb-3 flex items-center gap-2">
-                    <Activity size={18} className="text-amber-500" />
-                    Aquecimento & Mobilidade
-                  </h3>
-                  <ul className="list-disc list-inside text-sm text-text-secondary space-y-1">
-                    {todayPlan.warmup.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {exercises.map((ex, idx) => (
-                <div
-                  key={`${ex.id}-${idx}`}
-                  className={`p-4 rounded-xl border ${idx === activeExerciseIndex ? "bg-neon-blue/5 border-neon-blue" : idx < activeExerciseIndex ? "bg-emerald-500/5 border-emerald-500/30 opacity-70" : "bg-surface border-surface-light"}`}
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-start gap-4 w-full">
-                      <div className="w-[120px] h-[120px] rounded-xl overflow-hidden shrink-0 border border-white/10 bg-background/50 relative">
-                        <ExerciseMedia exerciseNameOrId={ex.id || ex.name} fallbackMuscle={ex.targetMuscles?.[0]} />
-                      </div>
-                      <div className="flex-1 min-w-0 pr-2">
-                        <h4 className="font-bold text-white text-[15px] leading-tight break-words">{ex.name}</h4>
-                        {idx === activeExerciseIndex && (
-                          <span className="inline-block mt-1.5 text-[10px] text-neon-blue font-bold uppercase border border-neon-blue/30 px-2 py-0.5 rounded">
-                            Atual
-                          </span>
-                        )}
-                        {idx < activeExerciseIndex && (
-                          <span className="inline-block mt-1.5 text-[10px] text-emerald-500 font-bold uppercase">
-                            <CheckCircle size={14} className="inline mr-1" /> Concluído
-                          </span>
-                        )}
-                      </div>
-                    </div>
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              className="bg-surface border border-surface-light rounded-2xl p-4 max-w-sm w-full shadow-2xl max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-text-primary font-bold uppercase tracking-wider text-xs flex items-center gap-2">
+                  🚀 Console de Testes
+                </h2>
+                <button onClick={() => setShowConsole(false)} className="text-text-secondary hover:text-text-primary">
+                  <X size={16} />
+                </button>
+              </div>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">Testar Técnicas</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button onClick={() => seedPhase4Scenario("superset")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Superset A1-A2</button>
+                    <button onClick={() => seedPhase4Scenario("Drop Set")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Drop Set</button>
+                    <button onClick={() => seedPhase4Scenario("Rest Pause")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Rest Pause</button>
+                    <button onClick={() => seedPhase4Scenario("Cluster Set")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Cluster Set</button>
                   </div>
-
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">Nível do Atleta</label>
                   <div className="grid grid-cols-3 gap-2">
-                    <div className="bg-background rounded-lg p-2 border border-white/5">
-                      <label className="text-[8px] text-text-secondary uppercase tracking-widest font-bold block mb-1">
-                        Séries
-                      </label>
-                      <input
-                        type="number"
-                        disabled={idx < activeExerciseIndex}
-                        value={ex.sets}
-                        onChange={(e) =>
-                          handleEditExercise(
-                            idx,
-                            "sets",
-                            parseInt(e.target.value) || 1,
-                          )
-                        }
-                        className="w-full bg-transparent text-white font-bold text-sm outline-none disabled:opacity-50"
-                      />
-                    </div>
-                    <div className="bg-background rounded-lg p-2 border border-white/5">
-                      <label className="text-[8px] text-text-secondary uppercase tracking-widest font-bold block mb-1">
-                        Reps
-                      </label>
-                      <input
-                        type="text"
-                        disabled={idx < activeExerciseIndex}
-                        value={ex.reps}
-                        onChange={(e) =>
-                          handleEditExercise(idx, "reps", e.target.value)
-                        }
-                        className="w-full bg-transparent text-white font-bold text-sm outline-none disabled:opacity-50"
-                      />
-                    </div>
-                    <div className="bg-background rounded-lg p-2 border border-white/5">
-                      <label className="text-[8px] text-text-secondary uppercase tracking-widest font-bold block mb-1">
-                        Descanso (s)
-                      </label>
-                      <input
-                        type="number"
-                        disabled={idx < activeExerciseIndex}
-                        value={ex.restSeconds}
-                        onChange={(e) =>
-                          handleEditExercise(
-                            idx,
-                            "restSeconds",
-                            parseInt(e.target.value) || 0,
-                          )
-                        }
-                        className="w-full bg-transparent text-white font-bold text-sm outline-none disabled:opacity-50"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Advanced technique and superset manual config */}
-                  <div className="grid grid-cols-2 gap-2 mt-2">
-                    <div className="bg-background rounded-lg p-2 border border-white/5">
-                      <label className="text-[8px] text-text-secondary uppercase tracking-widest font-bold block mb-1">
-                        Técnica Avançada
-                      </label>
-                      <select
-                        disabled={idx < activeExerciseIndex}
-                        value={ex.advancedTechnique || ""}
-                        onChange={(e) =>
-                          handleEditExercise(
-                            idx,
-                            "advancedTechnique",
-                            e.target.value,
-                          )
-                        }
-                        className="w-full bg-transparent text-white font-extrabold text-[10px] outline-none border-none max-w-full disabled:opacity-50 cursor-pointer"
-                      >
-                        <option value="" className="bg-surface text-white">
-                          Nenhuma
-                        </option>
-                        <option
-                          value="Drop Set"
-                          className="bg-surface text-white"
-                        >
-                          Drop Set
-                        </option>
-                        <option
-                          value="Rest Pause"
-                          className="bg-surface text-white"
-                        >
-                          Rest Pause
-                        </option>
-                        <option
-                          value="Cluster Set"
-                          className="bg-surface text-white"
-                        >
-                          Cluster Set
-                        </option>
-                        <option
-                          value="Myo Reps"
-                          className="bg-surface text-white"
-                        >
-                          Myo Reps
-                        </option>
-                        <option value="FST-7" className="bg-surface text-white">
-                          FST-7
-                        </option>
-                        <option
-                          value="Bi-set"
-                          className="bg-surface text-white"
-                        >
-                          Bi-set
-                        </option>
-                        <option
-                          value="Tri-set"
-                          className="bg-surface text-white"
-                        >
-                          Tri-set
-                        </option>
-                        <option
-                          value="Circuito"
-                          className="bg-surface text-white"
-                        >
-                          Circuito
-                        </option>
-                      </select>
-                    </div>
-                    <div className="bg-background rounded-lg p-2 border border-white/5">
-                      <label className="text-[8px] text-text-secondary uppercase tracking-widest font-bold block mb-1">
-                        Grupo Superset (ex: A1)
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Ex: A1, A2"
-                        disabled={idx < activeExerciseIndex}
-                        value={ex.supersetGroup || ""}
-                        onChange={(e) =>
-                          handleEditExercise(
-                            idx,
-                            "supersetGroup",
-                            e.target.value,
-                          )
-                        }
-                        className="w-full bg-transparent text-white font-bold text-[10px] outline-none disabled:opacity-50 placeholder-surface-light"
-                      />
-                    </div>
+                    <button onClick={() => seedScenario("novo")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Iniciante</button>
+                    <button onClick={() => seedScenario("intermediario")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Intermediário</button>
+                    <button onClick={() => seedScenario("avancado")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Avançado</button>
                   </div>
                 </div>
-              ))}
-
-              {todayPlan?.cooldown && todayPlan.cooldown.length > 0 && (
-                <div className="p-4 rounded-xl border bg-surface border-surface-light mt-6">
-                  <h3 className="font-bold text-white text-[15px] mb-3 flex items-center gap-2">
-                    <Activity size={18} className="text-neon-purple" />
-                    Resfriamento & Alongamento
-                  </h3>
-                  <ul className="list-disc list-inside text-sm text-text-secondary space-y-1">
-                    {todayPlan.cooldown.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              <button
-                onClick={() => setShowAddMenu(true)}
-                className="w-full bg-surface border border-surface-light py-4 rounded-xl text-xs font-bold uppercase text-text-secondary hover:border-white/20 hover:text-white transition-all flex items-center justify-center gap-2"
-              >
-                <Plus size={16} /> Adicionar Novo Exercício
-              </button>
-            </div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ADD EXERCISE MODAL (Full screen) */}
+      {/* ADD EXERCISE MENU */}
       <AnimatePresence>
         {showAddMenu && (
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="fixed inset-0 bg-background z-50 flex flex-col"
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex flex-col"
           >
-            <div className="p-4 border-b border-surface-light flex items-center justify-between bg-surface sticky top-0">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Plus size={20} className="text-neon-blue" />
-                Adicionar ao Treino
-              </h2>
+            <div className="flex justify-between items-center p-4 border-b border-surface-light">
+              <h2 className="text-text-primary font-bold text-sm">Adicionar Exercício</h2>
               <button
                 onClick={() => setShowAddMenu(false)}
-                className="p-2 text-text-secondary hover:text-white bg-surface-light rounded-full"
+                className="p-1.5 text-text-secondary hover:text-text-primary bg-surface-light rounded-full"
               >
-                <X size={20} />
+                <X size={16} />
               </button>
             </div>
-
-            <div className="p-4 bg-surface-light sticky top-[69px] z-10 border-b border-surface-light">
+            <div className="p-3 bg-surface border-b border-surface-light">
               <div className="relative">
-                <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"
-                  size={18}
-                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" size={14} />
                 <input
                   type="text"
                   placeholder="Buscar exercício..."
                   value={addSearchQuery}
                   onChange={(e) => setAddSearchQuery(e.target.value)}
-                  className="w-full bg-background border border-surface-light rounded-xl py-3 pl-10 pr-4 text-white text-sm outline-none focus:border-neon-blue transition-colors placeholder:text-text-secondary"
+                  className="w-full bg-background border border-surface-light text-text-primary rounded-xl py-2 pl-9 pr-4 text-xs focus:outline-none focus:border-neon-blue"
+                  autoFocus
                 />
               </div>
             </div>
-
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-3">
               {addResults.length > 0 ? (
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-1 gap-2">
                   {addResults.map((ex) => (
                     <button
                       key={ex.id}
                       onClick={() => handleAddExercise(ex)}
-                      className="bg-surface border border-surface-light p-3 rounded-xl flex items-center gap-4 text-left hover:border-neon-blue/50 transition-colors group"
+                      className="bg-surface border border-surface-light p-2 rounded-xl flex items-center gap-3 text-left hover:border-neon-blue/50 transition-colors group"
                     >
-                      <div className="w-12 h-12 rounded bg-background flex items-center justify-center shrink-0 border border-surface-light">
-                        <Dumbbell size={16} className="text-text-secondary" />
+                      <div className="w-10 h-10 rounded bg-background flex items-center justify-center shrink-0 border border-surface-light">
+                        <Dumbbell size={14} className="text-text-secondary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-sm text-white truncate group-hover:text-neon-blue transition-colors">
+                        <h4 className="font-bold text-xs text-text-primary truncate group-hover:text-neon-blue transition-colors">
                           {ex.name}
                         </h4>
-                        <p className="text-[10px] text-text-secondary uppercase">
+                        <p className="text-[9px] text-text-secondary uppercase">
                           {ex.targetMuscles.join(", ")}
                         </p>
                       </div>
-                      <Dumbbell
-                        size={16}
-                        className="text-text-secondary group-hover:text-white shrink-0"
-                      />
+                      <Plus size={14} className="text-text-secondary group-hover:text-neon-blue shrink-0" />
                     </button>
                   ))}
                 </div>
               ) : (
-                <div className="py-12 text-center">
-                  <p className="text-text-secondary">
-                    Nenhum exercício encontrado
-                  </p>
+                <div className="py-12 text-center text-xs text-text-secondary">
+                  Nenhum exercício encontrado
                 </div>
               )}
             </div>
           </motion.div>
         )}
+      </AnimatePresence>
+
+      {/* FULLSCREEN MEDIA MODAL */}
+      <AnimatePresence>
+        {fullscreenExercise && (() => {
+          const fsLibraryMatch = EXERCISE_LIBRARY.find(ex => ex.id === fullscreenExercise.libraryId || ex.name.toLowerCase() === fullscreenExercise.name.toLowerCase());
+          const inst = fullscreenExercise.instructions || fsLibraryMatch?.instructions;
+          const errs = fullscreenExercise.commonErrors && fullscreenExercise.commonErrors.length > 0 
+            ? fullscreenExercise.commonErrors 
+            : (fsLibraryMatch?.commonErrors && fsLibraryMatch.commonErrors.length > 0 ? fsLibraryMatch.commonErrors : getCommonErrorsForExercise(fullscreenExercise.name, fullscreenExercise.targetMuscles || []));
+            
+          return (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col"
+          >
+            <div className="p-4 flex justify-between items-center bg-black/80 sticky top-0 z-10 border-b border-surface-light">
+               <h3 className="text-text-primary font-bold text-sm">{fullscreenExercise.name}</h3>
+               <button onClick={() => setFullscreenExercise(null)} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-text-primary hover:bg-white/20 transition-colors cursor-pointer shrink-0">
+                 <X size={16} />
+               </button>
+            </div>
+            
+            <div className="flex-1 w-full flex flex-col p-4 overflow-y-auto space-y-4 pb-24">
+              <div className="w-full max-w-4xl mx-auto aspect-video relative rounded-2xl overflow-hidden border border-surface-light shadow-2xl bg-black shrink-0">
+                 <ExerciseMedia
+                    exerciseNameOrId={fullscreenExercise.libraryId || fullscreenExercise.name || fullscreenExercise.id}
+                    fallbackMuscle={fullscreenExercise.targetMuscles?.[0] || fullscreenExercise.target || "Corpo Todo"}
+                    priority={true}
+                 />
+              </div>
+
+              {inst && (
+                 <div className="w-full max-w-4xl mx-auto bg-surface/50 border-l-2 border-neon-blue p-4 rounded-r-xl">
+                   <h4 className="font-bold text-neon-blue uppercase tracking-widest text-[10px] mb-2">Instruções de Execução</h4>
+                   <p className="text-xs text-text-primary/80 leading-relaxed whitespace-pre-wrap">{inst}</p>
+                 </div>
+              )}
+              {errs && errs.length > 0 && (
+                 <div className="w-full max-w-4xl mx-auto bg-red-900/20 border-l-2 border-red-500 p-4 rounded-r-xl">
+                   <h4 className="font-bold text-red-500 uppercase tracking-widest text-[10px] mb-2">Evite Estes Erros</h4>
+                   <ul className="list-disc pl-4 space-y-1.5 text-xs text-red-200/80 marker:text-red-500">
+                     {errs.map((e, i) => <li key={i}>{e}</li>)}
+                   </ul>
+                 </div>
+              )}
+            </div>
+          </motion.div>
+        )})()}
       </AnimatePresence>
     </div>
   );

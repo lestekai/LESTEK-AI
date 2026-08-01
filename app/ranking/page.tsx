@@ -10,12 +10,7 @@ import { Header } from '@/components/Header';
 import { PLANET_MISSIONS, getRankTier, getRankFrameStyle, getPlanetTextureStyle, COSMETICS, ACHIEVEMENTS, calculateAvatarLevel, calculatePlanets, calculateEvoluxScore } from '@/lib/evolux';
 import { MiniCosmicAvatar } from '@/components/MiniCosmicAvatar';
 
-// Simulated global users with high stakes streaks (fallback)
-const SIMULATED_USERS = [
-  { id: '1', name: 'Alex_Neo', streak: 412, isMe: false, aura: 'rgba(255,0,50,0.6)', badges: ['legendary'], xp: 25400, tasksCompleted: 1540, plan: 'infinite' },
-  { id: '2', name: 'Sarah.V', streak: 190, isMe: false, aura: 'rgba(0,240,255,0.5)', badges: ['epic', 'legendary'], xp: 14800, tasksCompleted: 820, plan: 'nova' },
-  { id: '3', name: 'Cyber_Ninja', streak: 125, isMe: false, aura: 'rgba(255,150,0,0.5)', badges: ['rare', 'epic'], xp: 10500, tasksCompleted: 500, plan: 'orbit' },
-];
+
 
 export default function RankingPage() {
   const { profile } = useAppStore();
@@ -28,7 +23,7 @@ export default function RankingPage() {
     async function fetchRealUsers() {
       const { data, error } = await supabase.from('profiles')
         .select('*')
-        .eq('status', 'active')
+        
         .order('xp', { ascending: false })
         .limit(20);
         
@@ -39,7 +34,7 @@ export default function RankingPage() {
            
            return {
              id: p.id,
-             name: p.name || p.username,
+             name: p.name || p.username || 'Explorador',
              streak: p.streak || 0,
              xp: p.xp || 0,
              tasksCompleted: p.total_tasks_completed || 0,
@@ -81,12 +76,7 @@ export default function RankingPage() {
   const myScore = calculateEvoluxScore(profile.streak, profile.xp || 0, profile.totalTasksCompleted || 0);
 
   // Combine real users (with simulated fallback if needed) with current user
-  const otherUsers = realUsers.length > 0 ? realUsers.filter(u => u.id !== profile.id) : SIMULATED_USERS.map(u => ({ 
-    ...u, 
-    level: calculateAvatarLevel(u.xp), 
-    planets: calculatePlanets(u.streak),
-    score: calculateEvoluxScore(u.streak, u.xp, u.tasksCompleted)
-  }));
+  const otherUsers = realUsers.filter(u => u.id !== profile.id);
 
   const allUsers = [
     ...otherUsers,

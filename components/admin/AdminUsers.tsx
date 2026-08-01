@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { useAppStore } from '@/lib/store';
+import { logAdminAction } from '@/lib/admin';
 import { Users, Search, Edit2, Shield, Lock, Trash2, Ban, Target, LockKeyhole, ArrowRight } from 'lucide-react';
 
 export default function AdminUsers() {
+  const { profile } = useAppStore();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,6 +61,7 @@ export default function AdminUsers() {
       }
 
       alert('Usuário criado com sucesso. Senha padrão: Evolux@123');
+      if (profile) logAdminAction(profile.id, 'CREATE_USER', data?.user?.id || 'new', { email: editingUser.email, role: editingUser.role });
       setEditingUser(null);
       fetchUsers();
       return;
@@ -82,6 +86,7 @@ export default function AdminUsers() {
       alert('Erro ao atualizar usuário: ' + error.message);
     } else {
       alert('Usuário atualizado com sucesso.');
+      if (profile) logAdminAction(profile.id, 'UPDATE_USER', editingUser.id, { role: editingUser.role, status: editingUser.status });
       setEditingUser(null);
       fetchUsers();
     }
@@ -97,6 +102,7 @@ export default function AdminUsers() {
       alert('Erro ao alterar senha: ' + error.message);
     } else {
       alert('Senha alterada com sucesso!');
+      if (profile) logAdminAction(profile.id, 'RESET_PASSWORD', userId, {});
     }
   };
 

@@ -20,6 +20,11 @@ export function ProfileMenu() {
     await supabase.auth.signOut();
     logout();
     useWorkoutStore.getState().resetWorkoutSystem();
+        localStorage.removeItem('workout_q_step');
+    localStorage.removeItem('workout_q_data');
+    localStorage.removeItem('onboarding_step');
+    localStorage.removeItem('onboarding_answers');
+    localStorage.removeItem('evolux_finance');
     navigate('/login');
   };
 

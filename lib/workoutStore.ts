@@ -255,19 +255,31 @@ export const useWorkoutStore = create<WorkoutState>()(
       }),
 
       completeWorkout: (log) => set((state) => ({
-        workoutHistory: [...state.workoutHistory, log]
+        workoutHistory: [...(Array.isArray(state.workoutHistory) ? state.workoutHistory : []), log]
       })),
       
       setWorkoutHistory: (history) => set({
-        workoutHistory: history
+        workoutHistory: Array.isArray(history) ? history : []
       }),
 
-      resetWorkoutSystem: () => set({
+                  resetWorkoutSystem: () => set({
         hasCompletedQuestionnaire: false,
         questionnaire: {},
         currentPlan: null,
         workoutHistory: [],
-        selectedProgressionWeek: 0
+        selectedProgressionWeek: 0,
+        userTemplates: [],
+        activeFreeWorkout: null,
+        activeWorkoutSession: null,
+        settings: {
+          preparationTimeSeconds: 15,
+          preparationEnabled: true,
+          restTimeEnabled: true,
+          autoAdvanceEnabled: false,
+          soundEnabled: true,
+          vibrationEnabled: true,
+          estimatedSetTimeSeconds: 45
+        }
       }),
 
       updateSettings: (newSettings) => set((state) => ({

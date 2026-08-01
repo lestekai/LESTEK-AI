@@ -2,29 +2,16 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { generateAI } from '@/src/services/geminiService';
-import { useAppStore } from '@/lib/store';
+import { useAppStore, Transaction } from '@/lib/store';
 import { BottomNav } from '@/components/BottomNav';
 import { TrendingUp, TrendingDown, Plus, Loader2, BrainCircuit, Mic, PieChart, Activity, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header } from '@/components/Header';
 
-type Transaction = {
-  id: string;
-  type: 'income' | 'expense';
-  amount: number;
-  description: string;
-  date: string;
-};
+
 
 export default function FinancePage() {
-  const { profile, showPremiumModal } = useAppStore();
-  const [transactions, setTransactions] = useState<Transaction[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('evolux_finance');
-      if (saved) return JSON.parse(saved);
-    }
-    return [];
-  });
+  const { profile, showPremiumModal, transactions, addTransaction, removeTransaction } = useAppStore();
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [type, setType] = useState<'income' | 'expense'>('expense');
@@ -36,9 +23,7 @@ export default function FinancePage() {
   const recognitionRef = useRef<any>(null);
 
   // We save to local storage on change
-  useEffect(() => {
-    localStorage.setItem('evolux_finance', JSON.stringify(transactions));
-  }, [transactions]);
+
 
   const handleVoiceCommand = async (transcript: string) => {
     setProcessingAudio(true);
@@ -68,7 +53,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
           description: parsed.description,
           date: new Date().toLocaleDateString('en-CA')
         };
-        setTransactions(prev => [newTx, ...prev]);
+        addTransaction(newTx);
       }
     } catch (error) {
       console.error('Failed to parse voice command:', error);
@@ -114,9 +99,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('evolux_finance', JSON.stringify(transactions));
-  }, [transactions]);
+
 
 
 
@@ -150,13 +133,13 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
       date: new Date().toLocaleDateString('en-CA')
     };
 
-    setTransactions([newTx, ...transactions]);
+    addTransaction(newTx);
     setAmount('');
     setDescription('');
   };
 
   const deleteTransaction = (id: string) => {
-    setTransactions(transactions.filter(t => t.id !== id));
+    removeTransaction(id);
   };
 
   const balance = transactions.reduce((acc, curr) => {

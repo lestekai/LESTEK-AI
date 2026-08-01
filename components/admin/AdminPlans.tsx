@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { supabaseAdmin } from '@/lib/supabase-admin';
+import { useAppStore } from '@/lib/store';
+import { logAdminAction } from '@/lib/admin';
 import { BookOpen, Search, Save, Calendar } from 'lucide-react';
 
 export default function AdminPlans() {
+  const { profile } = useAppStore();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -42,6 +45,7 @@ export default function AdminPlans() {
       alert('Erro ao atualizar plano: ' + error.message);
     } else {
       alert('Plano atualizado com sucesso!');
+      if (profile) logAdminAction(profile.id, 'UPDATE_PLAN', userId, { newPlan, expiresAt });
       fetchUsers();
     }
   };
@@ -66,6 +70,7 @@ export default function AdminPlans() {
       alert('Erro ao recusar solicitação: ' + error.message);
     } else {
       alert('Solicitação recusada!');
+      if (profile) logAdminAction(profile.id, 'REJECT_PLAN_REQUEST', userId, {});
       fetchUsers();
     }
   };

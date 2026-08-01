@@ -149,6 +149,13 @@ export async function generateAI(
 
       const isTimeout = error.name === 'AbortError';
       const errorMessage = isTimeout ? 'Timeout de 50 segundos excedido' : (error.message || 'Erro desconhecido');
+      
+      const isApiKeyError = errorMessage.includes('API_KEY_INVALID') || errorMessage.includes('API key not valid') || errorMessage.includes('API KEY ausente');
+      
+      if (isApiKeyError) {
+        console.warn('[Gemini Service] Chave de API inválida detectada. Abortando tentativas e ativando fallback.');
+        attempt = retries; // Force fallback logic
+      }
 
       if (attempt < retries) {
         const nextDelay = delayMs * attempt;
@@ -159,9 +166,14 @@ export async function generateAI(
         console.warn('[Gemini Service] Todas as tentativas falharam. Usando mecanismo de fallback elegante.');
         
         // Define an elegant fallback response to prevent frontend application crashes for specific formats
+        if (!responseMimeType || responseMimeType === 'text/plain') {
+          console.log('[Gemini Service] Fallback: Retornando resposta de texto offline.');
+          return { text: "O serviço de Inteligência Artificial da Evolux está indisponível no momento devido a restrições de rede ou chave de API ausente. Por favor, tente novamente mais tarde ou configure a sua chave." };
+        }
+
         if (responseMimeType === 'application/json') {
           // If the requester expected a Questionnaire wizard JSON response:
-          if (prompt.includes('recipe') || prompt.includes('exercises') || prompt.includes('targetMuscles') || prompt.includes('habits')) {
+          if (prompt.includes('treino') || prompt.includes('recipe') || prompt.includes('exercises') || prompt.includes('targetMuscles') || prompt.includes('habits')) {
             console.log('[Gemini Service] Fallback: Retornando plano de treino adaptativo offline estruturado.');
             return {
               text: JSON.stringify({
@@ -223,6 +235,14 @@ export async function generateAI(
               })
             };
           }
+          
+          return {
+            text: JSON.stringify({
+              error: true,
+              message: "Serviço Evolux AI Indisponível no momento.",
+              fallback: true
+            })
+          };
         }
         
         throw new Error(`Serviço Evolux AI Indisponível (Tentativas esgotadas): ${errorMessage}`);

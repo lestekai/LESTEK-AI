@@ -24,6 +24,15 @@ export type Task = {
   baseDate?: string;
 };
 
+
+export type Transaction = {
+  id: string;
+  type: 'income' | 'expense';
+  amount: number;
+  description: string;
+  date: string;
+};
+
 export type Goal = {
   id: string;
   title: string;
@@ -57,7 +66,10 @@ export type UserProfile = {
 interface AppState {
   profile: UserProfile | null;
   tasks: Task[];
+
   goals: Goal[];
+  transactions: Transaction[];
+
   premiumModalOpen: boolean;
   premiumModalMessage: string;
   login: (name: string, plan: UserProfile['plan']) => void;
@@ -81,7 +93,12 @@ interface AppState {
   isElderlyMode: boolean;
   toggleElderlyMode: () => void;
   setTasks: (tasks: Task[]) => void;
+
   setGoals: (goals: Goal[]) => void;
+  setTransactions: (transactions: Transaction[]) => void;
+  addTransaction: (tx: Transaction) => void;
+  removeTransaction: (id: string) => void;
+
 }
 
 export function getLocalDateStr(date: Date) {
@@ -94,7 +111,10 @@ export const useAppStore = create<AppState>()(
     (set, get) => ({
       profile: null,
       tasks: [],
+
       goals: [],
+      transactions: [],
+
       premiumModalOpen: false,
       premiumModalMessage: '',
       zoomLevel: 100,
@@ -156,7 +176,9 @@ export const useAppStore = create<AppState>()(
         });
       },
 
-      logout: () => set({ profile: null, tasks: [], goals: [] }),
+
+      logout: () => set({ profile: null, tasks: [], goals: [], transactions: [] }),
+
       
       setProfile: (profile) => set({ profile }),
 
@@ -404,6 +426,7 @@ export const useAppStore = create<AppState>()(
         });
 
         const seenGoalIds = new Set<string>();
+
         const sanitizedGoals = (persistedState.goals || []).map((g: any) => {
           let id = g.id;
           if (!id || seenGoalIds.has(id)) {
@@ -413,11 +436,17 @@ export const useAppStore = create<AppState>()(
           return { ...g, id };
         });
 
+        const sanitizedTransactions = persistedState.transactions || [];
+
+
         return {
           ...currentState,
+
           ...persistedState,
           tasks: sanitizedTasks,
-          goals: sanitizedGoals
+          goals: sanitizedGoals,
+          transactions: sanitizedTransactions
+
         };
       }
     }
