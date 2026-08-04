@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db } from '@/lib/firebase';
+import { collection, getCountFromServer, query, where, getDocs } from 'firebase/firestore';
 import { Users, Activity, Target, Zap, Shield, Crown } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -18,83 +19,84 @@ export default function AdminOverview() {
   const [growthData, setGrowthData] = useState<any[]>([]);
 
   const fetchStats = async () => {
-    const { count: totalUsers } = await supabaseAdmin.from('profiles').select('*', { count: 'exact', head: true });
-    const { count: activeUsers } = await supabaseAdmin.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'active');
-    const { count: bannedUsers } = await supabaseAdmin.from('profiles').select('*', { count: 'exact', head: true }).eq('status', 'banned');
-    const { count: totalTasks } = await supabaseAdmin.from('tasks').select('*', { count: 'exact', head: true });
-    
-    // Fetch plan counts - wait, plan is inside equipped_cosmetics JSON...
-    // But since the query used .eq('plan', 'base') it might have failed if plan wasn't a real column. We will leave it as is or fix it.
-    // Wait, since there is no `plan` column, these count queries `.eq('plan', 'base')` will result in errors!
-    // I will remove the plan column restriction or fetch all users and count in memory.
-    const { data: allUsers } = await supabaseAdmin.from('profiles').select('equipped_cosmetics, created_at');
-    
-    let baseUsers = 0;
-    let orbitUsers = 0;
-    let novaUsers = 0;
-    let infiniteUsers = 0;
-    
-    if (allUsers) {
-      allUsers.forEach(u => {
-         const plan = u.equipped_cosmetics?.plan || 'base';
-         if (plan === 'base') baseUsers++;
-         if (plan === 'orbit') orbitUsers++;
-         if (plan === 'nova') novaUsers++;
-         if (plan === 'infinite') infiniteUsers++;
+    try {
+      const totalUsersSnap = await getCountFromServer(collection(db, 'profiles'));
+      const totalUsers = totalUsersSnap.data().count;
+      const activeUsersSnap = await getCountFromServer(query(collection(db, 'profiles'), where('status', '==', 'active')));
+      const activeUsers = activeUsersSnap.data().count;
+      const bannedUsersSnap = await getCountFromServer(query(collection(db, 'profiles'), where('status', '==', 'banned')));
+      const bannedUsers = bannedUsersSnap.data().count;
+      const totalTasksSnap = await getCountFromServer(collection(db, 'tasks'));
+      const totalTasks = totalTasksSnap.data().count;
+      
+      const allUsersSnap = await getDocs(collection(db, 'profiles'));
+      const allUsers = allUsersSnap.docs.map(d => d.data());
+      
+      let baseUsers = 0;
+      let orbitUsers = 0;
+      let novaUsers = 0;
+      let infiniteUsers = 0;
+      
+      if (allUsers) {
+        allUsers.forEach(u => {
+           const plan = u.equipped_cosmetics?.plan || 'base';
+           if (plan === 'base') baseUsers++;
+           if (plan === 'orbit') orbitUsers++;
+           if (plan === 'nova') novaUsers++;
+           if (plan === 'infinite') infiniteUsers++;
+        });
+      }
+  
+      const now = new Date();
+  
+      const d15DaysAgo = new Date(now);
+      d15DaysAgo.setDate(now.getDate() - 15);
+      
+      const d7DaysAgo = new Date(now);
+      d7DaysAgo.setDate(now.getDate() - 7);
+  
+      const users15DaysAgo = allUsers ? allUsers.filter(u => new Date(u.created_at) <= d15DaysAgo).length : 0;
+      const users7DaysAgo = allUsers ? allUsers.filter(u => new Date(u.created_at) <= d7DaysAgo).length : 0;
+      
+      let weeklyGrowth = 0;
+      if (users15DaysAgo > 0) {
+        weeklyGrowth = users15DaysAgo > 0 ? Math.round(((users7DaysAgo - users15DaysAgo) / users15DaysAgo) * 100) : 100;
+      } else if (users7DaysAgo > 0) {
+        weeklyGrowth = 100;
+      }
+  
+      setStats({
+        totalUsers: totalUsers || 0,
+        activeUsers: activeUsers || 0,
+        bannedUsers: bannedUsers || 0,
+        totalTasks: totalTasks || 0,
+        baseUsers,
+        orbitUsers,
+        novaUsers,
+        infiniteUsers,
+        weeklyGrowth
       });
+  
+      const data = [];
+      for (let i = 14; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(now.getDate() - i);
+        const displayDate = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  
+        const usersUpToDate = allUsers ? allUsers.filter(u => {
+          const uDate = new Date(u.created_at);
+          return uDate <= d;
+        }).length : 0;
+  
+        data.push({
+          date: displayDate,
+          usuarios: usersUpToDate,
+        });
+      }
+      setGrowthData(data);
+    } catch (e) {
+      console.error('AdminOverview error', e);
     }
-
-    const now = new Date();
-
-    const d15DaysAgo = new Date(now);
-    d15DaysAgo.setDate(now.getDate() - 15);
-    
-    const d7DaysAgo = new Date(now);
-    d7DaysAgo.setDate(now.getDate() - 7);
-
-    const users15DaysAgo = allUsers ? allUsers.filter(u => new Date(u.created_at) <= d15DaysAgo).length : 0;
-    const users7DaysAgo = allUsers ? allUsers.filter(u => new Date(u.created_at) <= d7DaysAgo).length : 0;
-    
-    // Growth percentage calculation
-    let weeklyGrowth = 0;
-    if (users15DaysAgo > 0) {
-      weeklyGrowth = Math.round(((users7DaysAgo - users15DaysAgo) / users15DaysAgo) * 100);
-    } else if (users7DaysAgo > 0) {
-      weeklyGrowth = 100; // If there were 0 users 15 days ago but >0 7 days ago
-    }
-
-    setStats({
-      totalUsers: totalUsers || 0,
-      activeUsers: activeUsers || 0,
-      bannedUsers: bannedUsers || 0,
-      totalTasks: totalTasks || 0,
-      baseUsers,
-      orbitUsers,
-      novaUsers,
-      infiniteUsers,
-      weeklyGrowth
-    });
-
-    // Fetch real growth data (users created in the last 15 days)
-    const data = [];
-    for (let i = 14; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(now.getDate() - i);
-      const dateString = d.toLocaleDateString('en-CA');
-      const displayDate = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-
-      // count users created on or before this day
-      const usersUpToDate = allUsers ? allUsers.filter(u => {
-        const uDate = new Date(u.created_at);
-        return uDate <= d;
-      }).length : 0;
-
-      data.push({
-        date: displayDate,
-        usuarios: usersUpToDate,
-      });
-    }
-    setGrowthData(data);
   };
 
   useEffect(() => {

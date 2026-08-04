@@ -98,9 +98,7 @@ export default defineConfig(({ mode }) => {
                     const { prompt, model, systemInstruction, responseMimeType } = JSON.parse(body);
                     
                     const customHeaderKey = req.headers['x-gemini-key'] || req.headers['X-Gemini-Key'] ||'';
-                    const apiKey = (typeof customHeaderKey === 'string' && customHeaderKey.trim() !== '')
-                      ? customHeaderKey
-                      : (process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || '');
+                    const apiKey = process.env.GEMINI_API_KEY || (typeof customHeaderKey === 'string' && customHeaderKey.trim() !== '' ? customHeaderKey : (process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || ''));
 
                     if (!apiKey || apiKey.trim() === '') {
                       console.error('Gemini error: API Key missing in process.env and request headers');
@@ -127,7 +125,7 @@ export default defineConfig(({ mode }) => {
                     if (systemInstruction) config.systemInstruction = systemInstruction;
                     if (responseMimeType) config.responseMimeType = responseMimeType;
 
-                    const requestModel = model || "gemini-1.5-flash";
+                    const requestModel = model || "gemini-2.5-flash";
                     console.log('Calling Gemini with model:', requestModel);
                     
                     let text = "";
@@ -140,8 +138,8 @@ export default defineConfig(({ mode }) => {
                       text = response.text || "";
                     } catch (genError: any) {
                       console.warn(`[Vite Middleware] Falha ao tentar com o modelo ${requestModel}:`, genError.message || genError);
-                      if (requestModel !== "gemini-1.5-flash") {
-                        const fallbackModel = "gemini-1.5-flash";
+                      if (requestModel !== "gemini-2.5-flash") {
+                        const fallbackModel = "gemini-2.5-flash";
                         console.log(`[Vite Middleware] Tentando modelo de fallback alternativo: ${fallbackModel}...`);
                         try {
                           const fallbackResponse = await ai.models.generateContent({

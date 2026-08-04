@@ -36,15 +36,7 @@ export function getCleanTokens(text: string): string[] {
 // Media failure cache tracking to avoid hitting 404s/broken images over and over
 const _mediaFailureCache = new Set<string>();
 
-const KNOWN_LOCAL_MP4 = [
-  '/exercises/cardio/bicicleta-ergometrica',
-  '/exercises/cardio/esteira',
-  '/exercises/panturrilha/gemeos-sentado',
-  '/exercises/posterior/stiff-com-barra',
-  '/exercises/quadriceps/agachamento-livre',
-  '/exercises/quadriceps/cadeira-extensora',
-  '/exercises/quadriceps/leg-press-45',
-];
+const KNOWN_LOCAL_MP4: string[] = [];
 
 export function markMediaAsFailed(url: string) {
   if (url) _mediaFailureCache.add(url);

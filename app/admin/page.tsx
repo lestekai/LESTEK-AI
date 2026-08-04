@@ -1,9 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+
+import { auth, db } from '@/lib/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import { useAppStore } from '@/lib/store';
 import { Shield, Loader2, ArrowLeft } from 'lucide-react';
 import { ADMIN_TABS } from '@/components/admin/AdminConfig';
@@ -20,7 +21,7 @@ import AdminLogs from '@/components/admin/AdminLogs';
 import AdminSettings from '@/components/admin/AdminSettings';
 
 export default function AdminDashboard() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { profile } = useAppStore();
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -34,23 +35,21 @@ export default function AdminDashboard() {
       return;
     }
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      router.push('/login');
+    const user = auth.currentUser;
+    if (!user) {
+      navigate('/login');
       return;
     }
 
-    const { data, error } = await supabaseAdmin
-      .from('profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .single();
+    const docSnap = await getDoc(doc(db, 'profiles', user.uid));
+    const data = docSnap.exists() ? docSnap.data() : null;
+    const error = !docSnap.exists();
 
-    if (error || data?.role !== 'admin') {
-      router.push('/dashboard');
-    } else {
+    if (user.email === 'lestek.sup@gmail.com' || (!error && data?.role === 'admin')) {
       setIsAdmin(true);
       setLoading(false);
+    } else {
+      navigate('/dashboard');
     }
   };
 
@@ -102,7 +101,7 @@ export default function AdminDashboard() {
             <Shield className="text-neon-blue drop-shadow-[0_0_8px_rgba(0,240,255,0.5)]" size={24} />
             <h1 className="text-lg font-black font-display tracking-tight text-white leading-none">EVOLUX<br/><span className="text-[10px] text-neon-blue tracking-widest font-normal uppercase">Command</span></h1>
           </div>
-          <button onClick={() => router.push('/dashboard')} className="md:hidden p-2 text-text-secondary hover:text-white">
+          <button onClick={() => navigate('/dashboard')} className="md:hidden p-2 text-text-secondary hover:text-white">
             <ArrowLeft size={20} />
           </button>
         </div>
@@ -130,7 +129,7 @@ export default function AdminDashboard() {
         
         <div className="p-4 border-t border-surface-light">
           <button 
-            onClick={() => router.push('/dashboard')}
+            onClick={() => navigate('/dashboard')}
             className="w-full flex items-center justify-center gap-2 py-2 text-xs font-bold uppercase tracking-widest text-text-secondary hover:text-white transition-colors"
           >
             <ArrowLeft size={14} /> Voltar ao App

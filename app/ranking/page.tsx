@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { BottomNav } from '@/components/BottomNav';
 import { Trophy, Flame, Star, Crown, Shield, Zap, Target, Lock, Gift, Eye, Sword, Cpu, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -21,11 +22,10 @@ export default function RankingPage() {
 
   useEffect(() => {
     async function fetchRealUsers() {
-      const { data, error } = await supabase.from('profiles')
-        .select('*')
-        
-        .order('xp', { ascending: false })
-        .limit(20);
+      const q = query(collection(db, 'profiles'), orderBy('xp', 'desc'), limit(20));
+      const snapshot = await getDocs(q);
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const error = null;
         
       if (data && !error) {
         setRealUsers(data.map(p => {

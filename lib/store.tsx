@@ -177,7 +177,14 @@ export const useAppStore = create<AppState>()(
       },
 
 
+      
+      setTasks: (tasks) => set({ tasks }),
+      setGoals: (goals) => set({ goals }),
+      setTransactions: (transactions) => set({ transactions }),
+      addTransaction: (tx) => set((state) => ({ transactions: [...state.transactions, tx] })),
+      removeTransaction: (id) => set((state) => ({ transactions: state.transactions.filter(t => t.id !== id) })),
       logout: () => set({ profile: null, tasks: [], goals: [], transactions: [] }),
+
 
       
       setProfile: (profile) => set({ profile }),

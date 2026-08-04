@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -7,7 +8,7 @@ import { useWorkoutStore, WorkoutQuestionnaire } from '@/lib/workoutStore';
 import { useAppStore } from '@/lib/store';
 import { EXERCISE_LIBRARY } from '@/lib/exerciseLibrary';
 import { Download, BrainCircuit, Dumbbell, User, HeartPulse, Target, ShieldCheck, Zap, ArrowRight, ArrowLeft, PenTool, Type } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+
 
 const generateId = () => typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
 
@@ -164,7 +165,7 @@ FORMATO DO JSON EXIGIDO:
     try {
       const data = await generateAI({
         prompt,
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         systemInstruction: planSystemInstruction,
         responseMimeType: 'application/json'
       });

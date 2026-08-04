@@ -1,11 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore, Task, TaskCategory } from '@/lib/store';
 import { useWorkoutStore } from '@/lib/workoutStore';
-import { supabase } from '@/lib/supabase';
+import { auth, db } from '@/lib/firebase';
+import { doc, updateDoc, setDoc, collection, addDoc } from 'firebase/firestore';
 import { Target, BrainCircuit, Activity, ChevronRight, Check } from 'lucide-react';
 
 function getLocalDateStr(date: Date) {
@@ -114,20 +116,22 @@ export default function OnboardingPage() {
 
     // Sync to Supabase
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const user = auth.currentUser;
       if (session?.user) {
         // Atualiza perfil no Supabase
-        await supabase.from('profiles').update({
-          is_onboarded: true,
-          ai_personality: answers.aiTone
-        }).eq('id', session.user.id);
+        await updateDoc(doc(db, 'profiles', user.uid), {
+          isOnboarded: true,
+          avatar_level: 2,
+          xp: 50,
+          'equipped_cosmetics._backup.questionnaire': answers
+        });
         
         // Salva questionario no ai_memory
-        await supabase.from('ai_memory').upsert({
-          user_id: session.user.id,
+        await setDoc(doc(db, 'ai_memory', user.uid), {
+          user_id: user.uid,
           questionnaire_data: answers,
           preferences: { aiTone: answers.aiTone, mainGoal: answers.mainGoal }
-        });
+        }, { merge: true });
       }
     } catch (err) {
       console.error(err);
@@ -139,7 +143,7 @@ export default function OnboardingPage() {
       const today = getLocalDateStr(new Date());
       const initialTasks: Task[] = [];
       
-      const { data: { session } } = await supabase.auth.getSession();
+      const user = auth.currentUser;
       
       const prepareTaskAndPush = async (title: string, category: TaskCategory, xpReward: number = 10) => {
         const t: Task = {
@@ -155,15 +159,15 @@ export default function OnboardingPage() {
         initialTasks.push(t);
         
         if (session?.user) {
-           await supabase.from('tasks').insert({
-             user_id: session.user.id,
-             title: t.title,
-             category: t.category,
-             xp_reward: t.xpReward,
-             date: t.date,
-             base_date: t.baseDate,
-             is_recurring: true,
-             completed: false
+           await addDoc(collection(db, 'tasks'), {
+             user_id: user.uid,
+             title: generatedTask.title,
+             description: generatedTask.description,
+             points: generatedTask.points,
+             category: generatedTask.category,
+             status: 'pending',
+             created_at: new Date().toISOString(),
+             type: 'daily'
            });
         }
       };

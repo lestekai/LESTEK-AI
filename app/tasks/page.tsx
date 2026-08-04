@@ -8,7 +8,6 @@ import { Plus, CheckCircle2, Target, Zap, Flame, Dumbbell, Wallet, Activity, Cod
 import confetti from 'canvas-confetti';
 
 import { Header } from '@/components/Header';
-import { Link } from 'react-router-dom';
 
 export default function TasksPage() {
   const { tasks, addTask, toggleTask, updateTaskProgress, toggleSubTask, profile, showPremiumModal } = useAppStore();
@@ -481,7 +480,7 @@ export default function TasksPage() {
                       <div className="mt-4 pt-4 border-t border-surface-light">
                          <div className="flex justify-between items-center mb-2">
                            <span className="text-[10px] uppercase font-bold text-text-secondary tracking-widest">Progresso: {task.currentAmount || 0} / {task.targetAmount} {task.unit}</span>
-                           <span className="text-xs font-bold text-neon-blue">{Math.round(((task.currentAmount || 0) / task.targetAmount) * 100)}%</span>
+                           <span className="text-xs font-bold text-neon-blue">{task.targetAmount > 0 ? Math.round(((task.currentAmount || 0) / task.targetAmount) * 100) : 0}%</span>
                          </div>
                          <div className="flex gap-2 items-center">
                             <div className="flex-1 h-3 bg-background rounded-full overflow-hidden border border-white/5">

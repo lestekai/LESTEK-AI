@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState } from 'react';
@@ -6,12 +7,12 @@ import { Header } from '@/components/Header';
 import { BottomNav } from '@/components/BottomNav';
 import { User, Bell, Shield, Smartphone, HardDrive, LogOut, Sun, Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/navigation';
+
 
 
 export default function SettingsPage() {
   const { profile, logout, zoomLevel, setZoomLevel, updateProfile } = useAppStore();
-  const router = useRouter();
+  const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -27,8 +28,9 @@ export default function SettingsPage() {
   const handleSaveName = async () => {
     if (newName.trim()) {
       updateProfile({ name: newName });
-      const { supabase } = await import('@/lib/supabase');
-      await supabase.from('profiles').update({ name: newName }).eq('id', profile.id);
+      const { db } = await import('@/lib/firebase');
+      const { doc, updateDoc } = await import('firebase/firestore');
+      await updateDoc(doc(db, 'profiles', profile.id), { name: newName });
       setIsEditingName(false);
     }
   };
@@ -139,8 +141,8 @@ export default function SettingsPage() {
         <section className="space-y-4 pt-4">
           <button 
             onClick={async () => {
-              const { supabase } = await import('@/lib/supabase');
-              await supabase.auth.signOut();
+              const { auth } = await import('@/lib/firebase');
+              await auth.signOut();
               const { useWorkoutStore } = await import('@/lib/workoutStore');
               useWorkoutStore.getState().resetWorkoutSystem();
               logout();
@@ -149,7 +151,7 @@ export default function SettingsPage() {
     localStorage.removeItem('onboarding_step');
     localStorage.removeItem('onboarding_answers');
     localStorage.removeItem('evolux_finance');
-    router.push('/login');
+    navigate('/login');
             }}
             className="w-full flex items-center justify-center gap-2 py-4 bg-surface border border-surface-light text-text-primary rounded-2xl text-sm font-bold hover:bg-white/5 transition-colors"
           >

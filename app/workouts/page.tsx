@@ -1,3 +1,4 @@
+import { Link, useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState } from 'react';
@@ -7,7 +8,7 @@ import { Header } from '@/components/Header';
 import { BottomNav } from '@/components/BottomNav';
 import { motion, AnimatePresence } from 'motion/react';
 import { Dumbbell, Target, Clock, Activity, Shield, PlaySquare, Edit3, Settings, TrendingUp, Sparkles, History, Calendar, Flame, Zap, Plus, ArrowRight, List, Trash2, AlertTriangle } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+
 import { getProgressionPhase } from '@/lib/progressionSystem';
 import { PREMADE_TEMPLATES } from '@/lib/templates';
 
@@ -85,7 +86,7 @@ function WorkoutDashboard({ plan }: { plan: any }) {
   // Base progress on days completed vs total days in phase
   const workoutsInPhase = (plan.schedule?.filter((s: any) => !s.isRest).length || 0) * totalWeeks;
   // A rough estimate if we don't have exact phase tracking yet, but let's do a simple calculation based on currentWeek
-  const progressPercent = Math.min(100, Math.round(((currentWeekIndex) / totalWeeks) * 100));
+  const progressPercent = totalWeeks > 0 ? Math.min(100, Math.round(((currentWeekIndex) / totalWeeks) * 100)) : 0;
 
   return (
     <div className="space-y-4">

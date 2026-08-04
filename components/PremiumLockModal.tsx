@@ -1,7 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore } from '@/lib/store';
 import { Lock, Zap, ArrowRight, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+
 
 export default function PremiumLockModal() {
   const { premiumModalOpen, premiumModalMessage, hidePremiumModal } = useAppStore();

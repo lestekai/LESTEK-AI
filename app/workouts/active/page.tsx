@@ -1,9 +1,9 @@
+import { useNavigate, useSearchParams } from 'react-router-dom';
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { useWorkoutStore, ExerciseDefinition } from "@/lib/workoutStore";
 import {
   getProgressionStats,

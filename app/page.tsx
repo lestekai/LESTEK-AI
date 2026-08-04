@@ -1,7 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore } from '@/lib/store';
 

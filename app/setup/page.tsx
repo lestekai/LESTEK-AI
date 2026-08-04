@@ -1,7 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { motion } from 'motion/react';
-import { useNavigate } from 'react-router-dom';
+
 import { Download, MonitorSmartphone, BellRing, ArrowRight } from 'lucide-react';
 
 export default function SetupAppPage() {

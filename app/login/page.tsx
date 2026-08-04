@@ -1,10 +1,12 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { motion, useScroll, useTransform } from 'motion/react';
-import { supabase } from '@/lib/supabase';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { auth, db } from '@/lib/firebase';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { useAppStore } from '@/lib/store';
 import { ChevronRight, Zap, Target, Trophy, Shield, Flame, Activity, Crown, Dumbbell, Wallet, ArrowRight, Loader2, BrainCircuit } from 'lucide-react';
 import { PLANET_MISSIONS } from '@/lib/evolux';
@@ -28,8 +30,13 @@ export default function LoginPage() {
     setErrorMsg('');
     setIsLoading(true);
 
-    const safeUsername = username.toLowerCase().trim().replace(/[^a-z0-9_.-]/g, '');
-    const email = `${safeUsername}@evolux.app`;
+    let email = '';
+    if (username.includes('@')) {
+      email = username.trim();
+    } else {
+      const safeUsername = username.toLowerCase().trim().replace(/[^a-z0-9_.-]/g, '');
+      email = `${safeUsername}@evolux.app`;
+    }
 
     if (isLogin) {
       if (username.trim() === 'ADM_TESTE' && password === 'ADM_TESTE') {
@@ -44,7 +51,6 @@ export default function LoginPage() {
           avatarLevel: 10,
           xp: 15000,
           streak: 100,
-          
           total_tasks_completed: 500,
           unlocked_achievements: [],
           unlocked_cosmetics: ['aura_base'],
@@ -56,60 +62,44 @@ export default function LoginPage() {
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) {
-        if (error.message === 'Failed to fetch') {
-          setErrorMsg('Erro de Rede: O seu navegador bloqueou a conexão com o banco de dados.');
-        } else if (error.message.includes('Invalid login credentials')) {
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        navigate('/dashboard');
+      } catch (error: any) {
+        if (error.code === 'auth/invalid-credential') {
           setErrorMsg('Nome de usuário ou senha incorretos.');
         } else {
           setErrorMsg('Erro ao entrar: ' + error.message);
         }
-      } else {
-        navigate('/dashboard');
       }
     } else {
       // REGISTRATION
-      // Usamos o Admin API para contornar limites de taxa de email do Supabase Free e auto-confirmar a conta:
-      const { data: authData, error } = await supabaseAdmin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: {
-          username: username.trim(),
-          name: username.trim(),
-          phone: phone.trim(),
-        }
-      });
-      
-      if (error) {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
+        await setDoc(doc(db, 'profiles', userCredential.user.uid), {
+           id: userCredential.user.uid,
+           username: username.trim(),
+           name: username.trim(),
+           email: email,
+           role: 'user',
+           status: 'active',
+           created_at: new Date().toISOString()
+        });
+
+        navigate('/onboarding');
+      } catch (error: any) {
         console.error("SignUp Error:", error);
-        if (error.message.includes('already been registered') || error.message.includes('already exists')) {
+        if (error.code === 'auth/email-already-in-use') {
           setErrorMsg('Este nome de usuário já está em uso.');
-        } else if (error.message.includes('Password should be at least')) {
+        } else if (error.code === 'auth/weak-password') {
           setErrorMsg('A senha deve ter pelo menos 6 caracteres.');
         } else {
           setErrorMsg('Erro: ' + error.message);
         }
-      } else {
-        // Agora fazemos login com a conta recém criada
-        const { error: signInErr } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
-        
-        if (signInErr) {
-          setErrorMsg('Erro interno ao iniciar sessão. Tente logar manualmente.');
-          setIsLoading(false);
-          return;
-        }
-
-        navigate('/onboarding');
       }
     }
+
     setIsLoading(false);
   };
 
@@ -426,7 +416,7 @@ export default function LoginPage() {
                   </button>
                 </div>
 
-                <label className="text-[10px] text-text-secondary uppercase tracking-[0.2em] font-bold mb-2 block ml-2">Codinome / Identificação</label>
+                <label className="text-[10px] text-text-secondary uppercase tracking-[0.2em] font-bold mb-2 block ml-2">E-mail ou Codinome</label>
                 <div className="relative group mb-4">
                   <input 
                     id="avatar-name-input"

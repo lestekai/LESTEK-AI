@@ -1,6 +1,7 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
-import { useNavigate } from 'react-router-dom';
+
 import { motion } from 'motion/react';
 import { useAppStore } from '@/lib/store';
 import { ArrowLeft, Check, Star, Zap, Infinity as InfinityIcon } from 'lucide-react';
@@ -18,15 +19,16 @@ export default function PlansPage() {
       updateProfile({ plan: planId as any });
       
       // Update in Supabase for persistence
-      const { supabase } = await import('@/lib/supabase');
-      await supabase.from('profiles').update({
+      const { db } = await import('@/lib/firebase');
+      const { doc, updateDoc } = await import('firebase/firestore');
+      await updateDoc(doc(db, 'profiles', profile.id), {
         equipped_cosmetics: {
           ...(profile.equippedCosmetics ? profile.equippedCosmetics : {}),
           plan: 'base',
           plan_request: '',
           plan_expires_at: ''
         }
-      }).eq('id', profile.id);
+      });
 
       alert(`Plano atualizado para ${planId.toUpperCase()} com sucesso!`);
       navigate('/setup');

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { db, auth } from '@/lib/firebase';
+import { collection, query, orderBy, limit, getDocs, where } from 'firebase/firestore';
 import { Bell, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -8,18 +9,28 @@ export function GlobalNotifications() {
   const [isOpen, setIsOpen] = useState(false);
   
   useEffect(() => {
-    // Busca notificações ativas que são para todos ou pro usuário
     const fetchNotifs = async () => {
-      const { data } = await supabase
-        .from('notifications')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-      if (data) {
-        setNotifications(data);
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+        const q = query(collection(db, 'notifications'), where('user_id', '==', user.uid));
+        const snapshot = await getDocs(q);
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        if (data) {
+          const sorted = data.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+          setNotifications(sorted.slice(0, 10));
+        }
+      } catch (e) {
+        console.error("Notifs error", e);
       }
     };
-    fetchNotifs();
+    
+    // Auth observer to ensure we have the user before fetching
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) fetchNotifs();
+    });
+    
+    return () => unsubscribe();
   }, []);
 
   const hasUnread = notifications.length > 0;

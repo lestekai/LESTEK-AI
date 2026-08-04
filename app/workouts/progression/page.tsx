@@ -1,10 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState } from 'react';
 import { useWorkoutStore } from '@/lib/workoutStore';
 import { motion, AnimatePresence } from 'motion/react';
 import { Target, CheckCircle2, Circle, Flame, ChevronRight, Activity, Calendar, Zap, RotateCcw, ArrowRight, Trophy, ArrowLeft, ChevronUp, ChevronDown, Check, Clock, Dumbbell, Info } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+
 import { BottomNav } from '@/components/BottomNav';
 
 function CircularProgress({ progress }: { progress: number }) {
@@ -77,7 +78,7 @@ export default function ProgressionPage() {
     completedWeeksAllPhases += phases[i].durationWeeks;
   }
   completedWeeksAllPhases += currentWeekIndex;
-  const overallProgress = Math.round((completedWeeksAllPhases / totalWeeksAllPhases) * 100);
+  const overallProgress = totalWeeksAllPhases > 0 ? Math.round((completedWeeksAllPhases / totalWeeksAllPhases) * 100) : 0;
 
   return (
     <div className="min-h-screen bg-background pb-32 overflow-x-hidden font-sans">

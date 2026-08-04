@@ -1,42 +1,43 @@
+import { useNavigate, useLocation } from 'react-router-dom';
+"use client";
 import { useEffect, useRef, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db, auth } from '@/lib/firebase';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { useAppStore } from '@/lib/store';
 import { useWorkoutStore } from '@/lib/workoutStore';
-import { useNavigate, useLocation } from 'react-router-dom';
+
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
-  const pathname = useLocation().pathname;
+  const location = useLocation();
+  const pathname = location.pathname;
   const { setProfile, setTasks, setGoals, setTransactions, profile, tasks, goals, transactions } = useAppStore();
   const { 
     setPlan, setQuestionnaireData, setWorkoutHistory, setFreeWorkout, setUserTemplates, updateSettings, setSelectedProgressionWeek,
-    currentPlan, workoutHistory, questionnaire, userTemplates, activeFreeWorkout, settings, selectedProgressionWeek 
-  } = useWorkoutStore();
+    currentPlan, workoutHistory, questionnaire, userTemplates, activeFreeWorkout, settings, selectedProgressionWeek
+   } = useWorkoutStore();
   
   // Track last loaded state to prevent redundant sync loops
   const syncLock = useRef(false);
 
   const fetchProfile = useCallback(async function doFetch(userId: string, retryCount = 0) {
     syncLock.current = true;
-    const { data: pData, error } = await supabaseAdmin
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-
-    if (error) {
-      console.error(`Error fetching profile (retry ${retryCount}):`, error);
-      if (retryCount < 5) {
-        // Retry after 500ms if row might not be created by trigger yet
-        setTimeout(() => doFetch(userId, retryCount + 1), 500);
-      } else {
-        syncLock.current = false;
+    try {
+      const docRef = doc(db, 'profiles', userId);
+      const docSnap = await getDoc(docRef);
+      
+      if (!docSnap.exists()) {
+        if (retryCount < 5) {
+          setTimeout(() => doFetch(userId, retryCount + 1), 500);
+        } else {
+          syncLock.current = false;
+        }
+        return;
       }
-      return;
-    }
 
-    if (pData) {
+      const pData = { id: docSnap.id, ...docSnap.data() } as any;
+
       let currentPlanStr = pData.equipped_cosmetics?.plan || 'base';
       const expiresAt = pData.equipped_cosmetics?.plan_expires_at;
 
@@ -46,13 +47,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const expDate = new Date(expiresAt);
         if (today > expDate) {
           currentPlanStr = 'base';
-          await supabaseAdmin.from('profiles').update({
+          await updateDoc(docRef, {
             equipped_cosmetics: {
               ...(pData.equipped_cosmetics || {}),
               plan: 'base',
               plan_expires_at: ''
             }
-          }).eq('id', userId);
+          });
           
           pData.equipped_cosmetics = {
             ...(pData.equipped_cosmetics || {}),
@@ -94,6 +95,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (backup.settings) updateSettings(backup.settings);
         if (backup.selectedProgressionWeek !== undefined) setSelectedProgressionWeek(backup.selectedProgressionWeek);
       }
+    } catch (error) {
+      console.error(`Error fetching profile (retry ${retryCount}):`, error);
+      if (retryCount < 5) {
+        setTimeout(() => doFetch(userId, retryCount + 1), 500);
+      }
     }
     syncLock.current = false;
   }, [setGoals, setPlan, setProfile, setQuestionnaireData, setTasks, setWorkoutHistory, setUserTemplates, setFreeWorkout, updateSettings, setSelectedProgressionWeek, setTransactions]);
@@ -101,12 +107,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (useAppStore.getState().profile?.id === 'test-admin-id') return;
 
-    supabase.auth.getSession().then(({ data: { session } }: any) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (useAppStore.getState().profile?.id === 'test-admin-id') return;
-      if (session) {
-        fetchProfile(session.user.id);
+      
+      if (user) {
+        fetchProfile(user.uid);
       } else {
-                const { logout } = useAppStore.getState();
+        const { logout } = useAppStore.getState();
         const { resetWorkoutSystem } = useWorkoutStore.getState();
         logout();
         resetWorkoutSystem();
@@ -115,65 +122,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem('onboarding_step');
         localStorage.removeItem('onboarding_answers');
         localStorage.removeItem('evolux_finance');
-        if (pathname !== '/' && pathname !== '/login' && pathname !== '/plans') {
-           navigate('/login');
+        if (pathname !== '/' && pathname !== '/login' && pathname !== '/plans') { 
+          navigate('/login');
         }
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event: any, session: any) => {
-      if (useAppStore.getState().profile?.id === 'test-admin-id') return;
-      if (session) {
-        fetchProfile(session.user.id);
-      } else {
-                const { logout } = useAppStore.getState();
-        const { resetWorkoutSystem } = useWorkoutStore.getState();
-        logout();
-        resetWorkoutSystem();
-        localStorage.removeItem('workout_q_step');
-        localStorage.removeItem('workout_q_data');
-        localStorage.removeItem('onboarding_step');
-        localStorage.removeItem('onboarding_answers');
-        localStorage.removeItem('evolux_finance');
-        if (pathname !== '/' && pathname !== '/login' && pathname !== '/plans') {
-           navigate('/login');
-        }
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate, pathname, setProfile, fetchProfile]); 
+    return () => unsubscribe();
+  }, [navigate, pathname, fetchProfile]);
 
   // SYNC UP: Whenever local state changes, push to database
   useEffect(() => {
-    if (syncLock.current || !profile?.id) return;
+    if (syncLock.current || !profile?.id || profile.id === 'test-admin-id') return;
     
     const syncBackup = async () => {
       try {
-        const { data } = await supabaseAdmin.from('profiles').select('equipped_cosmetics').eq('id', profile.id).maybeSingle();
-        const currentCosmetics = data?.equipped_cosmetics || {};
+        const docRef = doc(db, 'profiles', profile.id);
+        const docSnap = await getDoc(docRef);
         
-        await supabaseAdmin.from('profiles').update({
-          xp: profile.xp,
-          streak: profile.streak,
-          total_tasks_completed: profile.totalTasksCompleted,
-          avatar_level: profile.avatarLevel,
+        let currentCosmetics = {};
+        if (docSnap.exists()) {
+           currentCosmetics = docSnap.data()?.equipped_cosmetics || {};
+        }
+        
+        const backupData = JSON.parse(JSON.stringify({
+          tasks: tasks || [], 
+          goals: goals || [],
+          transactions: transactions || [],
+          workoutPlan: currentPlan || null,
+          workoutHistory: workoutHistory || [],
+          questionnaire: questionnaire || null,
+          userTemplates: userTemplates || [],
+          activeFreeWorkout: activeFreeWorkout || null,
+          settings: settings || {},
+          selectedProgressionWeek: selectedProgressionWeek || 1
+        }));
+
+        const payload: any = {
+          xp: profile.xp || 0,
+          streak: profile.streak || 0,
+          total_tasks_completed: profile.totalTasksCompleted || 0,
+          avatar_level: profile.avatarLevel || 1,
           equipped_cosmetics: {
             ...currentCosmetics,
-            _backup: {
-              tasks, 
-              goals,
-              transactions,
-              workoutPlan: currentPlan,
-              workoutHistory,
-              questionnaire,
-              userTemplates,
-              activeFreeWorkout,
-              settings,
-              selectedProgressionWeek
+            _backup: backupData
+          }
+        };
+
+        // Strip undefined values completely
+        const stripUndefined = (obj: any) => {
+          if (obj === null || typeof obj !== 'object') return obj;
+          if (Array.isArray(obj)) return obj.map(stripUndefined);
+          const newObj: any = {};
+          for (const key in obj) {
+            if (obj[key] !== undefined) {
+              newObj[key] = stripUndefined(obj[key]);
             }
           }
-        }).eq('id', profile.id);
+          return newObj;
+        };
+
+        await updateDoc(docRef, stripUndefined(payload));
       } catch (err) {
         console.error('Failed to sync state', err);
       }

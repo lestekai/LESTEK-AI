@@ -29,17 +29,19 @@ export default function CheckoutPage() {
     
     // Registrar a solicitação no perfil do usuário
     if (profile) {
-      const { supabase } = await import('@/lib/supabase');
-      const { data } = await supabase.from('profiles').select('equipped_cosmetics').eq('id', profile.id).single();
+      const { db } = await import('@/lib/firebase');
+      const { doc, getDoc, updateDoc } = await import('firebase/firestore');
+      const docSnap = await getDoc(doc(db, 'profiles', profile.id));
+      const data = docSnap.exists() ? docSnap.data() : null;
       const currentCosmetics = data?.equipped_cosmetics || {};
       
-      await supabase.from('profiles').update({
+      await updateDoc(doc(db, 'profiles', profile.id), {
         equipped_cosmetics: {
-          ...currentCosmetics,
-          plan_request: plan,
-          plan_request_date: new Date().toISOString()
+          ...(data?.equipped_cosmetics || {}),
+          plan: targetPlan,
+          plan_expires_at: nextMonth.toISOString()
         }
-      }).eq('id', profile.id);
+      });
     }
 
     window.open(wppUrl, '_blank');

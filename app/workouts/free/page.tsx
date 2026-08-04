@@ -1,7 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { useWorkoutStore, ExerciseDefinition, WorkoutDayPlan } from '@/lib/workoutStore';
 import { EXERCISE_LIBRARY, searchExercises } from '@/lib/exerciseLibrary';
 import { 

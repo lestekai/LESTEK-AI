@@ -1,7 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { EXERCISE_LIBRARY, searchExercises, ExerciseDefinition } from '@/lib/exerciseLibrary';
 import { BottomNav } from '@/components/BottomNav';
 import { Search, Dumbbell, Tag, Info, AlertTriangle, ArrowLeft, Activity, Loader2 } from 'lucide-react';

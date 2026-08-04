@@ -34,7 +34,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
       
       const data = await generateAI({
         prompt,
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         responseMimeType: 'application/json'
       });
       
@@ -161,7 +161,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
       
       const data = await generateAI({
         prompt: `Analise as transações financeiras: ${txData}. Saldo atual: ${balance}. Dê um feedback motivacional, analítico e curto (2 frases) sobre os padrões de gastos da pessoa.`,
-        model: 'gemini-3.5-flash'
+        model: 'gemini-2.5-flash'
       });
 
       setInsight(data.text || "Insight não disponível no momento.");

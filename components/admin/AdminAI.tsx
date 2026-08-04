@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import { Activity, BrainCircuit, BarChart3, MessageSquare } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -10,7 +11,9 @@ export default function AdminAI() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const { data, error } = await supabase.from('ai_history').select('user_id, tokens_used, created_at');
+      const snapshot = await getDocs(collection(db, 'ai_history'));
+      const data = snapshot.docs.map(d => d.data());
+      const error = null;
       if (data) {
         const uniqueUsers = new Set(data.map(d => d.user_id)).size;
         const sumTokens = data.reduce((acc, curr) => acc + (curr.tokens_used || 0), 0);

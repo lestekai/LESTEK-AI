@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && (request.auth.token.email == 'lestek.sup@gmail.com' || (exists(/databases/$(database)/documents/profiles/$(request.auth.uid)) && get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'admin'));
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    
+    // Schema Validations
+    function isValidProfile(data, isCreate) {
+      return (isCreate ? data.keys().hasAll(['id', 'name', 'username', 'email', 'role', 'status']) : true) &&
+             (!('id' in data) || (data.id is string && data.id.size() <= 128)) &&
+             (!('name' in data) || (data.name is string && data.name.size() <= 100)) &&
+             (!('username' in data) || (data.username is string && data.username.size() <= 100)) &&
+             (!('email' in data) || (data.email is string && data.email.size() <= 150)) &&
+             (!('role' in data) || (data.role in ['user', 'admin'])) &&
+             (!('status' in data) || (data.status in ['active', 'banned']));
+    }
+
+    // Profiles Collection
+    match /profiles/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidProfile(incoming(), true) && incoming().id == userId && incoming().role == 'user' && incoming().status == 'active';
+      allow update: if (isOwner(userId) && isValidProfile(incoming(), false) && (!('id' in incoming()) || incoming().id == existing().id) && (!('role' in incoming()) || incoming().role == existing().role) && (!('status' in incoming()) || incoming().status == existing().status)) || isAdmin();
+    }
+    
+    // Tasks Collection
+    match /tasks/{taskId} {
+      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
+      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+    }
+    
+    // Workouts Collection
+    match /workouts/{workoutId} {
+      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
+      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+    }
+    
+    // Workout History Collection
+    match /workout_history/{historyId} {
+      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
+      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+    }
+    
+    // Feedbacks Collection
+    match /feedbacks/{feedbackId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+    
+    // Admin Logs Collection
+    match /admin_logs/{logId} {
+      allow read, write: if isAdmin();
+    }
+    
+    // AI History Collection
+    match /ai_history/{historyId} {
+      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
+    }
+    
+    // AI Memory Collection
+    match /ai_memory/{memoryId} {
+      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
+      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+    }
+    
+    // Finances Collection
+    match /finances/{financeId} {
+      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
+      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+    }
+    
+    // User Inventory Collection
+    match /user_inventory/{inventoryId} {
+      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
+      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+    }
+    
+    // Notifications Collection
+    match /notifications/{notificationId} {
+      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}

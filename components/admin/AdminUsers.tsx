@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { useAppStore } from '@/lib/store';
 import { logAdminAction } from '@/lib/admin';
 import { Users, Search, Edit2, Shield, Lock, Trash2, Ban, Target, LockKeyhole, ArrowRight } from 'lucide-react';
@@ -14,8 +14,14 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     setLoading(true);
-    const { data } = await supabaseAdmin.from('profiles').select('*').order('created_at', { ascending: false });
-    if (data) setUsers(data);
+    try {
+      const q = query(collection(db, 'profiles'), orderBy('created_at', 'desc'));
+      const snapshot = await getDocs(q);
+      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (data) setUsers(data);
+    } catch(e) {
+      console.error(e);
+    }
     setLoading(false);
   };
 
@@ -35,29 +41,13 @@ export default function AdminUsers() {
 
     if (editingUser.isNew) {
       if (!editingUser.email) return alert('Email é necessário!');
-      const { data, error: authError } = await supabaseAdmin.auth.admin.createUser({
-        email: editingUser.email,
-        password: editingUser.password || 'Evolux@123',
-        email_confirm: true,
-        user_metadata: {
-          name: editingUser.name,
-          username: editingUser.username
-        }
-      });
+      const authError = new Error('Admin createUser is not supported on Firebase Client SDK');
+      const data = null;
       if (authError) return alert('Erro ao criar usuário: ' + authError.message);
       
       // Update the newly created profile
       if (data?.user) {
-         await supabaseAdmin.from('profiles').update({
-            role: editingUser.role,
-            status: editingUser.status,
-            xp: parseInt(editingUser.xp) || 0,
-            avatar_level: parseInt(editingUser.avatar_level) || 1,
-            equipped_cosmetics: {
-              plan: editingUser.plan,
-              plan_expires_at: editingUser.plan_expires_at
-            }
-         }).eq('id', data.user.id);
+         /* mocked */
       }
 
       alert('Usuário criado com sucesso. Senha padrão: Evolux@123');
@@ -68,19 +58,21 @@ export default function AdminUsers() {
     }
 
     // Update profiles table
-    const { error } = await supabaseAdmin.from('profiles').update({
-      name: editingUser.name,
-      username: editingUser.username,
-      role: editingUser.role,
-      status: editingUser.status,
-      xp: parseInt(editingUser.xp) || 0,
-      avatar_level: parseInt(editingUser.avatar_level) || 1,
-      equipped_cosmetics: {
-        ...(editingUser.equipped_cosmetics || {}),
-        plan: editingUser.plan,
-        plan_expires_at: editingUser.plan_expires_at
-      }
-    }).eq('id', editingUser.id);
+    let error = null;
+    try {
+      await updateDoc(doc(db, 'profiles', editingUser.id), {
+        name: editingUser.name,
+        username: editingUser.username,
+        role: editingUser.role,
+        status: editingUser.status,
+        xp: parseInt(editingUser.xp) || 0,
+        avatar_level: parseInt(editingUser.avatar_level) || 1,
+        equipped_cosmetics: {
+          ...(editingUser.equipped_cosmetics || {}),
+          plan: editingUser.equipped_cosmetics?.plan || 'base'
+        }
+      });
+    } catch(e) { error = e; }
 
     if (error) {
       alert('Erro ao atualizar usuário: ' + error.message);
@@ -97,7 +89,7 @@ export default function AdminUsers() {
     if (!newPass || newPass.trim() === '') return;
     
     // Using admin client to change password bypassing old password req
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, { password: newPass });
+    const error = new Error('Admin password update is not supported on Firebase Client SDK');
     if (error) {
       alert('Erro ao alterar senha: ' + error.message);
     } else {

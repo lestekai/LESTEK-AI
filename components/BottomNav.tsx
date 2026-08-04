@@ -1,11 +1,12 @@
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 'use client';
 
-import { Link } from 'react-router-dom';
-import { useNavigate, useLocation } from 'react-router-dom';
+
 import { Home, CheckSquare, Target, Dumbbell, Wallet, Trophy, User } from 'lucide-react';
 
 export function BottomNav() {
-  const pathname = useLocation().pathname;
+  const location = useLocation();
+  const pathname = location.pathname;
 
   const navItems = [
     { href: '/workouts', icon: Dumbbell, label: 'Treino' },

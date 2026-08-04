@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, limit, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { v4 as uuidv4 } from 'uuid';
 import { Send, Users, Activity, CheckCircle, Search, Trash2 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { logAdminAction } from '@/lib/admin';
@@ -12,8 +13,14 @@ export default function AdminNotifications() {
   const [history, setHistory] = useState<any[]>([]);
 
   const fetchHistory = async () => {
-    const { data } = await supabaseAdmin.from('notifications').select('*').order('created_at', { ascending: false }).limit(20);
-    if (data) setHistory(data);
+    try {
+      const q = query(collection(db, 'notifications'), orderBy('created_at', 'desc'), limit(20));
+      const snapshot = await getDocs(q);
+      const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (data) setHistory(data);
+    } catch (e) {
+      console.error('AdminNotifications error', e);
+    }
   };
 
   useEffect(() => {
@@ -29,18 +36,14 @@ export default function AdminNotifications() {
     setLoading(true);
 
     try {
-      const { data: users, error: fetchErr } = await supabaseAdmin.from('profiles').select('id');
-      if (fetchErr) throw fetchErr;
-      
-      const notifications = users.map(u => ({
-        title,
-        message,
-        type: 'system',
-        user_id: u.id,
-        is_read: false
-      }));
-
-      const { error } = await supabaseAdmin.from('notifications').insert(notifications);
+      const usersSnap = await getDocs(collection(db, 'profiles'));
+      const users = usersSnap.docs.map(d => ({ id: d.id }));
+      let error = null;
+      try {
+        for (const u of users) {
+          await setDoc(doc(collection(db, 'notifications')), { user_id: u.id, message, type: 'system', created_at: new Date().toISOString() });
+        }
+      } catch(e) { error = e; }
 
       if (error) throw error;
       alert('Notificação enviada com sucesso para todos os usuários!');
@@ -56,7 +59,7 @@ export default function AdminNotifications() {
 
   const deleteNotification = async (id: string) => {
     if(!confirm("Deletar notificação?")) return;
-    await supabaseAdmin.from('notifications').delete().eq('id', id);
+    await deleteDoc(doc(db, 'notifications', id));
     if (profile) logAdminAction(profile.id, 'DELETE_NOTIFICATION', id, {});
     fetchHistory();
   };

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useAppStore } from '@/lib/store';
 import { logAdminAction } from '@/lib/admin';
 import { BookOpen, Search, Save, Calendar } from 'lucide-react';
@@ -13,8 +13,10 @@ export default function AdminPlans() {
 
   const fetchUsers = async () => {
     setLoading(true);
-    const { data } = await supabaseAdmin.from('profiles').select('*').order('created_at', { ascending: false });
-    if (data) setUsers(data);
+    const q = query(collection(db, 'profiles'), orderBy('created_at', 'desc'));
+    const snapshot = await getDocs(q);
+    const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    setUsers(data as any);
     setLoading(false);
   };
 
@@ -26,20 +28,23 @@ export default function AdminPlans() {
   const handleUpdatePlan = async (userId: string, newPlan: string, expiresAt: string) => {
     const userToUpdate = users.find(u => u.id === userId);
     // Fetch latest user data to prevent overwriting their recent syncs (json backup)
-    const { data: latestProfile } = await supabaseAdmin.from('profiles').select('equipped_cosmetics').eq('id', userId).single();
-    if (!latestProfile) return;
+    const docRef = doc(db, 'profiles', userId);
+    const docSnap = await getDoc(docRef);
+    const latestProfile = docSnap.exists() ? docSnap.data() : null;
+    
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
 
-    const equipped_cosmetics = {
-       ...(latestProfile.equipped_cosmetics || {}),
-       plan: newPlan,
-       plan_expires_at: expiresAt,
-       plan_request: '',
-       plan_request_date: ''
-    };
-
-    const { error } = await supabaseAdmin.from('profiles')
-      .update({ equipped_cosmetics })
-      .eq('id', userId);
+    let error = null;
+    try {
+      await updateDoc(docRef, {
+        equipped_cosmetics: {
+          ...(latestProfile?.equipped_cosmetics || {}),
+          plan: 'premium',
+          plan_expires_at: nextMonth.toISOString()
+        }
+      });
+    } catch(e) { error = e; }
 
     if (error) {
       alert('Erro ao atualizar plano: ' + error.message);
@@ -53,18 +58,23 @@ export default function AdminPlans() {
   const handleRejectPlan = async (userId: string) => {
     const userToUpdate = users.find(u => u.id === userId);
     // Fetch latest user data to prevent overwriting their recent syncs
-    const { data: latestProfile } = await supabaseAdmin.from('profiles').select('equipped_cosmetics').eq('id', userId).single();
-    if (!latestProfile) return;
+    const docRef = doc(db, 'profiles', userId);
+    const docSnap = await getDoc(docRef);
+    const latestProfile = docSnap.exists() ? docSnap.data() : null;
+    
+    const nextMonth = new Date();
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
 
-    const equipped_cosmetics = {
-       ...(latestProfile.equipped_cosmetics || {}),
-       plan_request: '',
-       plan_request_date: ''
-    };
-
-    const { error } = await supabaseAdmin.from('profiles')
-      .update({ equipped_cosmetics })
-      .eq('id', userId);
+    let error = null;
+    try {
+      await updateDoc(docRef, {
+        equipped_cosmetics: {
+          ...(latestProfile?.equipped_cosmetics || {}),
+          plan: 'premium',
+          plan_expires_at: nextMonth.toISOString()
+        }
+      });
+    } catch(e) { error = e; }
 
     if (error) {
       alert('Erro ao recusar solicitação: ' + error.message);

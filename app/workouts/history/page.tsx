@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 /* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
@@ -23,7 +24,7 @@ import {
   Dumbbell,
   Target
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
@@ -554,7 +555,7 @@ export default function HistoryPage() {
                     ) : (
                       muscleGroupsStats.map((item, idx) => {
                         const maxSets = Math.max(...muscleGroupsStats.map(m => m.sets)) || 1;
-                        const percentage = Math.max(5, Math.round((item.sets / maxSets) * 100));
+                        const percentage = maxSets > 0 ? Math.max(5, Math.round((item.sets / maxSets) * 100)) : 5;
 
                         return (
                           <div key={idx} className="space-y-2">

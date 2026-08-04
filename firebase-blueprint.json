@@ -1,0 +1,177 @@
+{
+  "entities": {
+    "profile": {
+      "title": "Profile",
+      "description": "User profile data",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "username": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "status": { "type": "string", "enum": ["active", "banned"] },
+        "equipped_cosmetics": { "type": "object" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["id"]
+    },
+    "task": {
+      "title": "Task",
+      "description": "User task",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "title": { "type": "string" },
+        "created_at": { "type": "string" }
+      }
+    },
+    "feedback": {
+      "title": "Feedback",
+      "description": "User feedback",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string" },
+        "created_at": { "type": "string" }
+      }
+    },
+    "admin_log": {
+      "title": "Admin Log",
+      "description": "Admin actions log",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "action": { "type": "string" },
+        "created_at": { "type": "string" }
+      }
+    },
+    "ai_history": {
+      "title": "AI History",
+      "description": "AI tokens usage history",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "tokens_used": { "type": "number" },
+        "created_at": { "type": "string" }
+      }
+    },
+    "workout": {
+      "title": "Workout",
+      "description": "Workout definition",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "name": { "type": "string" },
+        "created_at": { "type": "string" }
+      }
+    },
+    "workout_history": {
+      "title": "Workout History",
+      "description": "Workout log",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "workout_id": { "type": "string" },
+        "created_at": { "type": "string" }
+      }
+    },
+    "ai_memory": {
+      "title": "AI Memory",
+      "description": "AI Memory context",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "memory": { "type": "string" },
+        "created_at": { "type": "string" }
+      }
+    },
+    "finance": {
+      "title": "Finance",
+      "description": "Financial record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "amount": { "type": "number" },
+        "created_at": { "type": "string" }
+      }
+    },
+    "user_inventory": {
+      "title": "User Inventory",
+      "description": "Cosmetics inventory",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "item_id": { "type": "string" },
+        "created_at": { "type": "string" }
+      }
+    },
+    "notification": {
+      "title": "Notification",
+      "description": "System notification",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "user_id": { "type": "string" },
+        "message": { "type": "string" },
+        "created_at": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "profiles/{userId}": {
+      "schema": { "$ref": "#/entities/profile" },
+      "description": "User profiles"
+    },
+    "tasks/{taskId}": {
+      "schema": { "$ref": "#/entities/task" },
+      "description": "Tasks"
+    },
+    "feedbacks/{feedbackId}": {
+      "schema": { "$ref": "#/entities/feedback" },
+      "description": "Feedbacks"
+    },
+    "admin_logs/{logId}": {
+      "schema": { "$ref": "#/entities/admin_log" },
+      "description": "Admin logs"
+    },
+    "ai_history/{historyId}": {
+      "schema": { "$ref": "#/entities/ai_history" },
+      "description": "AI History"
+    },
+    "workouts/{workoutId}": {
+      "schema": { "$ref": "#/entities/workout" },
+      "description": "Workouts"
+    },
+    "workout_history/{historyId}": {
+      "schema": { "$ref": "#/entities/workout_history" },
+      "description": "Workout History"
+    },
+    "ai_memory/{memoryId}": {
+      "schema": { "$ref": "#/entities/ai_memory" },
+      "description": "AI Memory"
+    },
+    "finances/{financeId}": {
+      "schema": { "$ref": "#/entities/finance" },
+      "description": "Finances"
+    },
+    "user_inventory/{inventoryId}": {
+      "schema": { "$ref": "#/entities/user_inventory" },
+      "description": "User Inventory"
+    },
+    "notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/notification" },
+      "description": "Notifications"
+    }
+  }
+}

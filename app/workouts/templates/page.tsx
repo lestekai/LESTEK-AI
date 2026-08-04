@@ -1,9 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useWorkoutStore, WorkoutPlan } from '@/lib/workoutStore';
 import { BottomNav } from '@/components/BottomNav';
 import { ArrowLeft, Save, Activity, Upload, Download, Copy, Check, ChevronDown, ChevronUp, Zap } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+
 import { useState, useRef } from 'react';
 import { PREMADE_TEMPLATES } from '@/lib/templates';
 

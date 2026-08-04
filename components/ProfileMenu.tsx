@@ -1,12 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore } from '@/lib/store';
 import { useWorkoutStore } from '@/lib/workoutStore';
-import { supabase } from '@/lib/supabase';
+import { auth } from '@/lib/firebase';
 import { calculateAvatarLevel } from '@/lib/evolux';
-import { useNavigate } from 'react-router-dom';
+
 import { User, LogOut, Settings, CreditCard, X, ChevronRight, BarChart3, Star, Flame } from 'lucide-react';
 
 export function ProfileMenu() {
@@ -17,7 +18,7 @@ export function ProfileMenu() {
   if (!profile) return null;
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await auth.signOut();
     logout();
     useWorkoutStore.getState().resetWorkoutSystem();
         localStorage.removeItem('workout_q_step');

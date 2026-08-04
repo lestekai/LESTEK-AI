@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, getCountFromServer } from 'firebase/firestore';
 import { Database, HardDrive, BarChart2, AlertTriangle, TerminalSquare } from 'lucide-react';
 
 export default function AdminDatabase() {
@@ -7,14 +8,21 @@ export default function AdminDatabase() {
 
   useEffect(() => {
     const est = async () => {
-      const { count: u } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-      const { count: t } = await supabase.from('tasks').select('*', { count: 'exact', head: true });
-      const { count: w } = await supabase.from('workouts').select('*', { count: 'exact', head: true });
-      const { count: h } = await supabase.from('workout_history').select('*', { count: 'exact', head: true });
-      const { count: f } = await supabase.from('feedbacks').select('*', { count: 'exact', head: true });
-      const { count: am } = await supabase.from('ai_memory').select('*', { count: 'exact', head: true }).catch(() => ({count: 0}));
-      const { count: fin } = await supabase.from('finances').select('*', { count: 'exact', head: true }).catch(() => ({count: 0}));
-      const { count: inv } = await supabase.from('user_inventory').select('*', { count: 'exact', head: true }).catch(() => ({count: 0}));
+      const getSafeCount = async (col) => {
+        try {
+          const snap = await getCountFromServer(collection(db, col));
+          return snap.data().count;
+        } catch(e) { return 0; }
+      };
+
+      const u = await getSafeCount('profiles');
+      const t = await getSafeCount('tasks');
+      const w = await getSafeCount('workouts');
+      const h = await getSafeCount('workout_history');
+      const f = await getSafeCount('feedbacks');
+      const am = await getSafeCount('ai_memory');
+      const fin = await getSafeCount('finances');
+      const inv = await getSafeCount('user_inventory');
 
       setTables([
         { name: 'profiles', rows: u || 0, sizeMb: ((u || 0) * 0.05).toFixed(2) },

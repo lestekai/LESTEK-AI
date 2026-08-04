@@ -1,13 +1,13 @@
+import { Link, useNavigate } from 'react-router-dom';
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore } from '@/lib/store';
 import { useWorkoutStore } from '@/lib/workoutStore';
 import { BottomNav } from '@/components/BottomNav';
 import { Flame, Star, ChevronRight, CheckCircle2, Circle, Dumbbell, Trophy, Cpu, Target, Shield, Zap, Activity, Globe, Rocket, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 import { ProfileMenu } from '@/components/ProfileMenu';
 import { MiniCosmicAvatar } from '@/components/MiniCosmicAvatar';
@@ -365,19 +365,23 @@ export default function DashboardPage() {
               if (message.trim()) {
                 setFeedbackState({ status: 'loading', message: 'Transmitindo mensagem...' });
                 try {
-                  const { supabase, supabaseAdmin } = await import('@/lib/supabase');
-                  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                  const { auth, db } = await import('@/lib/firebase');
+const { collection, addDoc } = await import('firebase/firestore');
+                  const user = auth.currentUser;
                   
                   if (sessionError) {
                     console.error("Session error:", sessionError);
                   }
                   
                   if (session) {
-                    const { error } = await supabaseAdmin.from('feedbacks').insert({
-                      user_id: session.user.id,
-                      message,
-                      category,
-                    });
+                    try {
+                      await addDoc(collection(db, 'feedbacks'), {
+                        user_id: user.uid,
+                        message: feedbackText,
+                        status: 'pending',
+                        created_at: new Date().toISOString()
+                      });
+                    } catch(e) { throw e; }
                     
                     if (!error) {
                       setFeedbackState({ status: 'success', message: 'Feedback enviado com sucesso ao Centro de Comando!' });

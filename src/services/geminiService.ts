@@ -14,9 +14,9 @@ export interface GeminiResponse {
   text: string;
 }
 
-const DEFAULT_MODEL = 'gemini-3.5-flash';
+const DEFAULT_MODEL = 'gemini-2.5-flash';
 const VALID_MODELS = [
-  'gemini-3.5-flash',
+  'gemini-2.5-flash',
   'gemini-3.1-flash-lite',
   'gemini-flash-latest',
   'gemini-2.5-flash',
@@ -92,7 +92,7 @@ export async function generateAI(
       };
 
       if (customKey) {
-        headers['X-Gemini-Key'] = customKey;
+        // headers['X-Gemini-Key'] = customKey;
       }
       
       const response = await fetch(GEMINI_ENDPOINT, {

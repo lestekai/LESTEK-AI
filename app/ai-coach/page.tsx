@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -6,7 +7,7 @@ import { generateAI } from '@/src/services/geminiService';
 import { Header } from '@/components/Header';
 import { motion, AnimatePresence } from 'motion/react';
 import { Send, Mic, Cpu, Sparkles, Loader2, ArrowLeft, Bot, MessageSquare } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+
 
 interface Message {
   id: string;
@@ -121,7 +122,7 @@ Use termos como "Operador", "Sistemas", "Directiva", "Ofensiva (referindo à str
       const response = await generateAI({
         prompt: finalPrompt,
         systemInstruction,
-        model: 'gemini-3.5-flash'
+        model: 'gemini-2.5-flash'
       });
 
       const aiMessage: Message = {

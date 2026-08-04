@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { Settings, FileText, Ghost } from 'lucide-react';
 
 export default function AdminLogs() {
@@ -8,8 +9,26 @@ export default function AdminLogs() {
 
   useEffect(() => {
     const fetchLogs = async () => {
-      const { data } = await supabase.from('admin_logs').select('*, profiles(name, username)').order('created_at', { ascending: false }).limit(50);
-      if (data) setLogs(data);
+      try {
+        const q = query(collection(db, 'admin_logs'), orderBy('created_at', 'desc'), limit(50));
+        const snapshot = await getDocs(q);
+        
+        const profQ = await getDocs(collection(db, 'profiles'));
+        const profiles: any = {};
+        profQ.forEach(d => { profiles[d.id] = d.data(); });
+  
+        const data = snapshot.docs.map(d => {
+          const log = d.data();
+          return {
+            id: d.id,
+            ...log,
+            profiles: log.user_id ? { name: profiles[log.user_id]?.name, username: profiles[log.user_id]?.username } : null
+          };
+        });
+        setLogs(data);
+      } catch (e) {
+        console.error('AdminLogs error', e);
+      }
       setLoading(false);
     };
     fetchLogs();

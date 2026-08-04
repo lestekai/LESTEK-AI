@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { useAppStore } from '@/lib/store';
 import { logAdminAction } from '@/lib/admin';
 import { MessageSquare, CheckCircle, XCircle } from 'lucide-react';
@@ -11,8 +12,20 @@ export default function AdminFeedbacks() {
 
   const fetchData = async () => {
     setLoading(true);
-    const { data } = await supabaseAdmin.from('feedbacks').select('*, profiles(name, username)').order('created_at', { ascending: false });
-    if (data) setFeedbacks(data);
+    try {
+      const q = query(collection(db, 'feedbacks'), orderBy('created_at', 'desc'));
+      const snapshot = await getDocs(q);
+      const profQ = await getDocs(collection(db, 'profiles'));
+      const profiles: any = {};
+      profQ.forEach(d => { profiles[d.id] = d.data(); });
+      const data = snapshot.docs.map(d => {
+        const fb = d.data();
+        return { id: d.id, ...fb, profiles: fb.user_id ? { name: profiles[fb.user_id]?.name, username: profiles[fb.user_id]?.username } : null };
+      });
+      if (data) setFeedbacks(data);
+    } catch (e) {
+      console.error('AdminFeedbacks error', e);
+    }
     setLoading(false);
   };
 
@@ -22,7 +35,7 @@ export default function AdminFeedbacks() {
   }, []);
 
   const updateFeedbackStatus = async (id: string, status: string) => {
-    await supabaseAdmin.from('feedbacks').update({ status }).eq('id', id);
+    await updateDoc(doc(db, 'feedbacks', id), { status });
     if (profile) logAdminAction(profile.id, 'RESOLVE_FEEDBACK', id, { status });
     fetchData();
   };
