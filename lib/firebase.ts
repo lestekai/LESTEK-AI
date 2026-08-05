@@ -1,16 +1,26 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBGLvIspjeoXUGu31q7m6Zpdr0AVObTnw4",
-  authDomain: "gen-lang-client-0791902841.firebaseapp.com",
-  projectId: "gen-lang-client-0791902841",
-  storageBucket: "gen-lang-client-0791902841.firebasestorage.app",
-  messagingSenderId: "369529813784",
-  appId: "1:369529813784:web:64a09bd09f89a93fc7fc6d"
-};
+import firebaseConfig from '../firebase-applet-config.json';
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+
+export type OperationType = 'create' | 'read' | 'update' | 'delete' | 'list';
+
+export function handleFirestoreError(error: any, operation: OperationType, path: string) {
+  const errMessage = error?.message || String(error);
+  const errCode = error?.code || 'unknown';
+  const info = {
+    operation,
+    path,
+    code: errCode,
+    message: errMessage,
+    timestamp: new Date().toISOString()
+  };
+  console.error(`[Firestore Error] ${operation.toUpperCase()} at ${path}:`, info);
+  return info;
+}
+
+

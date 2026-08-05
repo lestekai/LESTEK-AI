@@ -20,26 +20,36 @@ export default function AdminOverview() {
 
   const fetchStats = async () => {
     try {
-      const totalUsersSnap = await getCountFromServer(collection(db, 'profiles'));
-      const totalUsers = totalUsersSnap.data().count;
-      const activeUsersSnap = await getCountFromServer(query(collection(db, 'profiles'), where('status', '==', 'active')));
-      const activeUsers = activeUsersSnap.data().count;
-      const bannedUsersSnap = await getCountFromServer(query(collection(db, 'profiles'), where('status', '==', 'banned')));
-      const bannedUsers = bannedUsersSnap.data().count;
-      const totalTasksSnap = await getCountFromServer(collection(db, 'tasks'));
-      const totalTasks = totalTasksSnap.data().count;
-      
-      const allUsersSnap = await getDocs(collection(db, 'profiles'));
-      const allUsers = allUsersSnap.docs.map(d => d.data());
+      let totalUsers = 0;
+      let activeUsers = 0;
+      let bannedUsers = 0;
+      let totalTasks = 0;
+      let allUsers: any[] = [];
+
+      try {
+        const totalUsersSnap = await getCountFromServer(collection(db, 'profiles'));
+        totalUsers = totalUsersSnap.data().count;
+        const activeUsersSnap = await getCountFromServer(query(collection(db, 'profiles'), where('status', '==', 'active')));
+        activeUsers = activeUsersSnap.data().count;
+        const bannedUsersSnap = await getCountFromServer(query(collection(db, 'profiles'), where('status', '==', 'banned')));
+        bannedUsers = bannedUsersSnap.data().count;
+        const totalTasksSnap = await getCountFromServer(collection(db, 'tasks'));
+        totalTasks = totalTasksSnap.data().count;
+        
+        const allUsersSnap = await getDocs(collection(db, 'profiles'));
+        allUsers = allUsersSnap.docs.map(d => d.data());
+      } catch (err) {
+        console.warn('Firestore fetch in AdminOverview failed, falling back to basic defaults:', err);
+      }
       
       let baseUsers = 0;
       let orbitUsers = 0;
       let novaUsers = 0;
       let infiniteUsers = 0;
       
-      if (allUsers) {
+      if (allUsers.length > 0) {
         allUsers.forEach(u => {
-           const plan = u.equipped_cosmetics?.plan || 'base';
+           const plan = u.equipped_cosmetics?.plan || u.plan || 'base';
            if (plan === 'base') baseUsers++;
            if (plan === 'orbit') orbitUsers++;
            if (plan === 'nova') novaUsers++;
@@ -55,12 +65,12 @@ export default function AdminOverview() {
       const d7DaysAgo = new Date(now);
       d7DaysAgo.setDate(now.getDate() - 7);
   
-      const users15DaysAgo = allUsers ? allUsers.filter(u => new Date(u.created_at) <= d15DaysAgo).length : 0;
-      const users7DaysAgo = allUsers ? allUsers.filter(u => new Date(u.created_at) <= d7DaysAgo).length : 0;
+      const users15DaysAgo = allUsers.length > 0 ? allUsers.filter(u => new Date(u.created_at) <= d15DaysAgo).length : 0;
+      const users7DaysAgo = allUsers.length > 0 ? allUsers.filter(u => new Date(u.created_at) <= d7DaysAgo).length : 0;
       
       let weeklyGrowth = 0;
       if (users15DaysAgo > 0) {
-        weeklyGrowth = users15DaysAgo > 0 ? Math.round(((users7DaysAgo - users15DaysAgo) / users15DaysAgo) * 100) : 100;
+        weeklyGrowth = Math.round(((users7DaysAgo - users15DaysAgo) / users15DaysAgo) * 100);
       } else if (users7DaysAgo > 0) {
         weeklyGrowth = 100;
       }
@@ -83,7 +93,7 @@ export default function AdminOverview() {
         d.setDate(now.getDate() - i);
         const displayDate = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
   
-        const usersUpToDate = allUsers ? allUsers.filter(u => {
+        const usersUpToDate = allUsers.length > 0 ? allUsers.filter(u => {
           const uDate = new Date(u.created_at);
           return uDate <= d;
         }).length : 0;
@@ -95,7 +105,7 @@ export default function AdminOverview() {
       }
       setGrowthData(data);
     } catch (e) {
-      console.error('AdminOverview error', e);
+      console.warn('AdminOverview error or insufficient permissions:', e);
     }
   };
 

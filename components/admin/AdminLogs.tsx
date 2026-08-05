@@ -27,7 +27,8 @@ export default function AdminLogs() {
         });
         setLogs(data);
       } catch (e) {
-        console.error('AdminLogs error', e);
+        console.warn('AdminLogs error or insufficient permissions:', e);
+        setLogs([]);
       }
       setLoading(false);
     };

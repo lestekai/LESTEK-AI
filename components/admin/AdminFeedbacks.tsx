@@ -24,7 +24,8 @@ export default function AdminFeedbacks() {
       });
       if (data) setFeedbacks(data);
     } catch (e) {
-      console.error('AdminFeedbacks error', e);
+      console.warn('AdminFeedbacks error or insufficient permissions:', e);
+      setFeedbacks([]);
     }
     setLoading(false);
   };

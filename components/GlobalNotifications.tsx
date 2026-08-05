@@ -21,7 +21,8 @@ export function GlobalNotifications() {
           setNotifications(sorted.slice(0, 10));
         }
       } catch (e) {
-        console.error("Notifs error", e);
+        console.warn("Global Notifications error or permission error:", e);
+        setNotifications([]);
       }
     };
     

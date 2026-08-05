@@ -19,7 +19,8 @@ export default function AdminNotifications() {
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
       if (data) setHistory(data);
     } catch (e) {
-      console.error('AdminNotifications error', e);
+      console.warn('AdminNotifications error or insufficient permissions:', e);
+      setHistory([]);
     }
   };
 
