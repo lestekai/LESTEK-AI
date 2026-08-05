@@ -104,7 +104,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
 
 
   const toggleListen = () => {
-    if (profile?.plan === 'base' || profile?.plan === 'orbit') {
+    if (profile?.role !== 'admin' && (profile?.plan === 'base' || profile?.plan === 'orbit')) {
       showPremiumModal("Controle Financeiro por Voz IA está disponível a partir do plano Evolux Nova.");
       return;
     }
@@ -150,7 +150,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
 
   const generateInsight = async () => {
-    if (profile?.plan === 'base' || profile?.plan === 'orbit') {
+    if (profile?.role !== 'admin' && (profile?.plan === 'base' || profile?.plan === 'orbit')) {
       showPremiumModal("Análise e Insights Financeiros IA são exclusivos do plano Evolux Nova ou superior.");
       return;
     }
@@ -196,7 +196,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
                className={`w-14 h-14 rounded-full flex items-center justify-center transition-all relative ${isListening ? 'bg-neon-pink text-white animate-pulse shadow-[0_0_20px_rgba(255,42,127,0.5)]' : processingAudio ? 'bg-surface-light text-text-secondary' : 'bg-surface-light text-white hover:bg-white/10'}`}
             >
               {processingAudio ? <Loader2 size={24} className="animate-spin" /> : <Mic size={24} />}
-              {(profile?.plan === 'base' || profile?.plan === 'orbit') && (
+              {profile?.role !== 'admin' && (profile?.plan === 'base' || profile?.plan === 'orbit') && (
                 <div className="absolute -top-1 -right-1 bg-surface-light rounded-full p-1 border border-background">
                   <Lock size={10} className="text-text-secondary" />
                 </div>
@@ -246,7 +246,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
               className="text-[10px] uppercase tracking-widest font-bold bg-surface-light text-white px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loadingInsight ? 'Analisando...' : 'Pedir Conselho'}
-              {(profile?.plan === 'base' || profile?.plan === 'orbit') && <Lock size={12} className="text-text-secondary" />}
+              {profile?.role !== 'admin' && (profile?.plan === 'base' || profile?.plan === 'orbit') && <Lock size={12} className="text-text-secondary" />}
             </button>
           </div>
           <p className="text-sm text-text-secondary leading-relaxed">

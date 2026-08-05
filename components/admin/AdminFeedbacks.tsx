@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { collection, query, orderBy, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { useAppStore } from '@/lib/store';
 import { logAdminAction } from '@/lib/admin';
 import { MessageSquare, CheckCircle, XCircle } from 'lucide-react';
@@ -31,8 +32,12 @@ export default function AdminFeedbacks() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchData();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchData();
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   const updateFeedbackStatus = async (id: string, status: string) => {

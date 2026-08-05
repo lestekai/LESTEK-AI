@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { collection, query, orderBy, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { useAppStore } from '@/lib/store';
 import { logAdminAction } from '@/lib/admin';
 import { BookOpen, Search, Save, Calendar } from 'lucide-react';
@@ -21,8 +22,12 @@ export default function AdminPlans() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line
-    fetchUsers();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchUsers();
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   const handleUpdatePlan = async (userId: string, newPlan: string, expiresAt: string) => {
@@ -32,22 +37,21 @@ export default function AdminPlans() {
     const docSnap = await getDoc(docRef);
     const latestProfile = docSnap.exists() ? docSnap.data() : null;
     
-    const nextMonth = new Date();
-    nextMonth.setMonth(nextMonth.getMonth() + 1);
-
     let error = null;
     try {
       await updateDoc(docRef, {
         equipped_cosmetics: {
           ...(latestProfile?.equipped_cosmetics || {}),
-          plan: 'premium',
-          plan_expires_at: nextMonth.toISOString()
+          plan: newPlan,
+          plan_expires_at: expiresAt,
+          plan_request: '',
+          plan_request_date: ''
         }
       });
     } catch(e) { error = e; }
 
     if (error) {
-      alert('Erro ao atualizar plano: ' + error.message);
+      alert('Erro ao atualizar plano: ' + (error as Error).message);
     } else {
       alert('Plano atualizado com sucesso!');
       if (profile) logAdminAction(profile.id, 'UPDATE_PLAN', userId, { newPlan, expiresAt });
@@ -62,22 +66,19 @@ export default function AdminPlans() {
     const docSnap = await getDoc(docRef);
     const latestProfile = docSnap.exists() ? docSnap.data() : null;
     
-    const nextMonth = new Date();
-    nextMonth.setMonth(nextMonth.getMonth() + 1);
-
     let error = null;
     try {
       await updateDoc(docRef, {
         equipped_cosmetics: {
           ...(latestProfile?.equipped_cosmetics || {}),
-          plan: 'premium',
-          plan_expires_at: nextMonth.toISOString()
+          plan_request: '',
+          plan_request_date: ''
         }
       });
     } catch(e) { error = e; }
 
     if (error) {
-      alert('Erro ao recusar solicitação: ' + error.message);
+      alert('Erro ao recusar solicitação: ' + (error as Error).message);
     } else {
       alert('Solicitação recusada!');
       if (profile) logAdminAction(profile.id, 'REJECT_PLAN_REQUEST', userId, {});
@@ -87,9 +88,9 @@ export default function AdminPlans() {
 
   const sortedFilteredUsers = [...users]
     .filter(u => 
-      u.name?.toLowerCase().includes(search.toLowerCase()) || 
-      u.username?.toLowerCase().includes(search.toLowerCase()) ||
-      u.email?.toLowerCase().includes(search.toLowerCase())
+      (u.name || '').toLowerCase().includes(search.toLowerCase()) || 
+      (u.username || '').toLowerCase().includes(search.toLowerCase()) ||
+      (u.email || '').toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
       const aReq = a.equipped_cosmetics?.plan_request ? 1 : 0;

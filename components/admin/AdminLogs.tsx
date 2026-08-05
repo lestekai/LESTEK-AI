@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { Settings, FileText, Ghost } from 'lucide-react';
 
 export default function AdminLogs() {
@@ -32,7 +33,14 @@ export default function AdminLogs() {
       }
       setLoading(false);
     };
-    fetchLogs();
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchLogs();
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return (

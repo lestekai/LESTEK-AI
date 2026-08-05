@@ -88,6 +88,6 @@ export function getMediaSourcePriority(url: string | null | undefined): string {
   if (url.startsWith('/')) return 'local-cdn';
   if (url.includes('gifdotreino.com')) return 'gifdotreino';
   if (url.includes('smartworkout.app')) return 'smartworkout';
-  if (url.includes('storage.googleapis.com') || url.includes('supabase.co')) return 'storage';
+  if (url.includes('storage.googleapis.com') || url.includes('firebasestorage.googleapis.com')) return 'storage';
   return 'external';
 }

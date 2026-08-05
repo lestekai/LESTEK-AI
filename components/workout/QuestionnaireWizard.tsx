@@ -58,7 +58,7 @@ export function QuestionnaireWizard({ setStoreQuestionnaire, setPlan }: { setSto
     
     let maxUses = 3;
     if (profile.plan === 'orbit') maxUses = 20;
-    if (profile.plan === 'nova' || profile.plan === 'infinite') return true;
+    if (profile.role === 'admin' || profile.plan === 'nova' || profile.plan === 'infinite') return true;
 
     if (uses >= maxUses) {
       alert(`Limite de IA diário atingido (${maxUses} usos) para seu plano. Faça upgrade para continuar!`);

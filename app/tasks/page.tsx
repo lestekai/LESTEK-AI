@@ -122,7 +122,7 @@ export default function TasksPage() {
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
     if (newTaskTitle.trim()) {
-      if (profile?.plan === 'base' && todaysTasks.length >= 5 && !isLongTerm) {
+      if (profile?.role !== 'admin' && profile?.plan === 'base' && todaysTasks.length >= 5 && !isLongTerm) {
         showPremiumModal("O Plano Base é limitado a 5 tarefas por dia.");
         return;
       }
@@ -183,7 +183,7 @@ export default function TasksPage() {
 
   const handleQuickAdd = () => {
     if (quickInput.trim()) {
-      if (profile?.plan === 'base' && todaysTasks.length >= 5) {
+      if (profile?.role !== 'admin' && profile?.plan === 'base' && todaysTasks.length >= 5) {
         showPremiumModal("O Plano Base é limitado a 5 tarefas por dia.");
         return;
       }

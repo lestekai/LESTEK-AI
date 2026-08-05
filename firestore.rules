@@ -12,7 +12,10 @@ service cloud.firestore {
     }
     
     function isAdmin() {
-      return isSignedIn() && (request.auth.token.email == 'lestek.sup@gmail.com' || (exists(/databases/$(database)/documents/profiles/$(request.auth.uid)) && get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'admin'));
+      return isSignedIn() && (
+        (request.auth.token.email != null && request.auth.token.email == 'lestek.sup@gmail.com') ||
+        (exists(/databases/$(database)/documents/profiles/$(request.auth.uid)) && get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'admin')
+      );
     }
 
     function isOwner(userId) {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { Activity, BrainCircuit, BarChart3, MessageSquare } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -43,7 +44,13 @@ export default function AdminAI() {
       setLoading(false);
     };
 
-    fetchStats();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchStats();
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return (

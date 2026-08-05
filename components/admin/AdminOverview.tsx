@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { collection, getCountFromServer, query, where, getDocs } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { Users, Activity, Target, Zap, Shield, Crown } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -110,8 +111,12 @@ export default function AdminOverview() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchStats();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchStats();
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   return (

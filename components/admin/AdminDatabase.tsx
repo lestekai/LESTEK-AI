@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { collection, getCountFromServer } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { Database, HardDrive, BarChart2, AlertTriangle, TerminalSquare } from 'lucide-react';
 
 export default function AdminDatabase() {
@@ -35,7 +36,14 @@ export default function AdminDatabase() {
         { name: 'feedbacks', rows: f || 0, sizeMb: ((f || 0) * 0.03).toFixed(2) },
       ]);
     };
-    est();
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        est();
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const totalUsedMb = tables.reduce((acc, curr) => acc + parseFloat(curr.sizeMb), 0).toFixed(2);
@@ -58,11 +66,11 @@ export default function AdminDatabase() {
           Para que o novo armazenamento de Questionário IA, Finanças e Inventário Isolado funcione 100%, você precisa rodar o script SQL gerado <strong className="text-white">EVOLUX_ADVANCED_SCHEMA_V2.sql</strong>.
         </p>
         <ul className="text-xs text-text-secondary space-y-2 list-disc list-inside bg-black/40 p-4 rounded-xl border border-white/5">
-          <li>Acesse seu painel do Supabase.</li>
-          <li>Vá em <strong>SQL Editor</strong> &gt; <strong>New Query</strong>.</li>
-          <li>Copie e cole o conteúdo do arquivo <code className="text-neon-blue">EVOLUX_ADVANCED_SCHEMA_V2.sql</code> (ele foi gerado na raiz do projeto).</li>
-          <li>Clique em <strong>Run</strong> (Run script).</li>
-          <li>Sua base passará a contar com tabelas para <code className="text-amber-500">finances</code> e <code className="text-amber-500">user_inventory</code>, melhorando o isolamento de dados pedido.</li>
+          <li>Acesse seu painel do Firebase Console.</li>
+          <li>Vá em <strong>Firestore Database</strong> &gt; <strong>Regras (Rules)</strong>.</li>
+          <li>Verifique se as regras estão corretas e seguras.</li>
+          <li>O banco de dados irá criar as coleções automaticamente sob demanda (Firestore é schemaless).</li>
+          <li>Sua base passará a contar com coleções para <code className="text-amber-500">finances</code> e <code className="text-amber-500">user_inventory</code>, melhorando o isolamento de dados pedido.</li>
         </ul>
       </div>
 
@@ -83,7 +91,7 @@ export default function AdminDatabase() {
 
         <div className="flex justify-between text-xs text-text-secondary">
           <span>{percentUsed.toFixed(2)}% Utilizado</span>
-          <span>Plano Supabase Free/Pro</span>
+          <span>Plano Firebase Spark/Blaze</span>
         </div>
       </div>
 
@@ -120,10 +128,10 @@ export default function AdminDatabase() {
               </div>
               <div className="flex items-center justify-between border-b border-surface-light pb-3">
                 <span className="text-xs text-text-secondary">Plataforma</span>
-                <span className="text-xs font-bold text-white">Supabase (PostgreSQL)</span>
+                <span className="text-xs font-bold text-white">Firebase (Firestore)</span>
               </div>
               <div className="flex items-center justify-between border-b border-surface-light pb-3">
-                <span className="text-xs text-text-secondary">Row Level Security</span>
+                <span className="text-xs text-text-secondary">Security Rules</span>
                 <span className="text-xs font-bold text-emerald-500">Ativado (Todas Tabelas)</span>
               </div>
               <div className="flex items-center justify-between border-b border-surface-light pb-3">

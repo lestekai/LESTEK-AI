@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
-import { collection, query, orderBy, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { db, auth } from '@/lib/firebase';
+import { collection, query, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { useAppStore } from '@/lib/store';
 import { logAdminAction } from '@/lib/admin';
 import { Users, Search, Edit2, Shield, Lock, Trash2, Ban, Target, LockKeyhole, ArrowRight } from 'lucide-react';
@@ -15,24 +16,39 @@ export default function AdminUsers() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const q = query(collection(db, 'profiles'), orderBy('created_at', 'desc'));
+      const q = query(collection(db, 'profiles'));
       const snapshot = await getDocs(q);
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      if (data) setUsers(data);
+      const sortedData = [...data].sort((a: any, b: any) => {
+        const getMs = (val: any) => {
+          if (!val) return 0;
+          if (val.toMillis) return val.toMillis();
+          if (val.seconds) return val.seconds * 1000;
+          const parsed = new Date(val).getTime();
+          return isNaN(parsed) ? 0 : parsed;
+        };
+        return getMs(b.created_at) - getMs(a.created_at);
+      });
+      setUsers(sortedData);
     } catch(e) {
-      console.error(e);
+      console.error("Fetch users error:", e);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchUsers();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchUsers();
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   const filteredUsers = users.filter(u => 
-    u.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    u.username?.toLowerCase().includes(searchTerm.toLowerCase())
+    (u.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+    (u.username || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (u.email || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleUpdateUser = async (e: React.FormEvent) => {
@@ -69,13 +85,13 @@ export default function AdminUsers() {
         avatar_level: parseInt(editingUser.avatar_level) || 1,
         equipped_cosmetics: {
           ...(editingUser.equipped_cosmetics || {}),
-          plan: editingUser.equipped_cosmetics?.plan || 'base'
+          plan: editingUser.plan || editingUser.equipped_cosmetics?.plan || 'base'
         }
       });
     } catch(e) { error = e; }
 
     if (error) {
-      alert('Erro ao atualizar usuário: ' + error.message);
+      alert('Erro ao atualizar usuário: ' + (error as Error).message);
     } else {
       alert('Usuário atualizado com sucesso.');
       if (profile) logAdminAction(profile.id, 'UPDATE_USER', editingUser.id, { role: editingUser.role, status: editingUser.status });

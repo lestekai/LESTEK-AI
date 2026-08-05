@@ -18,7 +18,7 @@ export default function PlansPage() {
     if (planId === 'base') {
       updateProfile({ plan: planId as any });
       
-      // Update in Supabase for persistence
+      // Update in Firestore for persistence
       const { db } = await import('@/lib/firebase');
       const { doc, updateDoc } = await import('firebase/firestore');
       await updateDoc(doc(db, 'profiles', profile.id), {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { collection, query, orderBy, limit, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { Send, Users, Activity, CheckCircle, Search, Trash2 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
@@ -25,8 +26,12 @@ export default function AdminNotifications() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line
-    fetchHistory();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchHistory();
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   const { profile } = useAppStore();
