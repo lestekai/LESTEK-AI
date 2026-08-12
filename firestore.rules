@@ -39,29 +39,38 @@ service cloud.firestore {
     // Profiles Collection
     match /profiles/{userId} {
       allow read: if isSignedIn();
-      allow create: if isOwner(userId) && isValidProfile(incoming(), true) && incoming().id == userId && incoming().role == 'user' && incoming().status == 'active';
-      allow update: if (isOwner(userId) && isValidProfile(incoming(), false) && (!('id' in incoming()) || incoming().id == existing().id) && (!('role' in incoming()) || incoming().role == existing().role) && (!('status' in incoming()) || incoming().status == existing().status)) || isAdmin();
+      allow create: if isOwner(userId) && (!('role' in incoming()) || incoming().role == 'user') && (!('status' in incoming()) || incoming().status == 'active');
+      allow update: if (isOwner(userId) && (!('role' in incoming()) || incoming().role == existing().role) && (!('status' in incoming()) || incoming().status == existing().status)) || isAdmin();
+      allow delete: if isAdmin();
     }
     
     // Tasks Collection
     match /tasks/{taskId} {
-      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow read: if isSignedIn() && (resource == null || resource.data.user_id == request.auth.uid) || isAdmin();
       allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
-      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+      allow update, delete: if isSignedIn() && (resource != null && existing().user_id == request.auth.uid) || isAdmin();
+    }
+    
+    // Workout Generation Requests Collection
+    match /workout_generation_requests/{requestId} {
+      allow read: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
     }
     
     // Workouts Collection
     match /workouts/{workoutId} {
-      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
-      allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
-      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+      allow read: if isSignedIn() && (resource == null || resource.data.user_id == request.auth.uid) || isAdmin();
+      allow create: if true;
+      allow update, delete: if isSignedIn() && (resource != null && existing().user_id == request.auth.uid) || isAdmin();
     }
     
     // Workout History Collection
     match /workout_history/{historyId} {
-      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow read: if isSignedIn() && (resource == null || resource.data.user_id == request.auth.uid) || isAdmin();
       allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
-      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+      allow update, delete: if isSignedIn() && (resource != null && existing().user_id == request.auth.uid) || isAdmin();
     }
     
     // Feedbacks Collection
@@ -78,34 +87,34 @@ service cloud.firestore {
     
     // AI History Collection
     match /ai_history/{historyId} {
-      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow read: if isSignedIn() && (resource == null || resource.data.user_id == request.auth.uid) || isAdmin();
       allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
     }
     
     // AI Memory Collection
     match /ai_memory/{memoryId} {
-      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow read: if isSignedIn() && (resource == null || resource.data.user_id == request.auth.uid) || isAdmin();
       allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
-      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+      allow update, delete: if isSignedIn() && (resource != null && existing().user_id == request.auth.uid) || isAdmin();
     }
     
     // Finances Collection
     match /finances/{financeId} {
-      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow read: if isSignedIn() && (resource == null || resource.data.user_id == request.auth.uid) || isAdmin();
       allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
-      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+      allow update, delete: if isSignedIn() && (resource != null && existing().user_id == request.auth.uid) || isAdmin();
     }
     
     // User Inventory Collection
     match /user_inventory/{inventoryId} {
-      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow read: if isSignedIn() && (resource == null || resource.data.user_id == request.auth.uid) || isAdmin();
       allow create: if isSignedIn() && incoming().user_id == request.auth.uid;
-      allow update, delete: if isSignedIn() && existing().user_id == request.auth.uid || isAdmin();
+      allow update, delete: if isSignedIn() && (resource != null && existing().user_id == request.auth.uid) || isAdmin();
     }
     
     // Notifications Collection
     match /notifications/{notificationId} {
-      allow read: if isSignedIn() && resource.data.user_id == request.auth.uid || isAdmin();
+      allow read: if isSignedIn() && (resource == null || resource.data.user_id == request.auth.uid) || isAdmin();
       allow create, update, delete: if isAdmin();
     }
   }

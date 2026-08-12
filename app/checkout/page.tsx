@@ -1,3 +1,5 @@
+'use client';
+
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Copy, ArrowLeft, Send } from 'lucide-react';
@@ -33,7 +35,9 @@ export default function CheckoutPage() {
       const { doc, getDoc, updateDoc } = await import('firebase/firestore');
       const docSnap = await getDoc(doc(db, 'profiles', profile.id));
       const data = docSnap.exists() ? docSnap.data() : null;
-      const currentCosmetics = data?.equipped_cosmetics || {};
+      const targetPlan = plan;
+      const nextMonth = new Date();
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
       
       await updateDoc(doc(db, 'profiles', profile.id), {
         equipped_cosmetics: {
@@ -48,9 +52,9 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] flex flex-col p-6">
+    <div className="min-h-screen bg-background flex flex-col p-6">
       <header className="mb-8 flex items-center">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-text-secondary hover:text-white">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-text-secondary hover:text-text-primary">
           <ArrowLeft size={24} />
         </button>
         <h1 className="text-xl font-bold ml-2">Finalizar Assinatura</h1>
@@ -69,14 +73,14 @@ export default function CheckoutPage() {
           </p>
         </div>
 
-        <div className="bg-background rounded-2xl p-4 border border-white/5 mb-6 text-center">
+        <div className="bg-background rounded-2xl p-4 border border-text-primary/5 mb-6 text-center">
           <p className="text-xs text-text-secondary mb-1">Chave PIX (Celular)</p>
-          <div className="text-2xl font-bold font-mono tracking-widest text-white mb-2">{PIX_KEY}</div>
+          <div className="text-2xl font-bold font-mono tracking-widest text-text-primary mb-2">{PIX_KEY}</div>
           <p className="text-xs text-text-secondary mb-4">Favorecido: {PIX_NAME}</p>
           
           <button 
             onClick={handleCopyPix}
-            className="flex items-center justify-center gap-2 w-full py-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors text-sm font-bold"
+            className="flex items-center justify-center gap-2 w-full py-2 bg-text-primary/5 hover:bg-text-primary/10 rounded-xl transition-colors text-sm font-bold"
           >
             <Copy size={16} /> Copiar Chave PIX
           </button>
@@ -93,14 +97,14 @@ export default function CheckoutPage() {
           
           <button 
             onClick={handleSendWhatsApp}
-            className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.3)] mb-3"
+            className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-text-primary rounded-xl font-bold transition-colors flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.3)] mb-3"
           >
             Enviar Comprovante via WhatsApp
           </button>
           
           <button 
             onClick={() => navigate('/setup')}
-            className="w-full py-3 bg-surface-light border border-white/5 hover:bg-white/10 text-text-secondary hover:text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 bg-surface-light border border-text-primary/5 hover:bg-text-primary/10 text-text-secondary hover:text-text-primary rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
           >
             Concluir e Instalar App
           </button>

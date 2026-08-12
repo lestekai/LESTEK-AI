@@ -63,7 +63,7 @@ export default function AvatarPage() {
               key={tab}
               onClick={() => setActiveTab(tab as any)}
               className={`flex-1 py-2 text-xs font-bold uppercase rounded-xl transition-all ${
-                activeTab === tab ? 'bg-surface-light text-white shadow-md' : 'text-text-secondary hover:text-white'
+                activeTab === tab ? 'bg-surface-light text-text-primary shadow-md' : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               {tab === 'status' ? 'Status' : tab === 'cosmetics' ? 'Cosméticos' : 'Conquistas'}
@@ -83,13 +83,13 @@ export default function AvatarPage() {
                   <div className="absolute top-0 right-0 w-16 h-16 bg-neon-purple/10 rounded-full blur-xl" />
                   <Zap className="text-neon-purple mb-2" size={24} />
                   <p className="text-xs text-text-secondary uppercase tracking-widest">Disciplina</p>
-                  <p className="text-3xl font-bold mt-1 text-white">{profile.streak} <span className="text-sm font-normal text-text-secondary">dias</span></p>
+                  <p className="text-3xl font-bold mt-1 text-text-primary">{profile.streak} <span className="text-sm font-normal text-text-secondary">dias</span></p>
                 </div>
                 <div className="bg-surface p-5 rounded-3xl border border-surface-light relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-16 h-16 bg-neon-blue/10 rounded-full blur-xl" />
                   <Star className="text-neon-blue mb-2" size={24} />
                   <p className="text-xs text-text-secondary uppercase tracking-widest">Ação</p>
-                  <p className="text-3xl font-bold mt-1 text-white">{profile.totalTasksCompleted} <span className="text-sm font-normal text-text-secondary">tarefas</span></p>
+                  <p className="text-3xl font-bold mt-1 text-text-primary">{profile.totalTasksCompleted} <span className="text-sm font-normal text-text-secondary">tarefas</span></p>
                 </div>
               </div>
 
@@ -99,12 +99,12 @@ export default function AvatarPage() {
                   {PLANET_MISSIONS.map((planet) => {
                     const isUnlocked = profile.streak >= planet.streakReq;
                     return (
-                      <div key={planet.id} className={`p-4 rounded-2xl border transition-all flex items-center gap-4 ${isUnlocked ? 'bg-surface border-surface-light hover:border-white/20' : 'bg-surface/30 border-surface-light/50 opacity-60 grayscale'}`}>
-                        <div className="w-12 h-12 rounded-full shrink-0 flex items-center justify-center border border-white/10" style={{ backgroundColor: isUnlocked ? planet.color : '#333', boxShadow: isUnlocked ? `inset 0 0 10px rgba(0,0,0,0.5), 0 0 15px ${planet.color}40` : 'none' }}>
+                      <div key={planet.id} className={`p-4 rounded-2xl border transition-all flex items-center gap-4 ${isUnlocked ? 'bg-surface border-surface-light hover:border-text-primary/20' : 'bg-surface/30 border-surface-light/50 opacity-60 grayscale'}`}>
+                        <div className="w-12 h-12 rounded-full shrink-0 flex items-center justify-center border border-text-primary/10" style={{ backgroundColor: isUnlocked ? planet.color : '#333', boxShadow: isUnlocked ? `inset 0 0 10px rgba(0,0,0,0.5), 0 0 15px ${planet.color}40` : 'none' }}>
                           {!isUnlocked && <Lock size={16} />}
                         </div>
                         <div>
-                          <h4 className="font-bold text-sm text-white">{isUnlocked ? planet.name : 'Domínio Desconhecido'}</h4>
+                          <h4 className="font-bold text-sm text-text-primary">{isUnlocked ? planet.name : 'Domínio Desconhecido'}</h4>
                           <p className="text-xs text-text-secondary italic mt-1">&quot;{isUnlocked ? planet.phrase : 'Sua determinação atual é fraca demais para acessar estes registros.'}&quot;</p>
                           <p className="text-[10px] text-text-secondary mt-1 uppercase tracking-widest">{isUnlocked ? planet.atmosphere : `Desbloqueia aos ${planet.streakReq} dias de Streak`}</p>
                         </div>
@@ -143,12 +143,12 @@ export default function AvatarPage() {
                               }
                             }}
                             className={`p-4 rounded-xl border flex flex-col justify-between min-h-[120px] relative overflow-hidden transition-all cursor-pointer ${
-                              isEquipped ? 'bg-neon-blue/10 border-neon-blue box-glow-blue' : isUnlocked ? 'bg-surface border-surface-light hover:border-white/20' : 'bg-surface/30 border-surface-light/30 opacity-60 grayscale'
+                              isEquipped ? 'bg-neon-blue/10 border-neon-blue box-glow-blue' : isUnlocked ? 'bg-surface border-surface-light hover:border-text-primary/20' : 'bg-surface/30 border-surface-light/30 opacity-60 grayscale'
                             }`}
                           >
                             {!isUnlocked && (
                               <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
-                                <Lock size={20} className="text-white/40 mb-4" />
+                                <Lock size={20} className="text-text-primary/40 mb-4" />
                               </div>
                             )}
                             {item.color && (
@@ -156,7 +156,7 @@ export default function AvatarPage() {
                             )}
                             <div className="relative z-10">
                                <p className={`text-[9px] font-bold uppercase tracking-widest mb-1 px-1.5 py-0.5 rounded-sm inline-block ${item.rarity === 'common' ? 'bg-gray-500/20 text-gray-400' : item.rarity === 'rare' ? 'bg-blue-500/20 text-neon-blue' : item.rarity === 'epic' ? 'bg-purple-500/20 text-neon-purple' : 'bg-amber-500/20 text-amber-500'}`}>{item.rarity}</p>
-                               <h4 className="font-bold text-sm text-white mt-1 leading-tight">{item.name}</h4>
+                               <h4 className="font-bold text-sm text-text-primary mt-1 leading-tight">{item.name}</h4>
                             </div>
                             <div className="relative z-10">
                               {isEquipped ? (
@@ -189,7 +189,7 @@ export default function AvatarPage() {
                        <div className={`absolute top-0 right-0 w-24 h-24 blur-2xl opacity-10 rounded-full bg-current ${rarityColor}`} />
                     )}
                     
-                    <div className={`w-12 h-12 rounded-xl border flex items-center justify-center shrink-0 ${isUnlocked ? `${borderColor} bg-background` : 'border-white/10 bg-white/5'}`}>
+                    <div className={`w-12 h-12 rounded-xl border flex items-center justify-center shrink-0 ${isUnlocked ? `${borderColor} bg-background` : 'border-text-primary/10 bg-text-primary/5'}`}>
                       {isUnlocked ? <Trophy size={20} className={rarityColor.replace('text-', 'stroke-')} /> : <Lock size={20} className="text-text-secondary" />}
                     </div>
                     

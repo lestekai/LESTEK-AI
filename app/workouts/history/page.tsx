@@ -1,6 +1,7 @@
-import { useNavigate } from 'react-router-dom';
-/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
+
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useNavigate } from 'react-router-dom';
 
 import { useWorkoutStore } from '@/lib/workoutStore';
 import { useAppStore } from '@/lib/store';
@@ -41,17 +42,19 @@ import {
 } from 'recharts';
 
 function getMusclesForExercise(exerciseName: string): string[] {
+  if (!exerciseName || typeof exerciseName !== 'string') return ['Geral'];
   const normName = exerciseName.toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .trim();
   
   const found = EXERCISE_LIBRARY.find(ex => {
+    if (!ex || !ex.name) return false;
     const exNorm = ex.name.toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .trim();
-    return exNorm === normName || normName.includes(exNorm) || exNorm.includes(normName);
+    return exNorm === normName || (exNorm && normName && (normName.includes(exNorm) || exNorm.includes(normName)));
   });
   
   if (found && found.targetMuscles && found.targetMuscles.length > 0) {
@@ -264,7 +267,7 @@ export default function HistoryPage() {
     <div className="min-h-screen bg-background pb-32 relative overflow-x-hidden text-text-primary font-sans">
       <header className="p-5 sticky top-0 bg-background/95 backdrop-blur-xl z-30 flex items-center justify-between border-b border-surface-light">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="w-12 h-12 flex items-center justify-center bg-white/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95">
+          <button onClick={() => navigate(-1)} className="w-12 h-12 flex items-center justify-center bg-text-primary/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95">
             <ArrowLeft size={20} />
           </button>
           <div>
@@ -283,8 +286,8 @@ export default function HistoryPage() {
               onClick={() => setActiveTab(item.id)}
               className={`flex-1 min-w-[70px] px-2 py-3 rounded-2xl text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
                 activeTab === item.id 
-                ? 'bg-white text-black shadow-lg' 
-                : 'text-text-secondary hover:text-text-primary hover:bg-white/5'
+                ? 'bg-text-primary text-black shadow-lg' 
+                : 'text-text-secondary hover:text-text-primary hover:bg-text-primary/5'
               }`}
             >
               {item.label}
@@ -423,13 +426,13 @@ export default function HistoryPage() {
 
                 <div className="bg-surface border border-surface-light p-5 sm:p-4 rounded-2xl space-y-4 shadow-xl">
                   <div className="flex justify-between items-center bg-background/50 p-2 rounded-2xl border border-surface-light">
-                    <button onClick={prevMonth} className="w-10 h-10 flex items-center justify-center bg-surface hover:bg-white/10 text-text-primary rounded-xl transition-colors">
+                    <button onClick={prevMonth} className="w-10 h-10 flex items-center justify-center bg-surface hover:bg-text-primary/10 text-text-primary rounded-xl transition-colors">
                       <ChevronLeft size={18} />
                     </button>
                     <h3 className="font-black text-sm uppercase tracking-wider text-text-primary">
                       {monthNames[calendarMonth]} <span className="text-[#e57d3b]">{calendarYear}</span>
                     </h3>
-                    <button onClick={nextMonth} className="w-10 h-10 flex items-center justify-center bg-surface hover:bg-white/10 text-text-primary rounded-xl transition-colors">
+                    <button onClick={nextMonth} className="w-10 h-10 flex items-center justify-center bg-surface hover:bg-text-primary/10 text-text-primary rounded-xl transition-colors">
                       <ChevronRight size={18} />
                     </button>
                   </div>
@@ -461,11 +464,11 @@ export default function HistoryPage() {
                           disabled={!dayItem.isCurrentMonth}
                           className={`aspect-square rounded-2xl text-[11px] font-black flex flex-col items-center justify-center relative transition-all ${
                             !dayItem.isCurrentMonth ? 'opacity-10 cursor-not-allowed' :
-                            isSelected ? 'bg-white text-black scale-105 shadow-xl shadow-white/10 border-2 border-white' :
-                            isToday ? 'bg-[#e57d3b]/10 text-[#e57d3b] border-2 border-[#e57d3b]/50' :
+                            isSelected ? 'bg-text-primary text-black scale-105 shadow-xl shadow-white/10 border-2 border-text-primary' :
+                            isToday ? 'bg-background/10 text-[#e57d3b] border-2 border-[#e57d3b]/50' :
                             details ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
                             isFalta ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
-                            'bg-background border border-surface-light text-text-secondary hover:border-white/20'
+                            'bg-background border border-surface-light text-text-secondary hover:border-text-primary/20'
                           }`}
                         >
                           {dayItem.day}
@@ -481,7 +484,7 @@ export default function HistoryPage() {
                       key={selectedCalendarDate.toDateString()}
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="bg-[#e57d3b] text-black p-4 rounded-2xl shadow-lg"
+                      className="bg-background text-black p-4 rounded-2xl shadow-lg"
                     >
                       <div className="flex justify-between items-start mb-4">
                         <div>
@@ -497,7 +500,7 @@ export default function HistoryPage() {
                         <span className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-2 block">Exercícios Concluídos</span>
                         <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
                           {clickedDayWorkout.exerciseLogs?.map((ex, i) => (
-                            <div key={i} className="bg-white/20 px-3 py-2 rounded-xl text-xs font-black truncate border border-surface-light shadow-sm text-black">
+                            <div key={i} className="bg-text-primary/20 px-3 py-2 rounded-xl text-xs font-black truncate border border-surface-light shadow-sm text-black">
                               {ex.exerciseName}
                             </div>
                           ))}
@@ -571,7 +574,7 @@ export default function HistoryPage() {
                                 initial={{ width: 0 }}
                                 animate={{ width: `${percentage}%` }}
                                 transition={{ duration: 0.8, delay: idx * 0.05 }}
-                                className={`h-full rounded-full ${idx === 0 ? 'bg-[#e57d3b]' : 'bg-amber-600'}`}
+                                className={`h-full rounded-full ${idx === 0 ? 'bg-background' : 'bg-amber-600'}`}
                               />
                             </div>
                           </div>
@@ -600,7 +603,7 @@ export default function HistoryPage() {
                         <select
                           value={activeExToUse}
                           onChange={(e) => setSelectedEvolutionEx(e.target.value)}
-                          className="bg-background border border-surface-light px-4 py-3.5 rounded-[20px] text-xs font-black text-[#e57d3b] uppercase tracking-wider outline-none w-full cursor-pointer hover:border-white/20 transition-all appearance-none"
+                          className="bg-background border border-surface-light px-4 py-3.5 rounded-[20px] text-xs font-black text-[#e57d3b] uppercase tracking-wider outline-none w-full cursor-pointer hover:border-text-primary/20 transition-all appearance-none"
                         >
                           {uniqueExercisesInHistory.map((ex, idx) => (
                             <option key={idx} value={ex} className="font-bold bg-surface text-text-primary">{ex}</option>
@@ -672,12 +675,12 @@ export default function HistoryPage() {
                   exercisePRs.map((pr, idx) => (
                     <div key={idx} className="bg-surface border border-surface-light p-5 rounded-[24px] shadow-lg relative overflow-hidden">
                       {idx === 0 && (
-                        <div className="absolute top-0 right-0 bg-white text-black text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-bl-xl z-10 shadow-lg">
+                        <div className="absolute top-0 right-0 bg-text-primary text-black text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-bl-xl z-10 shadow-lg">
                           Melhor Marca
                         </div>
                       )}
                       <div className="flex items-center gap-3 mb-4">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg shadow-inner ${idx === 0 ? 'bg-neon-blue/20 text-neon-blue' : 'bg-white/5 text-text-secondary'}`}>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-lg shadow-inner ${idx === 0 ? 'bg-neon-blue/20 text-neon-blue' : 'bg-text-primary/5 text-text-secondary'}`}>
                           {idx === 0 ? '🏆' : idx + 1}
                         </div>
                         <span className={`font-black text-base max-w-[70%] truncate ${idx === 0 ? 'text-neon-blue' : 'text-text-primary'}`}>{pr.exerciseName}</span>

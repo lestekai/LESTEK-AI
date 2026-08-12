@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore } from '@/lib/store';
 import { useWorkoutStore } from '@/lib/workoutStore';
@@ -35,7 +35,7 @@ export function ProfileMenu() {
     { icon: BarChart3, label: 'Dados de Evolução', onClick: () => { setIsOpen(false); navigate('/avatar'); } },
     { icon: Settings, label: 'Configurações', onClick: () => { setIsOpen(false); navigate('/settings'); } },
     // Only admins have access to the Admin Panel
-    ...(profile.role === 'admin' ? [{ icon: Flame, label: 'Painel Admin', onClick: () => { setIsOpen(false); navigate('/admin'); } }] : [])
+    ...( (profile.role === 'admin' || profile.email === 'lestek.sup@gmail.com') ? [{ icon: Flame, label: 'Painel Admin', onClick: () => { setIsOpen(false); navigate('/admin'); } }] : [])
   ];
 
   const planLabels = {
@@ -60,7 +60,7 @@ export function ProfileMenu() {
         className="w-10 h-10 rounded-full bg-surface-light border border-neon-blue/20 flex items-center justify-center overflow-hidden hover:border-neon-blue/60 transition-colors focus:outline-none"
       >
         <div className="w-full h-full bg-gradient-to-br from-neon-blue/10 to-neon-purple/10 flex items-center justify-center text-neon-blue font-bold tracking-widest text-sm uppercase">
-          {profile.name.charAt(0)}
+          {(profile?.name || profile?.email || 'U').charAt(0)}
         </div>
       </button>
 
@@ -74,16 +74,16 @@ export function ProfileMenu() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -5 }}
               transition={{ duration: 0.15 }}
-              className="absolute top-full right-0 mt-2 w-56 bg-surface/95 backdrop-blur-xl border border-white/5 rounded-2xl z-[100] shadow-2xl overflow-hidden"
+              className="absolute top-full right-0 mt-2 w-56 bg-surface/95 backdrop-blur-xl border border-text-primary/5 rounded-2xl z-[100] shadow-2xl overflow-hidden"
             >
-              <div className="p-4 border-b border-white/5 flex items-center gap-3 bg-gradient-to-br from-white/[0.02] to-transparent">
+              <div className="p-4 border-b border-text-primary/5 flex items-center gap-3 bg-gradient-to-br from-white/[0.02] to-transparent">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon-blue to-neon-purple p-[1px] shrink-0">
                   <div className="w-full h-full bg-background rounded-full flex items-center justify-center">
-                    <User size={16} className="text-white" />
+                    <User size={16} className="text-text-primary" />
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-bold font-display text-white truncate">{profile.name}</h3>
+                  <h3 className="text-sm font-bold font-display text-text-primary truncate">{profile.name}</h3>
                   <div className="flex items-center gap-2 mt-0.5">
                      <span className={`text-[9px] font-bold uppercase tracking-widest ${planColors[profile.plan]}`}>
                       {planLabels[profile.plan]}
@@ -92,12 +92,12 @@ export function ProfileMenu() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 text-center border-b border-white/5 divide-x divide-white/5">
-                <button onClick={() => { setIsOpen(false); navigate('/avatar'); }} className="px-2 py-3 hover:bg-white/[0.02] transition-colors w-full flex flex-col items-center">
+              <div className="grid grid-cols-2 text-center border-b border-text-primary/5 divide-x divide-white/5">
+                <button onClick={() => { setIsOpen(false); navigate('/avatar'); }} className="px-2 py-3 hover:bg-text-primary/[0.02] transition-colors w-full flex flex-col items-center">
                   <div className="text-[9px] text-text-secondary uppercase tracking-widest font-bold mb-1">Nível</div>
                   <div className="font-bold text-neon-blue text-sm flex items-center justify-center gap-1"><Star size={12} className="fill-neon-blue"/> {profile.avatarLevel}</div>
                 </button>
-                <button onClick={() => { setIsOpen(false); navigate('/tasks'); }} className="px-2 py-3 hover:bg-white/[0.02] transition-colors w-full flex flex-col items-center">
+                <button onClick={() => { setIsOpen(false); navigate('/tasks'); }} className="px-2 py-3 hover:bg-text-primary/[0.02] transition-colors w-full flex flex-col items-center">
                   <div className="text-[9px] text-text-secondary uppercase tracking-widest font-bold mb-1">Streak</div>
                   <div className="font-bold text-neon-purple text-sm flex items-center justify-center gap-1"><Flame size={12} className="text-neon-purple"/> {profile.streak}</div>
                 </button>
@@ -110,10 +110,10 @@ export function ProfileMenu() {
                     <button 
                       key={i}
                       onClick={item.onClick}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors group"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-text-primary/5 transition-colors group"
                     >
-                      <Icon size={14} className="text-text-secondary group-hover:text-white transition-colors" />
-                      <span className="text-xs font-semibold text-text-secondary group-hover:text-white transition-colors">{item.label}</span>
+                      <Icon size={14} className="text-text-secondary group-hover:text-text-primary transition-colors" />
+                      <span className="text-xs font-semibold text-text-secondary group-hover:text-text-primary transition-colors">{item.label}</span>
                     </button>
                   );
                 })}

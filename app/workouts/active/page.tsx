@@ -1,9 +1,9 @@
-import { useNavigate, useSearchParams } from 'react-router-dom';
+'use client';
+
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/exhaustive-deps */
-"use client";
-
-import { useState, useEffect, useRef } from "react";
+import { Suspense, useState, useEffect, useRef } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useWorkoutStore, ExerciseDefinition } from "@/lib/workoutStore";
 import {
   getProgressionStats,
@@ -46,11 +46,11 @@ const generateId = () =>
     ? crypto.randomUUID()
     : Math.random().toString(36).substring(2, 15);
 
-export default function ActiveWorkoutPage() {
+function ActiveWorkoutContent() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const dayIndex = parseInt(searchParams?.get("dayIndex") || "0", 10);
-  const isFree = searchParams?.get("free") === "true";
+  const dayIndex = parseInt(searchParams.get("dayIndex") || "0", 10);
+  const isFree = searchParams.get("free") === "true";
 
   const {
     currentPlan,
@@ -571,7 +571,7 @@ export default function ActiveWorkoutPage() {
               {Math.floor(workoutSeconds / 60)} min
             </span>
           </div>
-          <div className="w-px bg-white/10" />
+          <div className="w-px bg-text-primary/10" />
           <div className="flex flex-col items-center gap-1">
             <span className="uppercase text-[10px] font-black text-neon-blue tracking-wider">
               Exercícios
@@ -582,12 +582,42 @@ export default function ActiveWorkoutPage() {
           </div>
         </div>
 
-        <button
-          onClick={() => navigate("/workouts")}
-          className="w-full max-w-sm py-3 rounded-2xl uppercase tracking-widest cursor-pointer bg-gradient-to-r from-neon-blue to-neon-purple text-black font-black text-sm shadow-[0_10px_30px_rgba(0,210,255,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-transform"
-        >
-          VOLTAR AOS TREINOS
-        </button>
+        <div className="w-full max-w-sm space-y-3">
+          <button
+            onClick={() => {
+              const namePrompt = prompt("Nome para salvar nos Treinos Extras:", todayPlan?.focus || "Treino Realizado");
+              if (namePrompt) {
+                const newTemplate = {
+                  id: `user-extra-${Date.now()}`,
+                  generatedAt: new Date().toISOString(),
+                  phaseName: namePrompt,
+                  planPromptDescription: `${exercises.length} exercícios concluídos`,
+                  schedule: [{
+                    dayName: 'Treino A',
+                    focus: namePrompt,
+                    isRest: false,
+                    exercises: exercises,
+                    warmup: [],
+                    cooldown: [],
+                    intensity: 'Média'
+                  }]
+                };
+                useWorkoutStore.getState().addUserTemplate(newTemplate);
+                alert(`Treino "${namePrompt}" salvo com sucesso nos Treinos Extras!`);
+              }
+            }}
+            className="w-full py-3 rounded-2xl uppercase tracking-widest cursor-pointer bg-surface border border-surface-light hover:bg-text-primary/5 text-text-primary font-bold text-xs transition-all active:scale-98"
+          >
+            ★ Salvar nos Treinos Extras
+          </button>
+
+          <button
+            onClick={() => navigate("/workouts")}
+            className="w-full py-3.5 rounded-2xl uppercase tracking-widest cursor-pointer bg-gradient-to-r from-neon-blue to-neon-purple text-black font-black text-sm shadow-[0_10px_30px_rgba(0,210,255,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-transform"
+          >
+            VOLTAR AOS TREINOS
+          </button>
+        </div>
       </div>
     );
   }
@@ -1015,7 +1045,7 @@ export default function ActiveWorkoutPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowCancelModal(true)}
-            className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 text-text-primary hover:bg-white/10 transition-colors"
+            className="w-8 h-8 rounded-full flex items-center justify-center bg-text-primary/5 text-text-primary hover:bg-text-primary/10 transition-colors"
           >
             <ArrowLeft size={16} />
           </button>
@@ -1031,14 +1061,14 @@ export default function ActiveWorkoutPage() {
                 
         <div className="flex items-center gap-3">
            <span
-              className="font-extrabold cursor-pointer transition-colors text-[10px] text-text-primary bg-white/5 border border-surface-light px-2 py-1 rounded hover:bg-white/10 flex items-center gap-1"
+              className="font-extrabold cursor-pointer transition-colors text-[10px] text-text-primary bg-text-primary/5 border border-surface-light px-2 py-1 rounded hover:bg-text-primary/10 flex items-center gap-1"
               onClick={() => setShowOverview(true)}
             >
               {activeExerciseIndex + 1}/{exercises.length} <Search size={10} />
             </span>
           <button
             onClick={() => setShowSettingsModal(true)}
-            className="w-8 h-8 flex items-center justify-center text-text-secondary hover:text-text-primary bg-white/5 rounded-full transition-colors"
+            className="w-8 h-8 flex items-center justify-center text-text-secondary hover:text-text-primary bg-text-primary/5 rounded-full transition-colors"
           >
             <Settings size={14} />
           </button>
@@ -1071,7 +1101,7 @@ export default function ActiveWorkoutPage() {
                     setActiveExerciseIndex(index);
                     setCompletedSets(completedSetsMap[index] || []);
                   }}
-                  className={`flex items-stretch gap-3 p-2 cursor-pointer transition-colors ${isExpanded ? 'bg-white/5' : 'hover:bg-white/[0.02]'}`}
+                  className={`flex items-stretch gap-3 p-2 cursor-pointer transition-colors ${isExpanded ? 'bg-text-primary/5' : 'hover:bg-text-primary/[0.02]'}`}
                 >
                   <div 
                     className="w-12 h-12 rounded-lg shrink-0 relative overflow-hidden bg-background border border-surface-light group flex items-center justify-center"
@@ -1246,7 +1276,7 @@ export default function ActiveWorkoutPage() {
                                         }
                                       }}
                                       className={`w-10 flex items-center justify-center transition-colors rounded-r-lg ${
-                                        isCompleted ? "bg-emerald-500 text-text-primary" : "bg-white/5 text-text-primary/40 hover:bg-white/10"
+                                        isCompleted ? "bg-emerald-500 text-text-primary" : "bg-text-primary/5 text-text-primary/40 hover:bg-text-primary/10"
                                       }`}
                                     >
                                       <CheckCircle size={14} />
@@ -1276,7 +1306,7 @@ export default function ActiveWorkoutPage() {
           <div className="flex justify-center pt-4">
             <button
               onClick={() => setShowAddMenu(true)}
-              className="flex items-center gap-2 text-[10px] font-bold text-text-secondary hover:text-text-primary uppercase tracking-widest bg-surface px-4 py-2.5 rounded-xl border border-surface-light hover:border-white/20 transition-all"
+              className="flex items-center gap-2 text-[10px] font-bold text-text-secondary hover:text-text-primary uppercase tracking-widest bg-surface px-4 py-2.5 rounded-xl border border-surface-light hover:border-text-primary/20 transition-all"
             >
               <Plus size={14} />
               Adicionar Exercício
@@ -1309,7 +1339,7 @@ export default function ActiveWorkoutPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => setRestTimer((t) => t + 15)}
-                className="rounded-lg font-bold transition-colors cursor-pointer bg-white/5 border border-surface-light px-3 py-1.5 text-text-primary text-[10px] hover:bg-white/10"
+                className="rounded-lg font-bold transition-colors cursor-pointer bg-text-primary/5 border border-surface-light px-3 py-1.5 text-text-primary text-[10px] hover:bg-text-primary/10"
               >
                 +15s
               </button>
@@ -1401,7 +1431,7 @@ export default function ActiveWorkoutPage() {
                 </h2>
                 <button
                   onClick={() => setShowOverview(false)}
-                  className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-text-secondary hover:text-text-primary"
+                  className="w-8 h-8 rounded-full bg-text-primary/5 flex items-center justify-center text-text-secondary hover:text-text-primary"
                 >
                   <X size={16} />
                 </button>
@@ -1515,7 +1545,7 @@ export default function ActiveWorkoutPage() {
                     onClick={() => updateSettings({ soundEnabled: !settings?.soundEnabled })}
                     className={`w-10 h-6 rounded-full transition-colors relative ${settings?.soundEnabled ? "bg-neon-blue" : "bg-surface-light"}`}
                   >
-                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${settings?.soundEnabled ? "left-5" : "left-1"}`} />
+                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-text-primary transition-transform ${settings?.soundEnabled ? "left-5" : "left-1"}`} />
                   </button>
                 </div>
                 <div className="flex items-center justify-between">
@@ -1524,7 +1554,7 @@ export default function ActiveWorkoutPage() {
                     onClick={() => updateSettings({ restTimeEnabled: !settings?.restTimeEnabled })}
                     className={`w-10 h-6 rounded-full transition-colors relative ${settings?.restTimeEnabled ? "bg-neon-blue" : "bg-surface-light"}`}
                   >
-                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${settings?.restTimeEnabled ? "left-5" : "left-1"}`} />
+                    <div className={`absolute top-1 w-4 h-4 rounded-full bg-text-primary transition-transform ${settings?.restTimeEnabled ? "left-5" : "left-1"}`} />
                   </button>
                 </div>
                 <div className="pt-2 border-t border-surface-light">
@@ -1568,18 +1598,18 @@ export default function ActiveWorkoutPage() {
                 <div className="space-y-2">
                   <label className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">Testar Técnicas</label>
                   <div className="grid grid-cols-2 gap-2">
-                    <button onClick={() => seedPhase4Scenario("superset")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Superset A1-A2</button>
-                    <button onClick={() => seedPhase4Scenario("Drop Set")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Drop Set</button>
-                    <button onClick={() => seedPhase4Scenario("Rest Pause")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Rest Pause</button>
-                    <button onClick={() => seedPhase4Scenario("Cluster Set")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Cluster Set</button>
+                    <button onClick={() => seedPhase4Scenario("superset")} className="py-2 bg-surface-light hover:bg-text-primary/10 text-text-primary rounded-lg text-[10px] font-bold">Superset A1-A2</button>
+                    <button onClick={() => seedPhase4Scenario("Drop Set")} className="py-2 bg-surface-light hover:bg-text-primary/10 text-text-primary rounded-lg text-[10px] font-bold">Drop Set</button>
+                    <button onClick={() => seedPhase4Scenario("Rest Pause")} className="py-2 bg-surface-light hover:bg-text-primary/10 text-text-primary rounded-lg text-[10px] font-bold">Rest Pause</button>
+                    <button onClick={() => seedPhase4Scenario("Cluster Set")} className="py-2 bg-surface-light hover:bg-text-primary/10 text-text-primary rounded-lg text-[10px] font-bold">Cluster Set</button>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">Nível do Atleta</label>
                   <div className="grid grid-cols-3 gap-2">
-                    <button onClick={() => seedScenario("novo")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Iniciante</button>
-                    <button onClick={() => seedScenario("intermediario")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Intermediário</button>
-                    <button onClick={() => seedScenario("avancado")} className="py-2 bg-surface-light hover:bg-white/10 text-text-primary rounded-lg text-[10px] font-bold">Avançado</button>
+                    <button onClick={() => seedScenario("novo")} className="py-2 bg-surface-light hover:bg-text-primary/10 text-text-primary rounded-lg text-[10px] font-bold">Iniciante</button>
+                    <button onClick={() => seedScenario("intermediario")} className="py-2 bg-surface-light hover:bg-text-primary/10 text-text-primary rounded-lg text-[10px] font-bold">Intermediário</button>
+                    <button onClick={() => seedScenario("avancado")} className="py-2 bg-surface-light hover:bg-text-primary/10 text-text-primary rounded-lg text-[10px] font-bold">Avançado</button>
                   </div>
                 </div>
               </div>
@@ -1671,7 +1701,7 @@ export default function ActiveWorkoutPage() {
           >
             <div className="p-4 flex justify-between items-center bg-black/80 sticky top-0 z-10 border-b border-surface-light">
                <h3 className="text-text-primary font-bold text-sm">{fullscreenExercise.name}</h3>
-               <button onClick={() => setFullscreenExercise(null)} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-text-primary hover:bg-white/20 transition-colors cursor-pointer shrink-0">
+               <button onClick={() => setFullscreenExercise(null)} className="w-8 h-8 rounded-full bg-text-primary/10 flex items-center justify-center text-text-primary hover:bg-text-primary/20 transition-colors cursor-pointer shrink-0">
                  <X size={16} />
                </button>
             </div>
@@ -1704,5 +1734,13 @@ export default function ActiveWorkoutPage() {
         )})()}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function ActiveWorkoutPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center text-text-primary font-mono text-sm">Carregando treino...</div>}>
+      <ActiveWorkoutContent />
+    </Suspense>
   );
 }

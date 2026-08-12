@@ -175,7 +175,7 @@ export default function TasksPage() {
       case 'finance': return { icon: <Wallet size={16} />, color: 'text-emerald-400', bg: 'bg-emerald-500/10', label: 'Finanças' };
       case 'goal': return { icon: <Brain size={16} />, color: 'text-neon-purple', bg: 'bg-neon-purple/10', label: 'Mentalidade' };
       case 'routine': return { icon: <Star size={16} />, color: 'text-neon-blue', bg: 'bg-neon-blue/10', label: 'Prioridade Máxima' };
-      default: return { icon: <Activity size={16} />, color: 'text-white', bg: 'bg-white/10', label: 'Custom' };
+      default: return { icon: <Activity size={16} />, color: 'text-text-primary', bg: 'bg-text-primary/10', label: 'Custom' };
     }
   };
 
@@ -204,7 +204,7 @@ export default function TasksPage() {
       
       {/* Header Dinâmico */}
       <div className="px-5 pt-8 pb-4">
-         <h1 className="text-3xl font-display font-bold text-white mb-2">
+         <h1 className="text-3xl font-display font-bold text-text-primary mb-2">
            {getGreeting()}, <span className="text-neon-blue">{userName}</span>! ⚡
          </h1>
          <p className="text-text-secondary text-sm">O que vamos conquistar hoje?</p>
@@ -221,7 +221,7 @@ export default function TasksPage() {
             <p className="text-[10px] font-bold uppercase tracking-widest text-neon-purple mb-1 select-none flex items-center gap-1">
               Reflexão IA Evolux
             </p>
-            <p className="text-sm text-white font-medium">
+            <p className="text-sm text-text-primary font-medium">
               {todaysTasks.length === 0 
                 ? 'Sem missões ativas hoje. Defina seus alvos e comece a escalar.'
                 : todaysTasks.every(t => t.completed)
@@ -252,7 +252,7 @@ export default function TasksPage() {
            </div>
            <div className="bg-surface border border-neon-purple/30 rounded-2xl p-3 flex flex-col items-center justify-center shadow-[0_0_15px_rgba(150,0,255,0.1)] transition-transform hover:scale-105 cursor-default">
              <span className="text-[10px] text-neon-purple uppercase font-bold tracking-widest mb-1 select-none text-center">Poder<br/>Atual (XP)</span>
-             <span className="text-white font-display font-bold text-lg">{profile?.xp || 0}</span>
+             <span className="text-text-primary font-display font-bold text-lg">{profile?.xp || 0}</span>
            </div>
         </div>
         <p className="text-[10px] text-text-secondary uppercase font-bold tracking-widest text-right mt-2 text-neon-purple/80">✨ Constância molda a realidade.</p>
@@ -261,13 +261,13 @@ export default function TasksPage() {
       {/* Calendário Gráfico */}
       <div className="px-5 mb-6">
          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold text-white capitalize">{calendarViewDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}</h3>
+            <h3 className="text-xl font-bold text-text-primary capitalize">{calendarViewDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}</h3>
             <div className="flex items-center gap-2">
-               <button onClick={prevMonth} className="p-2 rounded-full bg-surface-light border border-white/5 hover:bg-white/10 transition-colors">
-                 <ChevronLeft size={16} className="text-white" />
+               <button onClick={prevMonth} className="p-2 rounded-full bg-surface-light border border-text-primary/5 hover:bg-text-primary/10 transition-colors">
+                 <ChevronLeft size={16} className="text-text-primary" />
                </button>
-               <button onClick={nextMonth} className="p-2 rounded-full bg-surface-light border border-white/5 hover:bg-white/10 transition-colors">
-                 <ChevronRight size={16} className="text-white" />
+               <button onClick={nextMonth} className="p-2 rounded-full bg-surface-light border border-text-primary/5 hover:bg-text-primary/10 transition-colors">
+                 <ChevronRight size={16} className="text-text-primary" />
                </button>
             </div>
          </div>
@@ -275,7 +275,7 @@ export default function TasksPage() {
          <div className="bg-surface border border-surface-light rounded-2xl p-4">
              <div className="grid grid-cols-7 gap-1 mb-4">
                 {weekDays.map((d, i) => (
-                   <div key={i} className="text-center text-[12px] font-bold text-white uppercase tracking-widest">{d}</div>
+                   <div key={i} className="text-center text-[12px] font-bold text-text-primary uppercase tracking-widest">{d}</div>
                 ))}
              </div>
              <div className="grid grid-cols-7 gap-y-2 gap-x-1">
@@ -286,7 +286,7 @@ export default function TasksPage() {
                          className={`w-10 h-10 flex items-center justify-center rounded-full text-sm transition-all focus:outline-none ${
                          day.isSelected ? 'bg-amber-500 text-black font-bold shadow-lg scale-110 shadow-[0_0_15px_rgba(245,158,11,0.5)] z-10' :
                          day.isToday && !day.isSelected ? 'bg-neon-blue text-black font-bold shadow-lg scale-110' : 
-                         day.isCurrentMonth ? 'text-white/80 hover:bg-surface-light border border-transparent hover:border-white/10' : 'text-white/20 hover:bg-surface-light'
+                         day.isCurrentMonth ? 'text-text-primary/80 hover:bg-surface-light border border-transparent hover:border-text-primary/10' : 'text-text-primary/20 hover:bg-surface-light'
                       }`}>
                          {day.dayNumber}
                       </button>
@@ -301,31 +301,31 @@ export default function TasksPage() {
          <div className="flex gap-2 min-w-max pr-5">
             <button 
               onClick={() => setActiveSection('all')} 
-              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${activeSection === 'all' ? 'bg-white text-background shadow-lg scale-105' : 'bg-surface border border-surface-light text-text-secondary hover:text-white'}`}
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${activeSection === 'all' ? 'bg-text-primary text-background shadow-lg scale-105' : 'bg-surface border border-surface-light text-text-secondary hover:text-text-primary'}`}
             >
               Geral
             </button>
             <button 
               onClick={() => setActiveSection('priority')} 
-              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 ${activeSection === 'priority' ? 'bg-neon-blue text-background shadow-[0_0_15px_rgba(0,240,255,0.4)] scale-105' : 'bg-surface border border-surface-light text-text-secondary hover:text-white'}`}
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 ${activeSection === 'priority' ? 'bg-neon-blue text-background shadow-[0_0_15px_rgba(0,240,255,0.4)] scale-105' : 'bg-surface border border-surface-light text-text-secondary hover:text-text-primary'}`}
             >
               <Star size={14} className={activeSection === 'priority' ? "fill-background text-background" : ""} /> Máxima
             </button>
             <button 
               onClick={() => setActiveSection('mental')} 
-              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 ${activeSection === 'mental' ? 'bg-neon-purple text-white shadow-[0_0_15px_rgba(150,0,255,0.4)] scale-105' : 'bg-surface border border-surface-light text-text-secondary hover:text-white'}`}
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 ${activeSection === 'mental' ? 'bg-neon-purple text-text-primary shadow-[0_0_15px_rgba(150,0,255,0.4)] scale-105' : 'bg-surface border border-surface-light text-text-secondary hover:text-text-primary'}`}
             >
               <Brain size={14} /> Mental
             </button>
             <button 
               onClick={() => setActiveSection('physical')} 
-              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 ${activeSection === 'physical' ? 'bg-amber-500 text-background shadow-[0_0_15px_rgba(245,158,11,0.4)] scale-105' : 'bg-surface border border-surface-light text-text-secondary hover:text-white'}`}
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 ${activeSection === 'physical' ? 'bg-amber-500 text-background shadow-[0_0_15px_rgba(245,158,11,0.4)] scale-105' : 'bg-surface border border-surface-light text-text-secondary hover:text-text-primary'}`}
             >
               <Dumbbell size={14} /> Físico
             </button>
             <button 
               onClick={() => setActiveSection('long_term')} 
-              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 ${activeSection === 'long_term' ? 'bg-emerald-400 text-background shadow-[0_0_15px_rgba(52,211,153,0.4)] scale-105' : 'bg-surface border border-surface-light text-text-secondary hover:text-white'}`}
+              className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 ${activeSection === 'long_term' ? 'bg-emerald-400 text-background shadow-[0_0_15px_rgba(52,211,153,0.4)] scale-105' : 'bg-surface border border-surface-light text-text-secondary hover:text-text-primary'}`}
             >
               <Target size={14} /> Longo Prazo
             </button>
@@ -336,11 +336,11 @@ export default function TasksPage() {
         
         {/* Call to Add Form */}
         <div className="flex justify-between items-center px-1 mb-2">
-           <h3 className="text-sm font-bold text-white flex items-center gap-2">
+           <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
              <LayoutList size={16} className={"text-text-secondary"} /> O que temos agora?
              {activeSection === 'all' && <span className="text-xs bg-surface-light px-2 py-0.5 rounded-full text-text-secondary">{currentViewTasks.length} Totais</span>}
            </h3>
-           <button onClick={() => setShowAddForm(!showAddForm)} className="w-8 h-8 rounded-full bg-surface-light flex items-center justify-center text-white hover:bg-white/10 transition-colors">
+           <button onClick={() => setShowAddForm(!showAddForm)} className="w-8 h-8 rounded-full bg-surface-light flex items-center justify-center text-text-primary hover:bg-text-primary/10 transition-colors">
              <Plus size={16} className={`transition-transform duration-300 ${showAddForm ? 'rotate-45' : ''}`} />
            </button>
         </div>
@@ -352,11 +352,11 @@ export default function TasksPage() {
               <form onSubmit={handleAddTask} className="bg-surface p-5 rounded-3xl border border-surface-light space-y-5 shadow-xl font-sans">
                
                 <div className="flex gap-4 mb-2">
-                  <label className="flex items-center gap-2 text-xs font-bold text-white cursor-pointer select-none">
+                  <label className="flex items-center gap-2 text-xs font-bold text-text-primary cursor-pointer select-none">
                     <input type="radio" checked={!isLongTerm} onChange={() => setIsLongTerm(false)} className="accent-neon-blue w-4 h-4" />
                     Ação Diária
                   </label>
-                  <label className="flex items-center gap-2 text-xs font-bold text-white cursor-pointer select-none">
+                  <label className="flex items-center gap-2 text-xs font-bold text-text-primary cursor-pointer select-none">
                     <input type="radio" checked={isLongTerm} onChange={() => setIsLongTerm(true)} className="accent-neon-purple w-4 h-4" />
                     Longo Prazo
                   </label>
@@ -364,25 +364,25 @@ export default function TasksPage() {
 
                 <div>
                   <label className="text-[10px] font-bold text-text-secondary uppercase tracking-widest mb-2 block">{isLongTerm ? 'Visão Dourada (Meta Maior)' : 'Tarefa/Ação'}</label>
-                  <input type="text" value={newTaskTitle} onChange={(e) => setNewTaskTitle(e.target.value)} placeholder={isLongTerm ? "Ex: Comprar meu primeiro imóvel" : "Ex: Beber água, Ler 10 páginas"} className="w-full bg-background border border-surface-light rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-neon-blue transition-colors" />
+                  <input type="text" value={newTaskTitle} onChange={(e) => setNewTaskTitle(e.target.value)} placeholder={isLongTerm ? "Ex: Comprar meu primeiro imóvel" : "Ex: Beber água, Ler 10 páginas"} className="w-full bg-background border border-surface-light rounded-xl px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-neon-blue transition-colors" />
                 </div>
 
                 {!isLongTerm && (
                   <div className="p-4 rounded-xl border border-surface-light bg-background/50 space-y-4">
-                    <label className="flex items-center gap-2 text-xs font-bold text-white cursor-pointer group">
+                    <label className="flex items-center gap-2 text-xs font-bold text-text-primary cursor-pointer group">
                       <div className="relative flex items-center justify-center w-5 h-5 rounded overflow-hidden border border-surface-light bg-surface group-hover:border-neon-purple transition-all">
                         <input type="checkbox" checked={isRecurringForm} onChange={(e) => setIsRecurringForm(e.target.checked)} className="absolute w-full h-full opacity-0 cursor-pointer" />
-                        {isRecurringForm && <div className="absolute inset-0 bg-neon-purple flex items-center justify-center"><CheckCircle2 size={12} className="text-white"/></div>}
+                        {isRecurringForm && <div className="absolute inset-0 bg-neon-purple flex items-center justify-center"><CheckCircle2 size={12} className="text-text-primary"/></div>}
                       </div>
                       Todo dia (Recorrente)
                     </label>
 
                     <div className="w-full h-px bg-surface-light"></div>
 
-                    <label className="flex items-center gap-2 text-xs font-bold text-white cursor-pointer group">
+                    <label className="flex items-center gap-2 text-xs font-bold text-text-primary cursor-pointer group">
                       <div className="relative flex items-center justify-center w-5 h-5 rounded overflow-hidden border border-surface-light bg-surface group-hover:border-neon-blue transition-all">
                         <input type="checkbox" checked={hasTarget} onChange={(e) => setHasTarget(e.target.checked)} className="absolute w-full h-full opacity-0 cursor-pointer" />
-                        {hasTarget && <div className="absolute inset-0 bg-neon-blue flex items-center justify-center"><CheckCircle2 size={12} className="text-white"/></div>}
+                        {hasTarget && <div className="absolute inset-0 bg-neon-blue flex items-center justify-center"><CheckCircle2 size={12} className="text-text-primary"/></div>}
                       </div>
                       Definir Quantidade (Ex: 2 Metros, 5 Km)
                     </label>
@@ -390,11 +390,11 @@ export default function TasksPage() {
                       <div className="flex gap-2">
                          <div className="flex-1">
                            <label className="text-[10px] text-text-secondary uppercase tracking-widest mb-1 block">Quantidade</label>
-                           <input type="number" min="1" value={targetAmount} onChange={(e) => setTargetAmount(parseInt(e.target.value)||0)} placeholder="Ex: 2000" className="w-full bg-background border border-surface-light rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-neon-blue" />
+                           <input type="number" min="1" value={targetAmount} onChange={(e) => setTargetAmount(parseInt(e.target.value)||0)} placeholder="Ex: 2000" className="w-full bg-background border border-surface-light rounded-xl px-4 py-2 text-sm text-text-primary focus:outline-none focus:border-neon-blue" />
                          </div>
                          <div className="flex-1">
                            <label className="text-[10px] text-text-secondary uppercase tracking-widest mb-1 block">Unidade</label>
-                           <input type="text" value={targetUnit} onChange={(e) => setTargetUnit(e.target.value)} placeholder="Ex: ml, min, pág" className="w-full bg-background border border-surface-light rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-neon-blue" />
+                           <input type="text" value={targetUnit} onChange={(e) => setTargetUnit(e.target.value)} placeholder="Ex: ml, min, pág" className="w-full bg-background border border-surface-light rounded-xl px-4 py-2 text-sm text-text-primary focus:outline-none focus:border-neon-blue" />
                          </div>
                       </div>
                     )}
@@ -403,18 +403,18 @@ export default function TasksPage() {
 
                 {isLongTerm && (
                   <div className="p-4 rounded-xl border border-surface-light bg-background/50">
-                    <label className="text-xs font-bold text-white mb-2 block">Partes (Micro Passos)</label>
+                    <label className="text-xs font-bold text-text-primary mb-2 block">Partes (Micro Passos)</label>
                     <div className="space-y-2 mb-3">
                       {subTasks.map((st, i) => (
                         <div key={i} className="flex justify-between items-center bg-surface p-2 rounded border border-surface-light">
-                           <span className="text-sm text-white">{st.title}</span>
+                           <span className="text-sm text-text-primary">{st.title}</span>
                            <button type="button" onClick={() => setSubTasks(subTasks.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-500"><X size={16}/></button>
                         </div>
                       ))}
                     </div>
                     <div className="flex gap-2">
-                      <input type="text" value={newSubTask} onChange={(e) => setNewSubTask(e.target.value)} placeholder="Ex: Juntar 5.000 R$" className="flex-1 bg-background border border-surface-light rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-neon-purple" />
-                      <button type="button" onClick={() => { if(newSubTask.trim()) { setSubTasks([...subTasks, {title: newSubTask.trim()}]); setNewSubTask(''); } }} className="bg-surface border border-surface-light px-3 rounded-xl hover:bg-neon-purple hover:text-white transition-colors"><PlusCircle size={20} /></button>
+                      <input type="text" value={newSubTask} onChange={(e) => setNewSubTask(e.target.value)} placeholder="Ex: Juntar 5.000 R$" className="flex-1 bg-background border border-surface-light rounded-xl px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-neon-purple" />
+                      <button type="button" onClick={() => { if(newSubTask.trim()) { setSubTasks([...subTasks, {title: newSubTask.trim()}]); setNewSubTask(''); } }} className="bg-surface border border-surface-light px-3 rounded-xl hover:bg-neon-purple hover:text-text-primary transition-colors"><PlusCircle size={20} /></button>
                     </div>
                   </div>
                 )}
@@ -425,7 +425,7 @@ export default function TasksPage() {
                     {(['routine', 'workout', 'finance', 'goal'] as TaskCategory[]).map(cat => {
                       const cfg = getCategoryConfig(cat);
                       return (
-                        <button key={cat} type="button" onClick={() => setNewTaskCategory(cat)} className={`py-2 px-3 rounded-xl border flex items-center gap-2 text-xs font-bold transition-all ${newTaskCategory === cat ? `border-${cfg.color.replace('text-', '')}/50 ${cfg.bg} ${cfg.color}` : 'border-surface-light bg-background text-text-secondary hover:text-white'}`}>
+                        <button key={cat} type="button" onClick={() => setNewTaskCategory(cat)} className={`py-2 px-3 rounded-xl border flex items-center gap-2 text-xs font-bold transition-all ${newTaskCategory === cat ? `border-${cfg.color.replace('text-', '')}/50 ${cfg.bg} ${cfg.color}` : 'border-surface-light bg-background text-text-secondary hover:text-text-primary'}`}>
                           {cfg.icon} {cfg.label.split(' ')[0]}
                         </button>
                       );
@@ -433,7 +433,7 @@ export default function TasksPage() {
                   </div>
                 </div>
 
-                <button type="submit" disabled={!newTaskTitle.trim() || (hasTarget && targetAmount <= 0) || (isLongTerm && subTasks.length === 0)} className={`w-full font-bold uppercase tracking-widest text-xs py-3 rounded-xl transition-colors disabled:opacity-50 text-white ${isLongTerm ? 'bg-neon-purple hover:bg-neon-purple/80' : 'bg-neon-blue hover:bg-neon-blue/80'}`}>
+                <button type="submit" disabled={!newTaskTitle.trim() || (hasTarget && targetAmount <= 0) || (isLongTerm && subTasks.length === 0)} className={`w-full font-bold uppercase tracking-widest text-xs py-3 rounded-xl transition-colors disabled:opacity-50 text-text-primary ${isLongTerm ? 'bg-neon-purple hover:bg-neon-purple/80' : 'bg-neon-blue hover:bg-neon-blue/80'}`}>
                   Registrar
                 </button>
               </form>
@@ -446,7 +446,7 @@ export default function TasksPage() {
             {currentViewTasks.length === 0 && !showAddForm ? (
                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-12 bg-surface/30 border border-surface-light border-dashed rounded-[2rem] text-center">
                  <Target size={40} className="mx-auto mb-4 text-text-secondary/30" />
-                 <p className="font-bold text-white mb-1">Área Limpa</p>
+                 <p className="font-bold text-text-primary mb-1">Área Limpa</p>
                  <p className="text-xs text-text-secondary max-w-[200px] mx-auto mb-6">Nenhuma tarefa encontrada neste filtro atual.</p>
                </motion.div>
             ) : (
@@ -454,18 +454,18 @@ export default function TasksPage() {
                 const config = getCategoryConfig(task.category);
                 
                 return (
-                  <motion.div key={task.id} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className={`group flex flex-col p-4 rounded-2xl border transition-all ${task.completed ? 'bg-surface/50 border-surface-light opacity-60' : 'bg-surface border-surface-light shadow-lg hover:border-white/20'}`}>
+                  <motion.div key={task.id} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className={`group flex flex-col p-4 rounded-2xl border transition-all ${task.completed ? 'bg-surface/50 border-surface-light opacity-60' : 'bg-surface border-surface-light shadow-lg hover:border-text-primary/20'}`}>
                     <div className="flex items-center justify-between cursor-pointer" onClick={() => !task.targetAmount && !task.subTasks?.length ? handleToggle(task.id, task.completed) : undefined}>
                       <div className="flex items-center gap-4 flex-1">
-                        <div onClick={(e) => { e.stopPropagation(); handleToggle(task.id, task.completed); }} className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors cursor-pointer ${task.completed ? 'bg-surface-light border border-white/5' : config.bg}`}>
+                        <div onClick={(e) => { e.stopPropagation(); handleToggle(task.id, task.completed); }} className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors cursor-pointer ${task.completed ? 'bg-surface-light border border-text-primary/5' : config.bg}`}>
                           {task.completed ? <CheckCircle2 size={24} className={'text-emerald-400'} /> : <div className={config.color}>{config.icon}</div>}
                         </div>
                         <div>
                           <span className={`text-[10px] font-bold uppercase tracking-widest mb-1 block ${task.completed ? 'text-text-secondary/50' : config.color}`}>
                             {config.label} {task.isRecurring && '🔁'}
                           </span>
-                          <span className={`text-base tracking-tight font-bold ${task.completed ? 'text-text-secondary line-through' : 'text-white'}`}>{task.title}</span>
-                          {task.isLongTerm && <span className="text-[10px] text-text-secondary bg-surface-light px-2 py-0.5 rounded-full mt-1.5 inline-block opacity-70 border border-white/5 font-bold tracking-widest uppercase">Longo Prazo</span>}
+                          <span className={`text-base tracking-tight font-bold ${task.completed ? 'text-text-secondary line-through' : 'text-text-primary'}`}>{task.title}</span>
+                          {task.isLongTerm && <span className="text-[10px] text-text-secondary bg-surface-light px-2 py-0.5 rounded-full mt-1.5 inline-block opacity-70 border border-text-primary/5 font-bold tracking-widest uppercase">Longo Prazo</span>}
                         </div>
                       </div>
                       {!task.completed && (
@@ -483,11 +483,11 @@ export default function TasksPage() {
                            <span className="text-xs font-bold text-neon-blue">{task.targetAmount > 0 ? Math.round(((task.currentAmount || 0) / task.targetAmount) * 100) : 0}%</span>
                          </div>
                          <div className="flex gap-2 items-center">
-                            <div className="flex-1 h-3 bg-background rounded-full overflow-hidden border border-white/5">
+                            <div className="flex-1 h-3 bg-background rounded-full overflow-hidden border border-text-primary/5">
                               <div className="h-full bg-neon-blue transition-all" style={{ width: `${Math.min(100, Math.max(0, ((task.currentAmount || 0) / task.targetAmount) * 100))}` + "%" }} />
                             </div>
                             {!task.completed && (
-                              <button onClick={() => updateTaskProgress(task.id, task.targetAmount! * 0.25)} className="w-8 h-8 flex items-center justify-center bg-neon-blue/10 text-neon-blue rounded-lg border border-neon-blue/30 text-xs font-bold hover:bg-neon-blue hover:text-white transition-colors">
+                              <button onClick={() => updateTaskProgress(task.id, task.targetAmount! * 0.25)} className="w-8 h-8 flex items-center justify-center bg-neon-blue/10 text-neon-blue rounded-lg border border-neon-blue/30 text-xs font-bold hover:bg-neon-blue hover:text-text-primary transition-colors">
                                 <Plus size={16} />
                               </button>
                             )}
@@ -502,9 +502,9 @@ export default function TasksPage() {
                         {task.subTasks.map(st => (
                           <div key={st.id} onClick={() => toggleSubTask(task.id, st.id)} className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-colors ${st.completed ? 'bg-surface-light border-transparent' : 'bg-background border-surface-light hover:border-neon-purple/50'}`}>
                              <div className={`w-5 h-5 rounded-md flex items-center justify-center border ${st.completed ? 'bg-emerald-400 border-emerald-400' : 'bg-surface border-text-secondary'}`}>
-                               {st.completed && <CheckCircle2 size={12} className="text-white" />}
+                               {st.completed && <CheckCircle2 size={12} className="text-text-primary" />}
                              </div>
-                             <span className={`text-sm font-medium ${st.completed ? 'text-text-secondary line-through' : 'text-white'}`}>{st.title}</span>
+                             <span className={`text-sm font-medium ${st.completed ? 'text-text-secondary line-through' : 'text-text-primary'}`}>{st.title}</span>
                           </div>
                         ))}
                       </div>
@@ -545,7 +545,7 @@ export default function TasksPage() {
               <div className="absolute top-0 right-[-10%] w-32 h-32 bg-neon-purple/20 rounded-full blur-[40px] pointer-events-none" />
               <Bot size={40} className="text-neon-purple mx-auto mb-4" />
               
-              <h3 className="text-xl font-display font-bold text-white mb-2">Foi atingido pela inércia?</h3>
+              <h3 className="text-xl font-display font-bold text-text-primary mb-2">Foi atingido pela inércia?</h3>
               <p className="text-sm text-text-secondary mb-6 leading-relaxed">
                 Eu percebi. Atrasos constantes são normais, mas precisamos reagir. O que você escolhe para destravar agora?
               </p>
@@ -554,7 +554,7 @@ export default function TasksPage() {
                 <button onClick={() => {
                   addTask({ title: "Focar 5 minutos apenas na maior prioridade", category: "routine", xpReward: 50, date: todayStr, isLongTerm: false, isRecurring: false });
                   setShowStuckModal(false);
-                }} className="w-full bg-neon-purple/10 border border-neon-purple/30 text-neon-purple font-bold px-4 py-3 rounded-xl hover:bg-neon-purple hover:text-white transition-colors text-sm uppercase tracking-widest flex justify-between items-center group">
+                }} className="w-full bg-neon-purple/10 border border-neon-purple/30 text-neon-purple font-bold px-4 py-3 rounded-xl hover:bg-neon-purple hover:text-text-primary transition-colors text-sm uppercase tracking-widest flex justify-between items-center group">
                   Regra dos 5 Minutos <Zap size={16} className="group-hover:animate-pulse" />
                 </button>
                 <button onClick={() => {
@@ -562,17 +562,17 @@ export default function TasksPage() {
                   setShowAddForm(true);
                   setIsLongTerm(true);
                   setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
-                }} className="w-full bg-surface-light border border-white/5 text-white font-bold px-4 py-3 rounded-xl hover:bg-white/10 transition-colors text-sm uppercase tracking-widest flex justify-between items-center group">
+                }} className="w-full bg-surface-light border border-text-primary/5 text-text-primary font-bold px-4 py-3 rounded-xl hover:bg-text-primary/10 transition-colors text-sm uppercase tracking-widest flex justify-between items-center group">
                   Quebrar a Tarefa <LayoutList size={16} />
                 </button>
                 <button onClick={() => {
                   addTask({ title: "Reorganizar minhas prioridades do dia", category: "goal", xpReward: 20, date: todayStr, isLongTerm: false, isRecurring: false });
                   setShowStuckModal(false);
-                }} className="w-full bg-surface border border-surface-light text-text-secondary hover:text-white font-bold px-4 py-3 rounded-xl hover:bg-surface-light transition-colors text-sm uppercase tracking-widest flex justify-between items-center group">
+                }} className="w-full bg-surface border border-surface-light text-text-secondary hover:text-text-primary font-bold px-4 py-3 rounded-xl hover:bg-surface-light transition-colors text-sm uppercase tracking-widest flex justify-between items-center group">
                   Pausar e Reorganizar <Calendar size={16} />
                 </button>
               </div>
-              <button onClick={() => setShowStuckModal(false)} className="mt-6 text-xs text-text-secondary hover:text-white uppercase font-bold tracking-widest p-2">
+              <button onClick={() => setShowStuckModal(false)} className="mt-6 text-xs text-text-secondary hover:text-text-primary uppercase font-bold tracking-widest p-2">
                 Cancelar e Voltar ao Foco
               </button>
             </motion.div>
@@ -593,7 +593,7 @@ export default function TasksPage() {
                 }, 2000);
               }
             }}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all shrink-0 ${isListening ? 'bg-red-500 text-white animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' : 'bg-surface-light text-text-secondary hover:text-white hover:bg-white/10'}`}
+            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all shrink-0 ${isListening ? 'bg-red-500 text-text-primary animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.5)]' : 'bg-surface-light text-text-secondary hover:text-text-primary hover:bg-text-primary/10'}`}
           >
             <Mic size={18} />
           </button>
@@ -604,7 +604,7 @@ export default function TasksPage() {
             value={quickInput}
             onChange={(e) => setQuickInput(e.target.value)}
             onKeyDown={(e) => { if(e.key === 'Enter') handleQuickAdd() }}
-            className="flex-1 bg-transparent border-none text-sm text-white focus:outline-none focus:ring-0 placeholder:text-text-secondary"
+            className="flex-1 bg-transparent border-none text-sm text-text-primary focus:outline-none focus:ring-0 placeholder:text-text-secondary"
           />
           
           <button 

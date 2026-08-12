@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/lib/store';
 import { generateAI } from '@/src/services/geminiService';
 import { Header } from '@/components/Header';
@@ -167,7 +167,7 @@ Use termos como "Operador", "Sistemas", "Directiva", "Ofensiva (referindo à str
       <div>
         <header className="flex justify-between items-center px-6 pt-12 pb-4 sticky top-0 bg-background/80 backdrop-blur-md z-[100] border-b border-surface-light font-display">
           <div className="flex items-center gap-3">
-            <button onClick={() => navigate('/dashboard')} className="p-2 -ml-2 text-text-secondary hover:text-white transition-colors">
+            <button onClick={() => navigate('/dashboard')} className="p-2 -ml-2 text-text-secondary hover:text-text-primary transition-colors">
               <ArrowLeft size={20} />
             </button>
             <div>
@@ -210,8 +210,8 @@ Use termos como "Operador", "Sistemas", "Directiva", "Ofensiva (referindo à str
 
                   <div className={`p-4 rounded-2xl border text-sm leading-relaxed ${
                     isAI 
-                      ? 'bg-surface border-surface-light text-white rounded-tl-sm shadow-md' 
-                      : 'bg-gradient-to-br from-neon-purple/15 to-neon-blue/5 border-neon-purple/20 text-white rounded-tr-sm shadow-md'
+                      ? 'bg-surface border-surface-light text-text-primary rounded-tl-sm shadow-md' 
+                      : 'bg-gradient-to-br from-neon-purple/15 to-neon-blue/5 border-neon-purple/20 text-text-primary rounded-tr-sm shadow-md'
                   }`}>
                     {m.text}
                     {m.timestamp && (
@@ -249,7 +249,7 @@ Use termos como "Operador", "Sistemas", "Directiva", "Ofensiva (referindo à str
               <button
                 key={index}
                 onClick={() => handleSendMessage(chip.text)}
-                className="inline-block px-3.5 py-1.5 rounded-full bg-surface border border-surface-light text-text-secondary hover:text-white text-[11px] transition-all hover:bg-white/5 active:scale-95"
+                className="inline-block px-3.5 py-1.5 rounded-full bg-surface border border-surface-light text-text-secondary hover:text-text-primary text-[11px] transition-all hover:bg-text-primary/5 active:scale-95"
               >
                 {chip.text}
               </button>
@@ -268,7 +268,7 @@ Use termos como "Operador", "Sistemas", "Directiva", "Ofensiva (referindo à str
             className={`p-3.5 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
               isListening 
                 ? 'bg-red-500/20 border-red-500 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)] animate-pulse' 
-                : 'bg-surface border-surface-light text-text-secondary hover:text-white'
+                : 'bg-surface border-surface-light text-text-secondary hover:text-text-primary'
             }`}
             title="Ditar Conversa por Voz"
           >
@@ -284,12 +284,12 @@ Use termos como "Operador", "Sistemas", "Directiva", "Ofensiva (referindo à str
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
               disabled={loading}
-              className="w-full bg-surface border border-surface-light rounded-xl pl-4 pr-12 py-3 text-sm text-white focus:outline-none focus:border-neon-blue transition-colors disabled:opacity-65"
+              className="w-full bg-surface border border-surface-light rounded-xl pl-4 pr-12 py-3 text-sm text-text-primary focus:outline-none focus:border-neon-blue transition-colors disabled:opacity-65"
             />
             <button
               onClick={() => handleSendMessage()}
               disabled={loading || !input.trim()}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg text-neon-blue hover:text-white disabled:pointer-events-none disabled:opacity-30 transition-all font-bold cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg text-neon-blue hover:text-text-primary disabled:pointer-events-none disabled:opacity-30 transition-all font-bold cursor-pointer"
             >
               <Send size={16} />
             </button>

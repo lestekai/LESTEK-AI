@@ -1,12 +1,12 @@
-import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { motion, useScroll, useTransform } from 'motion/react';
 import { auth, db } from '@/lib/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useAppStore } from '@/lib/store';
 import { ChevronRight, Zap, Target, Trophy, Shield, Flame, Activity, Crown, Dumbbell, Wallet, ArrowRight, Loader2, BrainCircuit } from 'lucide-react';
 import { PLANET_MISSIONS } from '@/lib/evolux';
@@ -39,37 +39,34 @@ export default function LoginPage() {
     }
 
     if (isLogin) {
-      if (username.trim() === 'ADM_TESTE' && password === 'ADM_TESTE') {
-        // MOCK BYPASS FOR TESTING UI
-        useAppStore.getState().setProfile({
-          id: 'test-admin-id',
-          username: 'admin',
-          name: 'Administrador de Teste',
-          email: 'admin@evolux.app',
-          role: 'admin',
-          status: 'active',
-          avatarLevel: 10,
-          xp: 15000,
-          streak: 100,
-          total_tasks_completed: 500,
-          unlocked_achievements: [],
-          unlocked_cosmetics: ['aura_base'],
-          equipped_cosmetics: {},
-          isOnboarded: true
-        });
-        navigate('/dashboard');
-        setIsLoading(false);
-        return;
-      }
-
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const profileRef = doc(db, 'profiles', userCredential.user.uid);
+        const profileSnap = await getDoc(profileRef);
+        if (!profileSnap.exists()) {
+          const defaultUsername = username.includes('@') ? username.split('@')[0] : username.trim();
+          await setDoc(profileRef, {
+            id: userCredential.user.uid,
+            username: defaultUsername,
+            name: defaultUsername,
+            email: email,
+            phone: phone ? phone.trim() : '',
+            role: 'user',
+            status: 'active',
+            avatar_level: 1,
+            xp: 0,
+            streak: 0,
+            total_tasks_completed: 0,
+            equipped_cosmetics: { plan: 'base' },
+            created_at: new Date().toISOString()
+          });
+        }
         navigate('/dashboard');
       } catch (error: any) {
-        if (error.code === 'auth/invalid-credential') {
-          setErrorMsg('Nome de usuário ou senha incorretos.');
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+          setErrorMsg('Nome de usuário/e-mail ou senha incorretos.');
         } else {
-          setErrorMsg('Erro ao entrar: ' + error.message);
+          setErrorMsg('Erro ao entrar: ' + (error.message || 'Falha no login.'));
         }
       }
     } else {
@@ -82,8 +79,14 @@ export default function LoginPage() {
            username: username.trim(),
            name: username.trim(),
            email: email,
+           phone: phone ? phone.trim() : '',
            role: 'user',
            status: 'active',
+           avatar_level: 1,
+           xp: 0,
+           streak: 0,
+           total_tasks_completed: 0,
+           equipped_cosmetics: { plan: 'base' },
            created_at: new Date().toISOString()
         });
 
@@ -91,11 +94,11 @@ export default function LoginPage() {
       } catch (error: any) {
         console.error("SignUp Error:", error);
         if (error.code === 'auth/email-already-in-use') {
-          setErrorMsg('Este nome de usuário já está em uso.');
+          setErrorMsg('Este e-mail/nome de usuário já está cadastrado.');
         } else if (error.code === 'auth/weak-password') {
           setErrorMsg('A senha deve ter pelo menos 6 caracteres.');
         } else {
-          setErrorMsg('Erro: ' + error.message);
+          setErrorMsg('Erro no cadastro: ' + (error.message || 'Verifique os dados informados.'));
         }
       }
     }
@@ -111,25 +114,25 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-neon-blue/30 overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-background text-text-primary selection:bg-neon-blue/30 overflow-x-hidden font-sans">
       
       {/* HEADER */}
-      <header className="fixed top-0 left-0 right-0 p-4 lg:p-6 z-50 bg-[#050505]/70 backdrop-blur-2xl border-b border-white/5">
+      <header className="fixed top-0 left-0 right-0 p-4 lg:p-6 z-50 bg-background/70 backdrop-blur-2xl border-b border-text-primary/5">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="font-display font-black text-2xl tracking-[0.2em] text-white flex items-center gap-3 drop-shadow-[0_0_15px_rgba(0,240,255,0.8)]">
+          <div className="font-display font-black text-2xl tracking-[0.2em] text-text-primary flex items-center gap-3 drop-shadow-[0_0_15px_rgba(0,240,255,0.8)]">
             <img src="/logo.png" alt="Evolux" width={32} height={32} className="w-8 h-8 object-contain" />
             EVOLUX
           </div>
           <div className="flex gap-4">
             <button 
               onClick={() => navigate('/plans')}
-              className="text-xs font-bold text-text-secondary hover:text-white px-4 py-2.5 rounded-full transition-colors uppercase tracking-[0.2em]"
+              className="text-xs font-bold text-text-secondary hover:text-text-primary px-4 py-2.5 rounded-full transition-colors uppercase tracking-[0.2em]"
             >
               Planos
             </button>
             <button 
               onClick={scrollToForm}
-              className="text-xs font-bold bg-white text-black px-6 py-2.5 rounded-full hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)] uppercase tracking-[0.2em]"
+              className="text-xs font-bold bg-text-primary text-black px-6 py-2.5 rounded-full hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.3)] uppercase tracking-[0.2em]"
             >
               Acessar
             </button>
@@ -138,7 +141,7 @@ export default function LoginPage() {
       </header>
 
       {/* HERO SECTION - HIGH CONVERSION */}
-      <section className="relative min-h-[100svh] flex flex-col justify-center items-center pt-32 pb-24 px-6 overflow-hidden bg-[#030303]">
+      <section className="relative min-h-[100svh] flex flex-col justify-center items-center pt-32 pb-24 px-6 overflow-hidden bg-background">
         {/* Core Gradients & Background */}
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none mix-blend-screen" />
         <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[800px] h-[800px] bg-neon-blue/10 rounded-full blur-[150px] pointer-events-none" />
@@ -152,10 +155,10 @@ export default function LoginPage() {
           <motion.div style={{ opacity, scale }} className="flex flex-col items-start gap-8 relative z-20">
             <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-neon-blue/40 bg-neon-blue/10 backdrop-blur-md shadow-[0_0_20px_rgba(0,240,255,0.15)]">
                <div className="w-2.5 h-2.5 rounded-full bg-neon-blue animate-pulse shadow-[0_0_10px_#00f0ff]" />
-               <span className="text-[10px] font-bold text-white uppercase tracking-[0.3em] font-mono">Engine Online</span>
+               <span className="text-[10px] font-bold text-text-primary uppercase tracking-[0.3em] font-mono">Engine Online</span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-display font-black leading-[1.05] tracking-tighter text-white drop-shadow-lg">
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] font-display font-black leading-[1.05] tracking-tighter text-text-primary drop-shadow-lg">
               Forje sua <br />
               disciplina de <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-br from-white via-neon-blue to-neon-purple drop-shadow-[0_0_30px_rgba(0,240,255,0.4)]">
@@ -172,7 +175,7 @@ export default function LoginPage() {
                 onClick={scrollToForm}
                 className="group relative px-10 py-5 w-full sm:w-auto bg-neon-blue text-black font-black text-sm uppercase tracking-[0.2em] rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(0,240,255,0.3)] hover:shadow-[0_0_50px_rgba(0,240,255,0.5)] transition-all flex items-center justify-center gap-4 hover:scale-105"
               >
-                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 ease-out" />
+                <div className="absolute inset-0 bg-text-primary/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 ease-out" />
                 <span className="relative z-10 flex items-center gap-2">
                   Comece Agora
                   <ArrowRight size={20} className="transition-transform group-hover:translate-x-2" />
@@ -181,7 +184,7 @@ export default function LoginPage() {
               
               <button 
                 onClick={() => navigate('/plans')}
-                className="px-10 py-5 w-full sm:w-auto bg-surface/50 backdrop-blur-md border border-white/10 text-white font-bold text-sm uppercase tracking-[0.2em] rounded-2xl hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center"
+                className="px-10 py-5 w-full sm:w-auto bg-surface/50 backdrop-blur-md border border-text-primary/10 text-text-primary font-bold text-sm uppercase tracking-[0.2em] rounded-2xl hover:bg-text-primary/10 hover:border-text-primary/20 transition-all flex items-center justify-center"
               >
                 Funcionalidades
               </button>
@@ -195,7 +198,7 @@ export default function LoginPage() {
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
             className="w-full max-w-[440px] mx-auto relative perspective-[1200px]"
           >
-            <div className="bg-surface/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 relative shadow-[0_20px_50px_rgba(0,0,0,0.5)] transform rotate-y-[-10deg] rotate-x-[5deg] hover:rotate-y-0 hover:rotate-x-0 transition-transform duration-700 ease-out group">
+            <div className="bg-surface/80 backdrop-blur-2xl border border-text-primary/10 rounded-[2.5rem] p-8 relative shadow-[0_20px_50px_rgba(0,0,0,0.5)] transform rotate-y-[-10deg] rotate-x-[5deg] hover:rotate-y-0 hover:rotate-x-0 transition-transform duration-700 ease-out group">
                <div className="absolute inset-0 rounded-[2.5rem] box-glow-blue opacity-20 pointer-events-none group-hover:opacity-40 transition-opacity duration-700" />
                <div className="absolute top-0 right-0 w-64 h-64 bg-neon-blue/10 rounded-full blur-[80px] pointer-events-none" />
                
@@ -203,8 +206,8 @@ export default function LoginPage() {
                  <div className="flex justify-between items-start mb-10">
                    <div>
                      <p className="text-[10px] text-neon-blue uppercase tracking-[0.2em] mb-2 font-bold drop-shadow-[0_0_8px_rgba(0,240,255,0.5)]">Perfil em Destaque</p>
-                     <h3 className="text-2xl font-black font-display text-white mb-2 leading-none">Lenda Cibernética</h3>
-                     <span className="inline-block text-[10px] font-bold text-white uppercase tracking-widest px-2.5 py-1 rounded bg-white/5 border border-white/10">Lvl 100</span>
+                     <h3 className="text-2xl font-black font-display text-text-primary mb-2 leading-none">Lenda Cibernética</h3>
+                     <span className="inline-block text-[10px] font-bold text-text-primary uppercase tracking-widest px-2.5 py-1 rounded bg-text-primary/5 border border-text-primary/10">Lvl 100</span>
                    </div>
                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-700/20 border border-amber-500/40 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.3)]">
                      <Crown size={28} className="text-amber-500 drop-shadow-[0_0_10px_rgba(245,158,11,0.6)]" />
@@ -213,12 +216,12 @@ export default function LoginPage() {
 
                  <div className="space-y-6">
                    {/* Streak Bar */}
-                   <div className="bg-background/50 rounded-2xl p-4 border border-white/5">
+                   <div className="bg-background/50 rounded-2xl p-4 border border-text-primary/5">
                      <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest mb-3">
                        <span className="text-text-secondary">Ofensiva Atual</span>
                        <span className="text-amber-500 flex items-center gap-1 drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]"><Flame size={14}/> 42 DIAS</span>
                      </div>
-                     <div className="h-3 bg-black rounded-full overflow-hidden border border-white/10 relative shadow-inner">
+                     <div className="h-3 bg-black rounded-full overflow-hidden border border-text-primary/10 relative shadow-inner">
                        <div className="absolute top-0 left-0 h-full w-4/5 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-400 relative">
                           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 mix-blend-overlay" />
                        </div>
@@ -227,30 +230,30 @@ export default function LoginPage() {
 
                    {/* Missões */}
                    <div className="grid grid-cols-2 gap-4">
-                     <div className="bg-background/80 rounded-2xl p-5 border border-white/5 relative overflow-hidden group-hover:border-neon-purple/30 transition-colors">
+                     <div className="bg-background/80 rounded-2xl p-5 border border-text-primary/5 relative overflow-hidden group-hover:border-neon-purple/30 transition-colors">
                        <div className="absolute top-0 right-0 w-24 h-24 bg-neon-purple/5 blur-xl rounded-full" />
                        <Target size={20} className="text-neon-purple mb-3 relative z-10 drop-shadow-[0_0_8px_rgba(176,38,255,0.5)]" />
                        <p className="text-[9px] text-text-secondary uppercase tracking-[0.2em] mb-1 relative z-10 font-bold">Tarefas Completas</p>
-                       <p className="text-3xl font-mono font-black text-white relative z-10">128</p>
+                       <p className="text-3xl font-mono font-black text-text-primary relative z-10">128</p>
                      </div>
-                     <div className="bg-background/80 rounded-2xl p-5 border border-white/5 relative overflow-hidden group-hover:border-neon-blue/30 transition-colors">
+                     <div className="bg-background/80 rounded-2xl p-5 border border-text-primary/5 relative overflow-hidden group-hover:border-neon-blue/30 transition-colors">
                        <div className="absolute top-0 right-0 w-24 h-24 bg-neon-blue/5 blur-xl rounded-full" />
                        <Dumbbell size={20} className="text-neon-blue mb-3 relative z-10 drop-shadow-[0_0_8px_rgba(0,240,255,0.5)]" />
                        <p className="text-[9px] text-text-secondary uppercase tracking-[0.2em] mb-1 relative z-10 font-bold">Treinos</p>
-                       <p className="text-3xl font-mono font-black text-white relative z-10">24</p>
+                       <p className="text-3xl font-mono font-black text-text-primary relative z-10">24</p>
                      </div>
                    </div>
 
-                   <div className="pt-6 border-t border-white/5 mt-6">
+                   <div className="pt-6 border-t border-text-primary/5 mt-6">
                       <p className="text-[10px] text-text-secondary uppercase tracking-[0.2em] mb-4 font-bold flex items-center gap-2">
                         <Zap size={12} className="text-neon-blue" />
                         Galáxia Dominada
                       </p>
                       <div className="flex gap-3">
                         {PLANET_MISSIONS.slice(0, 5).map((p, i) => (
-                          <div key={i} className="w-10 h-10 rounded-full border border-white/10 relative overflow-hidden group/planet" style={{ backgroundColor: p.color, boxShadow: `inset -3px -3px 6px rgba(0,0,0,0.6), 0 0 15px ${p.color}40` }}>
+                          <div key={i} className="w-10 h-10 rounded-full border border-text-primary/10 relative overflow-hidden group/planet" style={{ backgroundColor: p.color, boxShadow: `inset -3px -3px 6px rgba(0,0,0,0.6), 0 0 15px ${p.color}40` }}>
                             <div className="absolute inset-0 opacity-40 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />
-                            <div className="absolute inset-0 bg-white/0 group-hover/planet:bg-white/20 transition-colors" />
+                            <div className="absolute inset-0 bg-text-primary/0 group-hover/planet:bg-text-primary/20 transition-colors" />
                           </div>
                         ))}
                       </div>
@@ -263,7 +266,7 @@ export default function LoginPage() {
       </section>
 
       {/* TRIGGERS & PROOF */}
-      <section className="py-24 px-4 bg-background relative border-t border-white/5 shadow-[0_-30px_60px_rgba(0,0,0,0.5)]">
+      <section className="py-24 px-4 bg-background relative border-t border-text-primary/5 shadow-[0_-30px_60px_rgba(0,0,0,0.5)]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-3xl md:text-5xl font-display font-black mb-6 tracking-tight">O QUE VOCÊ GANHA AO ENTRAR?</h2>
@@ -307,18 +310,18 @@ export default function LoginPage() {
       </section>
 
       {/* IMMERSIVE SHOWCASE SECTION */}
-      <section className="py-24 px-4 bg-[#050505] relative border-t border-white/5 overflow-hidden">
+      <section className="py-24 px-4 bg-background relative border-t border-text-primary/5 overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-neon-purple/5 rounded-full blur-[150px] pointer-events-none" />
 
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1 relative">
-              <div className="relative w-full aspect-square md:aspect-video lg:aspect-square bg-surface/40 backdrop-blur-md border border-white/10 rounded-[2rem] p-6 shadow-2xl flex flex-col items-center justify-center overflow-hidden">
+              <div className="relative w-full aspect-square md:aspect-video lg:aspect-square bg-surface/40 backdrop-blur-md border border-text-primary/10 rounded-[2rem] p-6 shadow-2xl flex flex-col items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)] pointer-events-none" />
                 
                 {/* Mockup UI Elements */}
-                <div className="w-full max-w-sm bg-background border border-white/10 rounded-2xl p-4 shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform duration-500 mb-[-2rem] relative z-10">
+                <div className="w-full max-w-sm bg-background border border-text-primary/10 rounded-2xl p-4 shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform duration-500 mb-[-2rem] relative z-10">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-8 h-8 rounded-full bg-neon-blue/20 flex items-center justify-center">
                       <Target size={14} className="text-neon-blue" />
@@ -341,7 +344,7 @@ export default function LoginPage() {
                       </div>
                       <p className="text-xs font-bold uppercase tracking-widest text-emerald-400">Patrimônio</p>
                     </div>
-                    <p className="text-lg font-black text-white">R$ 14.520</p>
+                    <p className="text-lg font-black text-text-primary">R$ 14.520</p>
                   </div>
                   <p className="text-[10px] text-text-secondary">Insight da IA: Seus investimentos subiram 12% este mês.</p>
                 </div>
@@ -365,12 +368,12 @@ export default function LoginPage() {
                   { icon: <Shield size={18} className="text-neon-blue" />, title: 'Isolamento de Dados', desc: 'Seus dados financeiros e tarefas são criptografados e inacessíveis a terceiros.' },
                   { icon: <BrainCircuit size={18} className="text-neon-purple" />, title: 'Análise de IA 24/7', desc: 'Seu assistente virtual deduz seus padrões e sugere ações de alto impacto.' },
                 ].map((item, i) => (
-                  <li key={i} className="flex gap-4 items-start bg-surface/30 p-4 rounded-2xl border border-white/5 hover:bg-surface/50 transition-colors">
-                    <div className="mt-1 bg-background p-2 rounded-lg shadow-inner border border-white/5">
+                  <li key={i} className="flex gap-4 items-start bg-surface/30 p-4 rounded-2xl border border-text-primary/5 hover:bg-surface/50 transition-colors">
+                    <div className="mt-1 bg-background p-2 rounded-lg shadow-inner border border-text-primary/5">
                       {item.icon}
                     </div>
                     <div>
-                      <h4 className="font-bold text-white mb-1">{item.title}</h4>
+                      <h4 className="font-bold text-text-primary mb-1">{item.title}</h4>
                       <p className="text-sm text-text-secondary">{item.desc}</p>
                     </div>
                   </li>
@@ -382,11 +385,11 @@ export default function LoginPage() {
       </section>
 
       {/* FINAL LOGIN FORM / CONVERSION */}
-      <section ref={formRef} className="py-32 px-4 relative bg-[#020202] border-t border-white/5 flex justify-center items-center min-h-[80vh]">
+      <section ref={formRef} className="py-32 px-4 relative bg-background border-t border-text-primary/5 flex justify-center items-center min-h-[80vh]">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[400px] bg-neon-blue/5 rounded-[100%] blur-[150px] pointer-events-none" />
 
         <div className="w-full max-w-md relative z-10">
-          <div className="bg-surface/60 backdrop-blur-3xl border border-white/10 p-8 sm:p-12 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
+          <div className="bg-surface/60 backdrop-blur-3xl border border-text-primary/10 p-8 sm:p-12 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
             
             <div className="text-center mb-10 relative z-10">
@@ -399,18 +402,18 @@ export default function LoginPage() {
 
             <form onSubmit={handleAuth} className="flex flex-col gap-6 relative z-10">
               <div>
-                <div className="flex bg-black/40 p-1.5 rounded-2xl mb-6 border border-white/5">
+                <div className="flex bg-black/40 p-1.5 rounded-2xl mb-6 border border-text-primary/5">
                   <button 
                     type="button" 
                     onClick={() => setIsLogin(true)}
-                    className={`flex-1 py-3 px-4 rounded-xl text-xs uppercase tracking-[0.2em] font-bold transition-all ${isLogin ? 'bg-white/10 text-white shadow-md' : 'text-text-secondary hover:text-white'}`}
+                    className={`flex-1 py-3 px-4 rounded-xl text-xs uppercase tracking-[0.2em] font-bold transition-all ${isLogin ? 'bg-text-primary/10 text-text-primary shadow-md' : 'text-text-secondary hover:text-text-primary'}`}
                   >
                     Acessar
                   </button>
                   <button 
                     type="button" 
                     onClick={() => setIsLogin(false)}
-                    className={`flex-1 py-3 px-4 rounded-xl text-xs uppercase tracking-[0.2em] font-bold transition-all ${!isLogin ? 'bg-white/10 text-white shadow-md' : 'text-text-secondary hover:text-white'}`}
+                    className={`flex-1 py-3 px-4 rounded-xl text-xs uppercase tracking-[0.2em] font-bold transition-all ${!isLogin ? 'bg-text-primary/10 text-text-primary shadow-md' : 'text-text-secondary hover:text-text-primary'}`}
                   >
                     Cadastrar
                   </button>
@@ -424,7 +427,7 @@ export default function LoginPage() {
                     placeholder="Ex: Sigma_01" 
                     value={username || ""}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full bg-background border border-white/10 rounded-2xl px-6 py-5 text-lg text-white font-bold placeholder:text-text-secondary/30 focus:outline-none focus:border-neon-blue/60 focus:bg-surface/50 transition-all shadow-inner"
+                    className="w-full bg-background border border-text-primary/10 rounded-2xl px-6 py-5 text-lg text-text-primary font-bold placeholder:text-text-secondary/30 focus:outline-none focus:border-neon-blue/60 focus:bg-surface/50 transition-all shadow-inner"
                     required
                   />
                 </div>
@@ -438,7 +441,7 @@ export default function LoginPage() {
                         placeholder="Ex: 11999999999" 
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full bg-background border border-white/10 rounded-2xl px-6 py-5 text-lg text-white font-bold placeholder:text-text-secondary/30 focus:outline-none focus:border-neon-blue/60 focus:bg-surface/50 transition-all shadow-inner"
+                        className="w-full bg-background border border-text-primary/10 rounded-2xl px-6 py-5 text-lg text-text-primary font-bold placeholder:text-text-secondary/30 focus:outline-none focus:border-neon-blue/60 focus:bg-surface/50 transition-all shadow-inner"
                         required={!isLogin}
                       />
                     </div>
@@ -452,7 +455,7 @@ export default function LoginPage() {
                     placeholder="••••••••" 
                     value={password || ""}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-background border border-white/10 rounded-2xl px-6 py-5 text-lg text-white font-bold placeholder:text-text-secondary/30 focus:outline-none focus:border-neon-blue/60 focus:bg-surface/50 transition-all shadow-inner"
+                    className="w-full bg-background border border-text-primary/10 rounded-2xl px-6 py-5 text-lg text-text-primary font-bold placeholder:text-text-secondary/30 focus:outline-none focus:border-neon-blue/60 focus:bg-surface/50 transition-all shadow-inner"
                     required
                     minLength={6}
                   />
@@ -464,7 +467,7 @@ export default function LoginPage() {
               <button 
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-white text-black font-black text-sm uppercase tracking-[0.2em] py-5 rounded-2xl flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] mt-4 border border-white/20 disabled:opacity-50 hover:bg-white/90"
+                className="w-full bg-text-primary text-black font-black text-sm uppercase tracking-[0.2em] py-5 rounded-2xl flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] mt-4 border border-text-primary/20 disabled:opacity-50 hover:bg-text-primary/90"
               >
                 {isLoading ? <Loader2 size={20} className="animate-spin" /> : (isLogin ? 'Estabelecer Conexão' : 'Iniciar Metamorfose')}
                 {!isLoading && <ArrowRight size={20} />}
@@ -476,7 +479,7 @@ export default function LoginPage() {
                     href="https://wa.me/5577999587570?text=Esqueci%20minha%20senha%20do%20Evolux!" 
                     target="_blank" 
                     rel="noreferrer"
-                    className="text-text-secondary hover:text-white text-xs uppercase tracking-widest font-bold underline underline-offset-4 transition-colors"
+                    className="text-text-secondary hover:text-text-primary text-xs uppercase tracking-widest font-bold underline underline-offset-4 transition-colors"
                   >
                     Esqueci minha senha
                   </a>
@@ -484,7 +487,7 @@ export default function LoginPage() {
               )}
             </form>
 
-            <div className="mt-8 pt-6 border-t border-white/5 text-center relative z-10">
+            <div className="mt-8 pt-6 border-t border-text-primary/5 text-center relative z-10">
               <p className="text-[9px] text-text-secondary uppercase tracking-[0.2em] font-bold flex items-center justify-center gap-2">
                 <Shield size={12} className="text-neon-blue" /> Protocolo Seguro &amp; Encriptado
               </p>

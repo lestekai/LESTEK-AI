@@ -121,13 +121,11 @@ export default function AdminUsers() {
           <Users className="text-neon-purple" size={24} />
           <h2 className="text-xl font-bold font-display">Gerenciamento de Usuários</h2>
         </div>
-        <button onClick={() => setEditingUser({ isNew: true, name: '', username: '', email: '', plan: 'base', role: 'user', status: 'pending', xp: 0, avatar_level: 1 })} className="px-4 py-2 bg-neon-purple text-white rounded-xl font-bold text-sm hover:scale-105 transition-transform flex items-center gap-2">
-          + Criar Usuário
-        </button>
+        
       </div>
 
       <div className="bg-surface border border-surface-light rounded-2xl p-4">
-         <div className="flex items-center gap-3 bg-background border border-white/10 rounded-xl px-4 py-3 mb-6">
+         <div className="flex items-center gap-3 bg-background border border-text-primary/10 rounded-xl px-4 py-3 mb-6">
            <Search size={18} className="text-text-secondary" />
            <input 
              type="text" 
@@ -143,7 +141,7 @@ export default function AdminUsers() {
          ) : (
            <div className="overflow-x-auto">
              <table className="w-full text-left text-sm whitespace-nowrap">
-               <thead className="text-[10px] uppercase tracking-widest text-text-secondary bg-background border-b border-white/5">
+               <thead className="text-[10px] uppercase tracking-widest text-text-secondary bg-background border-b border-text-primary/5">
                  <tr>
                    <th className="px-4 py-4 font-bold">Soldado</th>
                    <th className="px-4 py-4 font-bold">Nível / XP</th>
@@ -155,7 +153,7 @@ export default function AdminUsers() {
                </thead>
                <tbody className="divide-y divide-white/5">
                  {filteredUsers.map(u => (
-                   <tr key={u.id} className="hover:bg-white/[0.02] transition-colors">
+                   <tr key={u.id} className="hover:bg-text-primary/[0.02] transition-colors">
                      <td className="px-4 py-4">
                        <div className="font-bold flex items-center gap-2">
                          {u.name}
@@ -166,7 +164,7 @@ export default function AdminUsers() {
                        Lvl {u.avatar_level} <span className="text-[10px] text-text-secondary">({u.xp} xp)</span>
                      </td>
                      <td className="px-4 py-4">
-                       <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-white/5 ${u.role === 'admin' ? 'text-neon-blue' : 'text-text-secondary'}`}>
+                       <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded bg-text-primary/5 ${u.role === 'admin' ? 'text-neon-blue' : 'text-text-secondary'}`}>
                          {u.role}
                        </span>
                      </td>
@@ -180,12 +178,12 @@ export default function AdminUsers() {
                        </span>
                      </td>
                      <td className="px-4 py-4">
-                       <span className="text-[10px] font-bold uppercase tracking-widest bg-white/5 px-2 py-1 rounded border border-white/10">
+                       <span className="text-[10px] font-bold uppercase tracking-widest bg-text-primary/5 px-2 py-1 rounded border border-text-primary/10">
                          {u.equipped_cosmetics?.plan || 'base'}
                        </span>
                      </td>
                      <td className="px-4 py-4">
-                       <button onClick={() => setEditingUser({...u, plan: u.equipped_cosmetics?.plan || 'base', plan_expires_at: u.equipped_cosmetics?.plan_expires_at || ''})} className="p-2 hover:bg-white/10 rounded-lg transition-colors text-text-secondary hover:text-white">
+                       <button onClick={() => setEditingUser({...u, plan: u.equipped_cosmetics?.plan || 'base', plan_expires_at: u.equipped_cosmetics?.plan_expires_at || ''})} className="p-2 hover:bg-text-primary/10 rounded-lg transition-colors text-text-secondary hover:text-text-primary">
                          <Edit2 size={16} />
                        </button>
                      </td>
@@ -204,7 +202,7 @@ export default function AdminUsers() {
                 <h3 className="font-bold text-lg flex items-center gap-2">
                   <Shield size={20} className="text-neon-purple"/> Editando Soldado
                 </h3>
-                <button onClick={() => setEditingUser(null)} className="text-text-secondary hover:text-white">X</button>
+                <button onClick={() => setEditingUser(null)} className="text-text-secondary hover:text-text-primary">X</button>
              </div>
              
              <div className="flex-1 overflow-y-auto p-6">
@@ -216,7 +214,7 @@ export default function AdminUsers() {
                          type="text" 
                          value={editingUser.name || ''} 
                          onChange={e => setEditingUser({...editingUser, name: e.target.value})}
-                         className="w-full bg-background border border-white/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
+                         className="w-full bg-background border border-text-primary/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
                        />
                      </div>
                      <div>
@@ -225,7 +223,7 @@ export default function AdminUsers() {
                          type="text" 
                          value={editingUser.username || ''} 
                          onChange={e => setEditingUser({...editingUser, username: e.target.value})}
-                         className="w-full bg-background border border-white/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
+                         className="w-full bg-background border border-text-primary/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
                        />
                      </div>
                    </div>
@@ -238,7 +236,7 @@ export default function AdminUsers() {
                            type="email" 
                            value={editingUser.email || ''} 
                            onChange={e => setEditingUser({...editingUser, email: e.target.value})}
-                           className="w-full bg-background border border-white/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
+                           className="w-full bg-background border border-text-primary/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
                            required={editingUser.isNew}
                          />
                        </div>
@@ -249,7 +247,7 @@ export default function AdminUsers() {
                            placeholder="Padrão: Evolux@123"
                            value={editingUser.password || ''} 
                            onChange={e => setEditingUser({...editingUser, password: e.target.value})}
-                           className="w-full bg-background border border-white/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
+                           className="w-full bg-background border border-text-primary/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
                          />
                        </div>
                      </div>
@@ -261,7 +259,7 @@ export default function AdminUsers() {
                        <select 
                          value={editingUser.plan} 
                          onChange={e => setEditingUser({...editingUser, plan: e.target.value})}
-                         className="w-full bg-background border border-white/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
+                         className="w-full bg-background border border-text-primary/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
                        >
                          <option value="base">Base (Comum)</option>
                          <option value="orbit">Orbit (Especial)</option>
@@ -275,7 +273,7 @@ export default function AdminUsers() {
                          type="date"
                          value={editingUser.plan_expires_at || ''} 
                          onChange={e => setEditingUser({...editingUser, plan_expires_at: e.target.value})}
-                         className="w-full bg-background border border-white/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue text-white"
+                         className="w-full bg-background border border-text-primary/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue text-text-primary"
                        />
                      </div>
                    </div>
@@ -286,7 +284,7 @@ export default function AdminUsers() {
                        <select 
                          value={editingUser.role} 
                          onChange={e => setEditingUser({...editingUser, role: e.target.value})}
-                         className="w-full bg-background border border-white/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
+                         className="w-full bg-background border border-text-primary/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
                        >
                          <option value="user">Usuário Comum</option>
                          <option value="moderator">Moderador</option>
@@ -299,7 +297,7 @@ export default function AdminUsers() {
                          type="number" 
                          value={editingUser.xp || 0} 
                          onChange={e => setEditingUser({...editingUser, xp: e.target.value})}
-                         className="w-full bg-background border border-white/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
+                         className="w-full bg-background border border-text-primary/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
                        />
                      </div>
                      <div>
@@ -308,7 +306,7 @@ export default function AdminUsers() {
                          type="number" 
                          value={editingUser.avatar_level || 1} 
                          onChange={e => setEditingUser({...editingUser, avatar_level: e.target.value})}
-                         className="w-full bg-background border border-white/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
+                         className="w-full bg-background border border-text-primary/10 rounded-xl px-3 py-2 text-sm focus:border-neon-blue"
                        />
                      </div>
                    </div>
@@ -338,7 +336,7 @@ export default function AdminUsers() {
                    <button 
                      type="button" 
                      onClick={() => handleChangePassword(editingUser.id)}
-                     className="w-full flex items-center justify-between p-3 rounded-xl border border-white/10 hover:border-white/30 bg-white/5 transition-all text-sm mb-3"
+                     className="w-full flex items-center justify-between p-3 rounded-xl border border-text-primary/10 hover:border-text-primary/30 bg-text-primary/5 transition-all text-sm mb-3"
                    >
                      <div className="flex items-center gap-2">
                        <LockKeyhole size={16} /> Redefinir Senha
@@ -359,8 +357,8 @@ export default function AdminUsers() {
              </div>
 
              <div className="p-4 border-t border-surface-light flex gap-3">
-               <button onClick={() => setEditingUser(null)} className="flex-1 py-3 text-sm font-bold bg-white/5 rounded-xl hover:bg-white/10">Cancelar</button>
-               <button form="edit-user-form" type="submit" className="flex-1 py-3 text-sm font-bold bg-neon-purple text-white rounded-xl hover:bg-neon-purple/80">Salvar Alterações</button>
+               <button onClick={() => setEditingUser(null)} className="flex-1 py-3 text-sm font-bold bg-text-primary/5 rounded-xl hover:bg-text-primary/10">Cancelar</button>
+               <button form="edit-user-form" type="submit" className="flex-1 py-3 text-sm font-bold bg-neon-purple text-text-primary rounded-xl hover:bg-neon-purple/80">Salvar Alterações</button>
              </div>
           </div>
         </div>

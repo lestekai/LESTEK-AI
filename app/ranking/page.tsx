@@ -108,16 +108,16 @@ export default function RankingPage() {
 
       {/* Top Banner Control */}
       <div className="px-4 mt-6 relative z-20 flex justify-center">
-        <div className="flex bg-surface-light rounded-full p-1 border border-white/5 w-full max-w-sm">
+        <div className="flex bg-surface-light rounded-full p-1 border border-text-primary/5 w-full max-w-sm">
           <button 
             onClick={() => setActiveTab('meu_imperio')}
-            className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider rounded-full transition-colors flex items-center justify-center gap-2 ${activeTab === 'meu_imperio' ? 'bg-neon-purple text-white shadow-[0_0_15px_rgba(150,0,255,0.4)]' : 'text-text-secondary'}`}
+            className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider rounded-full transition-colors flex items-center justify-center gap-2 ${activeTab === 'meu_imperio' ? 'bg-neon-purple text-text-primary shadow-[0_0_15px_rgba(150,0,255,0.4)]' : 'text-text-secondary'}`}
           >
             <Star size={16} /> Meu Império
           </button>
           <button 
             onClick={() => setActiveTab('global')}
-            className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider rounded-full transition-colors flex items-center justify-center gap-2 ${activeTab === 'global' ? 'bg-neon-blue text-white shadow-[0_0_15px_rgba(0,240,255,0.4)]' : 'text-text-secondary'}`}
+            className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider rounded-full transition-colors flex items-center justify-center gap-2 ${activeTab === 'global' ? 'bg-neon-blue text-text-primary shadow-[0_0_15px_rgba(0,240,255,0.4)]' : 'text-text-secondary'}`}
           >
             <Trophy size={16} /> Supremacia
           </button>
@@ -150,9 +150,9 @@ export default function RankingPage() {
                     </div>
                     
                     {/* Info Badge overlay */}
-                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-surface border border-white/10 px-6 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center gap-3 z-30">
+                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap bg-surface border border-text-primary/10 px-6 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex items-center gap-3 z-30">
                       <Star size={18} className={getRankTier(myStrictLevel).color} />
-                      <span className="text-sm font-bold text-white tracking-widest">{profile.name}</span>
+                      <span className="text-sm font-bold text-text-primary tracking-widest">{profile.name}</span>
                       <span className="text-xs text-text-secondary font-mono">NVL {myStrictLevel}</span>
                     </div>
                   </div>
@@ -170,12 +170,12 @@ export default function RankingPage() {
                     <span className="text-[10px] text-text-secondary uppercase tracking-widest mb-1">Streak</span>
                     <span className="text-xl font-bold text-amber-500 flex items-center gap-1"><Flame size={18}/> {profile.streak}</span>
                   </div>
-                  <div className="w-px h-10 bg-white/10" />
+                  <div className="w-px h-10 bg-text-primary/10" />
                   <div className="flex flex-col items-center">
                     <span className="text-[10px] text-text-secondary uppercase tracking-widest mb-1">Missões</span>
                     <span className="text-xl font-bold text-neon-purple flex items-center gap-1">{profile.totalTasksCompleted || 0} <Target size={18}/></span>
                   </div>
-                  <div className="w-px h-10 bg-white/10" />
+                  <div className="w-px h-10 bg-text-primary/10" />
                   <div className="flex flex-col items-center">
                     <span className="text-[10px] text-text-secondary uppercase tracking-widest mb-1">Classe</span>
                     <span className={`text-base flex items-center gap-1 font-black uppercase tracking-tighter ${getRankTier(myStrictLevel).color}`}>
@@ -190,7 +190,7 @@ export default function RankingPage() {
                 <div className="flex items-center gap-2 mb-4 px-2">
                   <Crown size={18} className="text-amber-500" />
                   <div>
-                    <h3 className="text-sm font-bold text-white uppercase tracking-widest">Sistema Solar</h3>
+                    <h3 className="text-sm font-bold text-text-primary uppercase tracking-widest">Sistema Solar</h3>
                     <p className="text-[10px] text-text-secondary">Expanda seu império mantendo a constância.</p>
                   </div>
                 </div>
@@ -204,13 +204,13 @@ export default function RankingPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className={`relative overflow-hidden p-4 rounded-2xl border flex items-center gap-4 group transition-all ${isUnlocked ? 'bg-surface/50 border-white/10 hover:border-white/20' : 'bg-background border-surface-light/50 opacity-70 grayscale'}`}
+                        className={`relative overflow-hidden p-4 rounded-2xl border flex items-center gap-4 group transition-all ${isUnlocked ? 'bg-surface/50 border-text-primary/10 hover:border-text-primary/20' : 'bg-background border-surface-light/50 opacity-70 grayscale'}`}
                       >
                         {isUnlocked && <div className="absolute top-0 right-0 w-32 h-32 blur-[50px] pointer-events-none opacity-20" style={{ backgroundColor: planet.color }} />}
                         
                         {/* Realistic Planet Visual */}
                         <div className="w-16 h-16 rounded-full relative shrink-0 flex items-center justify-center">
-                           {!isUnlocked && <Lock size={20} className="text-white/20 absolute z-30" />}
+                           {!isUnlocked && <Lock size={20} className="text-text-primary/20 absolute z-30" />}
                            {isUnlocked && <div className="absolute inset-0 rounded-full blur-[10px] opacity-60 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: planet.color }} />}
                            <div 
                              className={`absolute ${isUnlocked ? 'inset-1' : 'inset-0'} rounded-full overflow-hidden flex items-center justify-center`} 
@@ -230,12 +230,12 @@ export default function RankingPage() {
                         </div>
 
                         <div className="flex-1 min-w-0 z-10">
-                          <h4 className={`font-black text-sm uppercase tracking-wider ${isUnlocked ? 'text-white' : 'text-text-secondary blur-[2px]'}`} style={isUnlocked ? { textShadow: `0 0 10px ${planet.color}` } : {}}>
+                          <h4 className={`font-black text-sm uppercase tracking-wider ${isUnlocked ? 'text-text-primary' : 'text-text-secondary blur-[2px]'}`} style={isUnlocked ? { textShadow: `0 0 10px ${planet.color}` } : {}}>
                             {isUnlocked ? planet.name : 'Desconhecido'}
                           </h4>
                           <p className="text-[10px] text-text-secondary uppercase tracking-widest mb-1">
                             {isUnlocked ? `Nível ${planet.level}` : 'Restrito'} 
-                            <span className="mx-2 text-white/10">|</span> 
+                            <span className="mx-2 text-text-primary/10">|</span> 
                             <span className={isUnlocked ? 'text-amber-500' : ''}>{planet.streakReq} dias</span>
                           </p>
                           <p className={`text-xs text-text-secondary italic line-clamp-2 ${isUnlocked ? '' : 'blur-[3px]'}`}>
@@ -254,7 +254,7 @@ export default function RankingPage() {
                   <div className="flex items-center gap-2">
                     <Gift size={18} className="text-neon-blue" />
                     <div>
-                      <h3 className="text-sm font-bold text-white uppercase tracking-widest">Equipamento Atual</h3>
+                      <h3 className="text-sm font-bold text-text-primary uppercase tracking-widest">Equipamento Atual</h3>
                       <p className="text-[10px] text-text-secondary">O seu loadout cósmico.</p>
                     </div>
                   </div>
@@ -265,10 +265,10 @@ export default function RankingPage() {
                       const equippedItem = equippedCosmetics.find(c => c.type === slot);
                       
                       return (
-                        <div key={slot} className="bg-surface/50 border border-white/5 rounded-xl p-3 flex flex-col items-center justify-center text-center relative overflow-hidden group">
+                        <div key={slot} className="bg-surface/50 border border-text-primary/5 rounded-xl p-3 flex flex-col items-center justify-center text-center relative overflow-hidden group">
                            <div className="absolute inset-0 bg-gradient-to-t from-neon-blue/5 to-transparent pointer-events-none" />
                            <span className="text-[8px] font-bold text-text-secondary uppercase mb-2 block tracking-widest">{slot}</span>
-                           <div className="w-10 h-10 rounded shadow-inner bg-black/50 border border-white/5 flex items-center justify-center mb-2" style={{ borderColor: equippedItem ? equippedItem.color || 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.05)' }}>
+                           <div className="w-10 h-10 rounded shadow-inner bg-black/50 border border-text-primary/5 flex items-center justify-center mb-2" style={{ borderColor: equippedItem ? equippedItem.color || 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.05)' }}>
                              {equippedItem ? (
                                <>
                                  {slot === 'aura' && <Sparkles size={16} style={{ color: equippedItem.color || '#fff' }} className="drop-shadow-lg" />}
@@ -280,11 +280,11 @@ export default function RankingPage() {
                                  {slot === 'particula' && <Star size={16} style={{ color: equippedItem.color || '#fff' }} className="drop-shadow-lg" />}
                                </>
                              ) : (
-                               <div className="w-2 h-2 bg-white/10 rounded-full" />
+                               <div className="w-2 h-2 bg-text-primary/10 rounded-full" />
                              )}
                            </div>
                            {equippedItem ? (
-                             <span className="text-[9px] font-bold text-white truncate w-full">{equippedItem.name}</span>
+                             <span className="text-[9px] font-bold text-text-primary truncate w-full">{equippedItem.name}</span>
                            ) : (
                              <span className="text-[9px] text-text-secondary">Vazio</span>
                            )}
@@ -297,7 +297,7 @@ export default function RankingPage() {
                   <div className="flex items-center gap-2">
                     <Gift size={18} className="text-neon-purple" />
                     <div>
-                      <h3 className="text-sm font-bold text-white uppercase tracking-widest">Armazém Evolux</h3>
+                      <h3 className="text-sm font-bold text-text-primary uppercase tracking-widest">Armazém Evolux</h3>
                       <p className="text-[10px] text-text-secondary">Colete, evolua e equipe itens únicos.</p>
                     </div>
                   </div>
@@ -309,7 +309,7 @@ export default function RankingPage() {
                      <button
                        key={tab}
                        onClick={() => setActiveCosmeticTab(tab.toLowerCase())}
-                       className={`px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-colors border ${activeCosmeticTab === tab.toLowerCase() ? 'bg-white text-black border-white' : 'bg-surface border-white/10 text-text-secondary hover:text-white hover:border-white/30'}`}
+                       className={`px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap transition-colors border ${activeCosmeticTab === tab.toLowerCase() ? 'bg-text-primary text-black border-text-primary' : 'bg-surface border-text-primary/10 text-text-secondary hover:text-text-primary hover:border-text-primary/30'}`}
                      >
                        {tab}
                      </button>
@@ -358,11 +358,11 @@ export default function RankingPage() {
                          
                          {!unlocked && (
                            <div className="absolute top-4 right-4 z-30">
-                             <Lock size={16} className="text-white/50 drop-shadow-md" />
+                             <Lock size={16} className="text-text-primary/50 drop-shadow-md" />
                            </div>
                          )}
                          {isEquipped && (
-                           <div className="absolute top-0 right-0 bg-white text-black text-[8px] font-bold px-3 py-1 rounded-bl-xl z-20">
+                           <div className="absolute top-0 right-0 bg-text-primary text-black text-[8px] font-bold px-3 py-1 rounded-bl-xl z-20">
                              EQUIPADO
                            </div>
                          )}
@@ -391,7 +391,7 @@ export default function RankingPage() {
 
                            <div className="relative z-10 flex-1 flex flex-col justify-center min-w-0">
                              <div className="flex justify-between items-start mb-1">
-                               <div className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${isLegendary ? 'text-amber-400 border-amber-900 bg-amber-900/20' : isEpic ? 'text-neon-purple border-purple-900 bg-purple-900/20' : isRare ? 'text-neon-blue border-blue-900 bg-blue-900/20': 'text-text-secondary border-white/10'}`}>
+                               <div className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${isLegendary ? 'text-amber-400 border-amber-900 bg-amber-900/20' : isEpic ? 'text-neon-purple border-purple-900 bg-purple-900/20' : isRare ? 'text-neon-blue border-blue-900 bg-blue-900/20': 'text-text-secondary border-text-primary/10'}`}>
                                  {cosmetic.rarity}
                                </div>
                                <div className="text-[8px] font-bold uppercase tracking-widest text-text-secondary ml-2">
@@ -399,32 +399,32 @@ export default function RankingPage() {
                                </div>
                              </div>
                              
-                             <h4 className={`text-sm font-bold truncate ${unlocked && isLegendary ? 'text-amber-500' : unlocked && isEpic ? 'text-neon-purple' : 'text-white'}`}>{cosmetic.name}</h4>
+                             <h4 className={`text-sm font-bold truncate ${unlocked && isLegendary ? 'text-amber-500' : unlocked && isEpic ? 'text-neon-purple' : 'text-text-primary'}`}>{cosmetic.name}</h4>
                            </div>
                          </div>
 
-                         <div className="mt-3 pt-3 border-t border-white/10 flex flex-col gap-2 relative z-10">
+                         <div className="mt-3 pt-3 border-t border-text-primary/10 flex flex-col gap-2 relative z-10">
                            <p className="text-[10px] text-text-secondary leading-tight italic line-clamp-2">&quot;{cosmetic.description}&quot;</p>
                            
                            <div className="flex flex-col gap-1 mt-1">
                               <span className="text-[8px] font-bold text-text-secondary tracking-widest uppercase">Requisitos</span>
                               <div className="flex flex-wrap gap-1">
                                 {cosmetic.requirements?.map((req, idx) => (
-                                  <span key={idx} className="bg-black/40 border border-white/5 px-1.5 py-0.5 rounded text-[8px] text-white/80 whitespace-nowrap">
+                                  <span key={idx} className="bg-black/40 border border-text-primary/5 px-1.5 py-0.5 rounded text-[8px] text-text-primary/80 whitespace-nowrap">
                                     {req}
                                   </span>
                                 ))}
                               </div>
                            </div>
 
-                           <p className="text-[9px] text-text-secondary font-mono bg-black/40 p-1.5 rounded border border-white/5 truncate mt-1">
+                           <p className="text-[9px] text-text-secondary font-mono bg-black/40 p-1.5 rounded border border-text-primary/5 truncate mt-1">
                              <span className="opacity-50 text-neon-blue">🔑 Como obter:</span> {cosmetic.unlockCondition}
                            </p>
 
                            {unlocked && (
                              <button
                                onClick={() => useAppStore.getState().equipCosmetic(cosmetic.type, cosmetic.id)}
-                               className={`mt-2 w-full py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${isEquipped ? 'bg-white/5 text-text-secondary border border-white/10 hover:bg-white/10' : 'bg-neon-blue text-black shadow-[0_0_15px_rgba(0,210,255,0.3)] hover:scale-[1.02]'}`}
+                               className={`mt-2 w-full py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${isEquipped ? 'bg-text-primary/5 text-text-secondary border border-text-primary/10 hover:bg-text-primary/10' : 'bg-neon-blue text-black shadow-[0_0_15px_rgba(0,210,255,0.3)] hover:scale-[1.02]'}`}
                              >
                                {isEquipped ? 'Desequipar (Test Mode)' : 'Equipar'}
                              </button>
@@ -451,7 +451,7 @@ export default function RankingPage() {
               <div className="space-y-3 relative z-10">
                 <div className="flex items-center gap-2 mb-4 px-2">
                   <Trophy size={16} className="text-amber-500" />
-                  <h3 className="text-sm font-bold text-white uppercase tracking-widest">Supremacia Global</h3>
+                  <h3 className="text-sm font-bold text-text-primary uppercase tracking-widest">Supremacia Global</h3>
                 </div>
                 {allUsers.map((user, index) => {
                   const isTop3 = index < 3;
@@ -473,8 +473,8 @@ export default function RankingPage() {
                         user.isMe 
                           ? 'bg-neon-blue/5 border-neon-blue box-glow-blue relative overflow-hidden' 
                           : isTop3 
-                            ? 'bg-surface/80 border-white/20 hover:bg-surface' 
-                            : 'bg-surface border-surface-light hover:border-white/10'
+                            ? 'bg-surface/80 border-text-primary/20 hover:bg-surface' 
+                            : 'bg-surface border-surface-light hover:border-text-primary/10'
                       }`}
                     >
                       {user.isMe && <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/10 to-transparent pointer-events-none" />}
@@ -491,8 +491,8 @@ export default function RankingPage() {
                                : user.isMe 
                                ? 'text-neon-blue text-base' 
                                : isTop3 
-                               ? 'text-white text-base' 
-                               : 'text-white text-sm'
+                               ? 'text-text-primary text-base' 
+                               : 'text-text-primary text-sm'
                            }`}>
                               {user.name} {user.isMe && <span className="text-[10px] uppercase font-normal text-text-secondary tracking-widest ml-1">(Você)</span>}
                            </p>
@@ -532,9 +532,9 @@ export default function RankingPage() {
                          <div className={`font-black font-display tracking-tighter ${isTop3 || user.isMe ? 'text-2xl' : 'text-lg'}`} style={{ color: user.isMe ? '#00f0ff' : 'white', textShadow: user.isMe ? '0 0 10px rgba(0,240,255,0.5)' : isTop3 ? '0 0 10px rgba(255,255,255,0.2)' : 'none' }}>
                            {user.score.toLocaleString()}
                          </div>
-                         <div className="flex items-center gap-2 text-[9px] text-text-secondary uppercase mt-1 bg-surface-light px-2 py-0.5 rounded-full border border-white/5">
+                         <div className="flex items-center gap-2 text-[9px] text-text-secondary uppercase mt-1 bg-surface-light px-2 py-0.5 rounded-full border border-text-primary/5">
                            <span className="flex items-center gap-0.5 text-amber-500 font-bold"><Flame size={10} /> {user.streak}</span>
-                           <span className="w-px h-2 bg-white/20" />
+                           <span className="w-px h-2 bg-text-primary/20" />
                            <span className="flex items-center gap-0.5 text-neon-purple font-bold">{user.tasksCompleted} <Target size={10} /></span>
                          </div>
                       </div>
@@ -568,7 +568,7 @@ export default function RankingPage() {
             >
               <button 
                 onClick={() => setInspectUser(null)} 
-                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-black/50 text-white rounded-full z-20 hover:bg-white/20 transition-colors"
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-black/50 text-text-primary rounded-full z-20 hover:bg-text-primary/20 transition-colors"
                >
                 X
               </button>
@@ -579,35 +579,35 @@ export default function RankingPage() {
                  <MiniCosmicAvatar streak={inspectUser.streak} auraColor={inspectUser.aura || '#00f0ff'} size={120} />
               </div>
               
-              <h3 className="text-2xl font-display font-bold text-white mb-1" style={{ textShadow: `0 0 10px ${inspectUser.aura || '#00f0ff'}` }}>{inspectUser.name}</h3>
+              <h3 className="text-2xl font-display font-bold text-text-primary mb-1" style={{ textShadow: `0 0 10px ${inspectUser.aura || '#00f0ff'}` }}>{inspectUser.name}</h3>
               <p className={`text-xs font-bold uppercase tracking-widest mb-6 ${getRankTier(inspectUser.level).color}`}>{getRankTier(inspectUser.level).name}</p>
               
               <div className="grid grid-cols-2 gap-3 mb-6 relative z-10">
-                <div className="bg-black/50 p-3 rounded-xl border border-white/5 flex flex-col items-center">
+                <div className="bg-black/50 p-3 rounded-xl border border-text-primary/5 flex flex-col items-center">
                   <span className="text-[10px] text-text-secondary uppercase tracking-widest mb-1">Streak</span>
                   <span className="text-lg font-bold text-amber-500 font-mono">{inspectUser.streak}</span>
                 </div>
-                <div className="bg-black/50 p-3 rounded-xl border border-white/5 flex flex-col items-center">
+                <div className="bg-black/50 p-3 rounded-xl border border-text-primary/5 flex flex-col items-center">
                   <span className="text-[10px] text-text-secondary uppercase tracking-widest mb-1">Poder Global</span>
-                  <span className="text-lg font-bold text-white font-mono">{inspectUser.score.toLocaleString()}</span>
+                  <span className="text-lg font-bold text-text-primary font-mono">{inspectUser.score.toLocaleString()}</span>
                 </div>
-                <div className="bg-black/50 p-3 rounded-xl border border-white/5 flex flex-col items-center">
+                <div className="bg-black/50 p-3 rounded-xl border border-text-primary/5 flex flex-col items-center">
                   <span className="text-[10px] text-text-secondary uppercase tracking-widest mb-1">Planetas</span>
                   <span className="text-lg font-bold text-neon-blue font-mono">{inspectUser.planets}</span>
                 </div>
-                <div className="bg-black/50 p-3 rounded-xl border border-white/5 flex flex-col items-center">
+                <div className="bg-black/50 p-3 rounded-xl border border-text-primary/5 flex flex-col items-center">
                   <span className="text-[10px] text-text-secondary uppercase tracking-widest mb-1">Missões</span>
                   <span className="text-lg font-bold text-neon-purple font-mono">{inspectUser.tasksCompleted}</span>
                 </div>
               </div>
 
-              <div className="text-left mt-4 border-t border-white/10 pt-4 relative z-10">
+              <div className="text-left mt-4 border-t border-text-primary/10 pt-4 relative z-10">
                  <span className="text-[10px] text-text-secondary uppercase font-bold tracking-widest block mb-2">Relíquias Equipadas</span>
                  <div className="flex gap-2">
                     {inspectUser.badges.length > 0 ? inspectUser.badges.map((badge: string, i: number) => {
                        const bColor = badge === 'common' ? 'text-gray-400' : badge === 'rare' ? 'text-neon-blue' : badge === 'epic' ? 'text-neon-purple' : 'text-amber-500';
                        return (
-                         <div key={i} className="w-8 h-8 rounded border border-white/10 flex items-center justify-center bg-black/50">
+                         <div key={i} className="w-8 h-8 rounded border border-text-primary/10 flex items-center justify-center bg-black/50">
                            <Shield size={14} className={bColor} />
                          </div>
                        );

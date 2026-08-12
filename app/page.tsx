@@ -1,8 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useEffect, useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore } from '@/lib/store';
 
@@ -110,13 +109,13 @@ export default function SplashPage() {
             <motion.div 
               animate={{ scale: [0.9, 1.05, 0.9] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute w-12 h-12 bg-white rounded-full blur-[10px] z-10 opacity-30"
+              className="absolute w-12 h-12 bg-text-primary rounded-full blur-[10px] z-10 opacity-30"
               style={{ boxShadow: '0 0 20px #00f0ff' }}
             />
             
             <div className="absolute flex flex-col items-center justify-center z-20 text-center">
               <span className="text-2xl font-mono tracking-[0.4em] text-neon-blue font-bold uppercase mb-2 drop-shadow-[0_0_10px_rgba(0,240,255,1)]">lestek</span>
-              <div className="font-display font-black text-4xl tracking-[0.3em] text-white text-glow-blue uppercase">
+              <div className="font-display font-black text-4xl tracking-[0.3em] text-text-primary text-glow-blue uppercase">
                 EVOLUX
               </div>
               <img src="/logo.png" alt="Evolux" width={112} height={112} className="w-28 h-28 mt-6 object-contain opacity-90 drop-shadow-[0_0_15px_rgba(0,240,255,0.5)]" />
@@ -128,7 +127,7 @@ export default function SplashPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5 }}
-              className="text-lg font-medium text-white/80 max-w-sm italic tracking-wide"
+              className="text-lg font-medium text-text-primary/80 max-w-sm italic tracking-wide"
             >
               {quote ? `"${quote}"` : ""}
             </motion.p>

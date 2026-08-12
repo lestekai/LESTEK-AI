@@ -1,3 +1,5 @@
+'use client';
+
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAppStore } from '@/lib/store';
@@ -22,7 +24,7 @@ export default function PremiumLockModal() {
         >
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink" />
           
-          <button onClick={hidePremiumModal} className="absolute top-4 right-4 text-text-secondary hover:text-white transition-colors">
+          <button onClick={hidePremiumModal} className="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors">
             <X size={20} />
           </button>
 
@@ -43,7 +45,7 @@ export default function PremiumLockModal() {
                 hidePremiumModal();
                 navigate('/plans');
               }}
-              className="w-full py-3.5 bg-gradient-to-r from-neon-blue to-neon-purple text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(157,78,221,0.3)]"
+              className="w-full py-3.5 bg-gradient-to-r from-neon-blue to-neon-purple text-text-primary font-bold rounded-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(157,78,221,0.3)]"
             >
               <Zap size={18} />
               Conhecer Planos
@@ -51,7 +53,7 @@ export default function PremiumLockModal() {
             </button>
             <button
               onClick={hidePremiumModal}
-              className="w-full py-3.5 bg-transparent text-text-secondary font-bold text-sm hover:text-white rounded-xl transition-colors"
+              className="w-full py-3.5 bg-transparent text-text-secondary font-bold text-sm hover:text-text-primary rounded-xl transition-colors"
             >
               Cancelar
             </button>

@@ -64,7 +64,7 @@ export const ExerciseMedia = ({
     <div className={`relative flex items-center justify-center overflow-hidden bg-surface ${className}`}>
       {isLoading && !hasError && (
         <div className="absolute inset-0 flex items-center justify-center bg-surface border border-surface-light z-10 animate-pulse">
-           <div className="w-1/3 aspect-video bg-white/5 rounded-lg"></div>
+           <div className="w-1/3 aspect-video bg-text-primary/5 rounded-lg"></div>
         </div>
       )}
 

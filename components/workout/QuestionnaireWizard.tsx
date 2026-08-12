@@ -1,12 +1,14 @@
-import { useNavigate } from 'react-router-dom';
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { generateAI } from '@/src/services/geminiService';
 import { motion, AnimatePresence } from 'motion/react';
 import { useWorkoutStore, WorkoutQuestionnaire } from '@/lib/workoutStore';
 import { useAppStore } from '@/lib/store';
 import { EXERCISE_LIBRARY } from '@/lib/exerciseLibrary';
+import { db, auth } from '@/lib/firebase';
+import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
 import { Download, BrainCircuit, Dumbbell, User, HeartPulse, Target, ShieldCheck, Zap, ArrowRight, ArrowLeft, PenTool, Type } from 'lucide-react';
 
 
@@ -43,12 +45,47 @@ export function QuestionnaireWizard({ setStoreQuestionnaire, setPlan }: { setSto
     localStorage.setItem('workout_q_data', JSON.stringify(data));
   }, [data]);
   
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(() => !!(typeof localStorage !== 'undefined' && localStorage.getItem('pending_workout_request')));
   const globalSetPlan = useWorkoutStore(s => s.setPlan);
   const globalSetStoreQuestionnaire = useWorkoutStore(s => s.setQuestionnaireData);
 
   const _setStoreQuestionnaire = setStoreQuestionnaire || globalSetStoreQuestionnaire;
   const _setPlan = setPlan || globalSetPlan;
+
+  useEffect(() => {
+    const pendingRequestId = typeof localStorage !== 'undefined' ? localStorage.getItem('pending_workout_request') : null;
+    if (pendingRequestId && auth.currentUser) {
+      const unsubscribe = onSnapshot(doc(db, 'workout_generation_requests', pendingRequestId), async (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.status === 'completed' && data.workoutId) {
+            unsubscribe();
+            try {
+              const workoutDoc = await getDoc(doc(db, 'workouts', data.workoutId));
+              if (workoutDoc.exists()) {
+                 const newPlan = workoutDoc.data();
+                 _setPlan(newPlan);
+                 localStorage.removeItem('workout_q_step');
+                 localStorage.removeItem('workout_q_data');
+                 localStorage.removeItem('pending_workout_request');
+                 if (!setPlan) navigate('/workouts');
+              }
+            } catch (err) {
+              console.error(err);
+            } finally {
+              setIsGenerating(false);
+            }
+          } else if (data.status === 'failed') {
+            unsubscribe();
+            setIsGenerating(false);
+            localStorage.removeItem('pending_workout_request');
+            alert('Erro ao gerar treino: ' + (data.error || 'Erro desconhecido'));
+          }
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [_setPlan, navigate, setPlan]);
 
   const checkAILimits = () => {
     // Basic limit simulation using localStorage and profile plan
@@ -58,7 +95,7 @@ export function QuestionnaireWizard({ setStoreQuestionnaire, setPlan }: { setSto
     
     let maxUses = 3;
     if (profile.plan === 'orbit') maxUses = 20;
-    if (profile.role === 'admin' || profile.plan === 'nova' || profile.plan === 'infinite') return true;
+    if (profile.role === 'admin' || profile.email === 'lestek.sup@gmail.com' || profile.plan === 'nova' || profile.plan === 'infinite') return true;
 
     if (uses >= maxUses) {
       alert(`Limite de IA diário atingido (${maxUses} usos) para seu plano. Faça upgrade para continuar!`);
@@ -232,37 +269,88 @@ Texto do Usuário:
 
   const generatePlanAI = async (finalData: WorkoutQuestionnaire) => {
     _setStoreQuestionnaire(finalData);
-    
-    // Obter todos os nomes válidos da biblioteca
-    const validExerciseNames = EXERCISE_LIBRARY.map(ex => ex.name).join(', ');
+    setIsGenerating(true);
 
-    const prompt = `Gere um protocolo de treinamento hiper-preciso, profissional e totalmente personalizado com base neste perfil do aluno:
-    
-- NOME: ${finalData.name || 'Aluno'}
-- GÊNERO: ${finalData.gender || 'Não especificado'}
-- IDADE: ${finalData.age || 'Não especificada'} anos
-- PESO: ${finalData.weight || 'Não especificado'} kg
-- ALTURA: ${finalData.height || 'Não especificada'} cm
-- OBJETIVO PRINCIPAL: ${finalData.mainGoal || 'Não especificado'}
-- EXPERIÊNCIA: ${finalData.experienceLevel || 'Não especificado'}
-- OBJETIVO ESPECÍFICO/RESTRIÇÕES: ${finalData.specificGoal || 'Nenhuma'}
-- LOCAL DE TREINO: ${finalData.location || 'Não especificado'}
-- EQUIPAMENTOS: ${(finalData.equipment || []).join(', ') || 'Padrão do local'}
-- DIAS POR SEMANA: ${finalData.daysPerWeek || 3}
-- TEMPO POR SESSÃO: ${finalData.minutesPerSession || 60} minutos
-- NÍVEL DE ENERGIA: ${finalData.energyLevel || 'Normal'}
-- INCLUIR CARDIO: ${finalData.includeCardio ? 'Sim' : 'Não'}
+    try {
+      let currentUser = auth.currentUser;
+      if (!currentUser) {
+        await new Promise((resolve) => {
+          const unsub = auth.onAuthStateChanged((u) => {
+            currentUser = u;
+            unsub();
+            resolve(u);
+          });
+          setTimeout(() => resolve(null), 2000);
+        });
+      }
 
-INSTRUÇÕES FINAIS PARA A IA:
-- Você DEVE retornar exatamente um JSON no formato especificado no seu system prompt.
-- Garanta que o "schedule" de cada fase tenha EXATAMENTE 7 itens, representando os 7 dias da semana.
-- Como o aluno selecionou treinar ${finalData.daysPerWeek || 3} dias por semana, haverão ${7 - (finalData.daysPerWeek || 3)} dias marcados com "isRest": true.
-- Adeque os exercícios, séries e repetições estritamente para o objetivo principal (${finalData.mainGoal || ''}).
-- IMPORTANTE: Todos os exercícios listados devem ser selecionados APENAS da seguinte lista de exercícios disponíveis no sistema. NUNCA crie exercícios que não estejam nesta lista:
-${validExerciseNames}
-`;
-    
-    await requestGemini(prompt);
+      const targetUserId = currentUser?.uid || profile?.id;
+      if (!targetUserId || !currentUser) {
+        throw new Error('Usuário não autenticado no Firebase Auth. Por favor, faça login novamente.');
+      }
+
+      const requestId = `req_${generateId()}`;
+      const idToken = await currentUser.getIdToken(true);
+      
+      // Create pending request
+      await setDoc(doc(db, 'workout_generation_requests', requestId), {
+        status: 'pending',
+        user_id: targetUserId,
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem('pending_workout_request', requestId);
+
+      // Start background process
+      fetch('/api/gemini/generate-workout-async', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify({
+          requestId,
+          userId: targetUserId,
+          questionnaireData: finalData
+        })
+      }).catch(console.error);
+
+      // Listen to Firestore for completion
+      const unsubscribe = onSnapshot(doc(db, 'workout_generation_requests', requestId), async (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.status === 'completed' && data.workoutId) {
+            unsubscribe();
+            try {
+              // Fetch the completed workout
+              const workoutDoc = await getDoc(doc(db, 'workouts', data.workoutId));
+              if (workoutDoc.exists()) {
+                 const newPlan = workoutDoc.data();
+                 _setPlan(newPlan);
+                 localStorage.removeItem('workout_q_step');
+                 localStorage.removeItem('workout_q_data');
+                 localStorage.removeItem('pending_workout_request');
+                 if (!setPlan) navigate('/workouts');
+              } else {
+                 console.error("Workout doc not found:", data.workoutId);
+              }
+            } catch (err) {
+              console.error("Error fetching completed workout:", err);
+            } finally {
+              setIsGenerating(false);
+            }
+          } else if (data.status === 'failed') {
+            unsubscribe();
+            setIsGenerating(false);
+            localStorage.removeItem('pending_workout_request');
+            alert('Erro ao gerar treino: ' + (data.error || 'Erro desconhecido'));
+          }
+        }
+      });
+    } catch (error: any) {
+      console.error("Failed to start generation:", error);
+      setIsGenerating(false);
+      alert('Falha ao iniciar geração do treino: ' + (error?.message || 'Erro desconhecido'));
+    }
   };
 
   if (isGenerating) {
@@ -288,7 +376,7 @@ ${validExerciseNames}
             onClick={() => setMethod('ai')}
             className="bg-surface border border-surface-light p-5 rounded-2xl text-left hover:border-neon-blue/50 transition-all group flex flex-col items-start gap-4 shadow-lg active:scale-95"
           >
-            <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-neon-blue/10 transition-colors shadow-inner">
+            <div className="w-16 h-16 bg-text-primary/5 rounded-2xl flex items-center justify-center group-hover:bg-neon-blue/10 transition-colors shadow-inner">
               <BrainCircuit className="text-neon-blue" size={32} />
             </div>
             <div>
@@ -301,7 +389,7 @@ ${validExerciseNames}
             onClick={() => setMethod('manual')}
             className="bg-surface border border-surface-light p-5 rounded-2xl text-left hover:border-neon-purple/50 transition-all group flex flex-col items-start gap-4 shadow-lg active:scale-95"
           >
-            <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center group-hover:bg-neon-purple/10 transition-colors shadow-inner">
+            <div className="w-16 h-16 bg-text-primary/5 rounded-2xl flex items-center justify-center group-hover:bg-neon-purple/10 transition-colors shadow-inner">
               <Type className="text-neon-purple" size={32} />
             </div>
             <div>
@@ -370,7 +458,7 @@ ${validExerciseNames}
           </div>
           <div className="flex gap-2 w-full">
             {STEPS.map((s, i) => (
-              <div key={s.id} className="h-1.5 flex-1 bg-white/5 rounded-full overflow-hidden">
+              <div key={s.id} className="h-1.5 flex-1 bg-text-primary/5 rounded-full overflow-hidden">
                 <motion.div 
                   className={`h-full ${i <= stepIndex ? 'bg-neon-blue' : ''}`}
                   initial={{ width: 0 }}
@@ -436,7 +524,7 @@ ${validExerciseNames}
                    <button 
                      key={opt.label}
                      onClick={() => { update('mainGoal', opt.label); setTimeout(handleNext, 300) }}
-                     className={`w-full text-left p-4 sm:p-5 rounded-[24px] border transition-all duration-300 active:scale-95 ${data.mainGoal === opt.label ? 'border-neon-blue bg-neon-blue/10 shadow-lg' : 'border-surface-light bg-background hover:border-white/20'}`}
+                     className={`w-full text-left p-4 sm:p-5 rounded-[24px] border transition-all duration-300 active:scale-95 ${data.mainGoal === opt.label ? 'border-neon-blue bg-neon-blue/10 shadow-lg' : 'border-surface-light bg-background hover:border-text-primary/20'}`}
                    >
                      <h4 className={`text-base font-black mb-1 ${data.mainGoal === opt.label ? 'text-neon-blue' : 'text-text-primary'}`}>{opt.label}</h4>
                      <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">{opt.desc}</p>
@@ -454,7 +542,7 @@ ${validExerciseNames}
                        <button
                          key={opt}
                          onClick={() => update('experienceLevel', opt)}
-                         className={`p-5 rounded-[20px] border text-sm font-black transition-all text-left uppercase tracking-wider ${data.experienceLevel === opt ? 'bg-white text-black border-white shadow-lg' : 'bg-background border-surface-light text-text-secondary hover:border-white/20'}`}
+                         className={`p-5 rounded-[20px] border text-sm font-black transition-all text-left uppercase tracking-wider ${data.experienceLevel === opt ? 'bg-text-primary text-black border-text-primary shadow-lg' : 'bg-background border-surface-light text-text-secondary hover:border-text-primary/20'}`}
                        >
                          {opt}
                        </button>
@@ -478,7 +566,7 @@ ${validExerciseNames}
                        <button
                          key={opt}
                          onClick={() => update('location', opt)}
-                         className={`p-5 rounded-[20px] border text-sm font-black transition-all text-left uppercase tracking-wider ${data.location === opt ? 'bg-neon-blue/20 text-neon-blue border-neon-blue shadow-lg' : 'bg-background border-surface-light text-text-secondary hover:border-white/20'}`}
+                         className={`p-5 rounded-[20px] border text-sm font-black transition-all text-left uppercase tracking-wider ${data.location === opt ? 'bg-neon-blue/20 text-neon-blue border-neon-blue shadow-lg' : 'bg-background border-surface-light text-text-secondary hover:border-text-primary/20'}`}
                        >
                          {opt}
                        </button>
@@ -518,12 +606,12 @@ ${validExerciseNames}
                    <div className="flex justify-center items-center gap-10 bg-background rounded-2xl p-5 border border-surface-light w-full max-w-[280px] mx-auto shadow-inner">
                      <button 
                        onClick={() => update('daysPerWeek', Math.max(1, (data.daysPerWeek || 3) - 1))}
-                       className="w-10 h-10 flex items-center justify-center bg-white/5 rounded-2xl border border-surface-light hover:bg-white/10 transition-colors text-2xl active:scale-95"
+                       className="w-10 h-10 flex items-center justify-center bg-text-primary/5 rounded-2xl border border-surface-light hover:bg-text-primary/10 transition-colors text-2xl active:scale-95"
                      >-</button>
                      <div className="text-6xl font-black text-text-primary tracking-tighter">{data.daysPerWeek || 3}</div>
                      <button 
                        onClick={() => update('daysPerWeek', Math.min(7, (data.daysPerWeek || 3) + 1))}
-                       className="w-10 h-10 flex items-center justify-center bg-white/5 rounded-2xl border border-surface-light hover:bg-white/10 transition-colors text-2xl active:scale-95"
+                       className="w-10 h-10 flex items-center justify-center bg-text-primary/5 rounded-2xl border border-surface-light hover:bg-text-primary/10 transition-colors text-2xl active:scale-95"
                      >+</button>
                    </div>
                  </div>

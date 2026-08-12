@@ -1,17 +1,16 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-"use client";
+'use client';
+
 import { useEffect, useRef, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { db, auth } from '@/lib/firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useAppStore } from '@/lib/store';
 import { useWorkoutStore } from '@/lib/workoutStore';
 
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const pathname = location.pathname;
   const { setProfile, setTasks, setGoals, setTransactions, profile, tasks, goals, transactions } = useAppStore();
   const { 
     setPlan, setQuestionnaireData, setWorkoutHistory, setFreeWorkout, setUserTemplates, updateSettings, setSelectedProgressionWeek,
@@ -25,15 +24,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     syncLock.current = true;
     try {
       const docRef = doc(db, 'profiles', userId);
-      const docSnap = await getDoc(docRef);
+      let docSnap = await getDoc(docRef);
       
       if (!docSnap.exists()) {
-        if (retryCount < 5) {
+        const currentUser = auth.currentUser;
+        if (currentUser && currentUser.uid === userId) {
+          const defaultUsername = currentUser.email ? currentUser.email.split('@')[0] : 'user';
+          const defaultName = currentUser.displayName || defaultUsername;
+          const initialProfile = {
+            id: userId,
+            username: defaultUsername,
+            name: defaultName,
+            email: currentUser.email || `${defaultUsername}@evolux.app`,
+            role: 'user',
+            status: 'active',
+            avatar_level: 1,
+            xp: 0,
+            streak: 0,
+            total_tasks_completed: 0,
+            equipped_cosmetics: { plan: 'base' },
+            created_at: new Date().toISOString()
+          };
+          await setDoc(docRef, initialProfile, { merge: true });
+          docSnap = await getDoc(docRef);
+        } else if (retryCount < 5) {
           setTimeout(() => doFetch(userId, retryCount + 1), 500);
+          return;
         } else {
           syncLock.current = false;
+          return;
         }
-        return;
       }
 
       const pData = { id: docSnap.id, ...docSnap.data() } as any;
@@ -47,13 +67,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const expDate = new Date(expiresAt);
         if (today > expDate) {
           currentPlanStr = 'base';
-          await updateDoc(docRef, {
+          await setDoc(docRef, {
             equipped_cosmetics: {
               ...(pData.equipped_cosmetics || {}),
               plan: 'base',
               plan_expires_at: ''
             }
-          });
+          }, { merge: true });
           
           pData.equipped_cosmetics = {
             ...(pData.equipped_cosmetics || {}),
@@ -65,20 +85,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setProfile({
         id: pData.id,
-        name: pData.name || pData.username,
-        avatarLevel: pData.avatar_level,
-        streak: pData.streak,
-        totalTasksCompleted: pData.total_tasks_completed,
-        lastLoginDate: pData.updated_at,
+        email: pData.email || '',
+        name: pData.name || pData.username || 'Usuário',
+        avatarLevel: pData.avatar_level || 1,
+        streak: pData.streak || 0,
+        totalTasksCompleted: pData.total_tasks_completed || 0,
+        lastLoginDate: pData.updated_at || new Date().toISOString(),
         plan: currentPlanStr,
         plan_expires_at: pData.equipped_cosmetics?.plan_expires_at,
-        xp: pData.xp,
+        xp: pData.xp || 0,
         unlockedAchievements: pData.unlocked_achievements || [],
         unlockedCosmetics: pData.unlocked_cosmetics || ['aura_base', 'tex_carbon', 'part_none', 'eye_blue'],
         equippedCosmetics: pData.equipped_cosmetics || {},
         isOnboarded: true,
-        role: pData.role,
-        status: pData.status,
+        role: pData.role || 'user',
+        status: pData.status || 'active',
       });
 
       // Hydrate state from JSON blob in equipped_cosmetics temporarily until full table migration
@@ -105,11 +126,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [setGoals, setPlan, setProfile, setQuestionnaireData, setTasks, setWorkoutHistory, setUserTemplates, setFreeWorkout, updateSettings, setSelectedProgressionWeek, setTransactions]);
 
   useEffect(() => {
-    if (useAppStore.getState().profile?.id === 'test-admin-id') return;
-
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (useAppStore.getState().profile?.id === 'test-admin-id') return;
-      
       if (user) {
         fetchProfile(user.uid);
       } else {
@@ -122,18 +139,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem('onboarding_step');
         localStorage.removeItem('onboarding_answers');
         localStorage.removeItem('evolux_finance');
-        if (pathname !== '/' && pathname !== '/login' && pathname !== '/plans') { 
+        if (location.pathname !== '/' && location.pathname !== '/login' && location.pathname !== '/plans') { 
           navigate('/login');
         }
       }
     });
 
     return () => unsubscribe();
-  }, [navigate, pathname, fetchProfile]);
+  }, [navigate, location.pathname, fetchProfile]);
 
   // SYNC UP: Whenever local state changes, push to database
   useEffect(() => {
-    if (syncLock.current || !profile?.id || profile.id === 'test-admin-id') return;
+    const currentUid = auth.currentUser?.uid;
+    if (syncLock.current || !profile?.id || !currentUid || profile.id !== currentUid) return;
     
     const syncBackup = async () => {
       try {
@@ -159,6 +177,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }));
 
         const payload: any = {
+          id: profile.id,
+          name: profile.name || 'Usuário',
+          email: profile.email || auth.currentUser?.email || '',
+          role: profile.role || 'user',
+          status: profile.status || 'active',
           xp: profile.xp || 0,
           streak: profile.streak || 0,
           total_tasks_completed: profile.totalTasksCompleted || 0,
@@ -182,7 +205,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return newObj;
         };
 
-        await updateDoc(docRef, stripUndefined(payload));
+        await setDoc(docRef, stripUndefined(payload), { merge: true });
       } catch (err) {
         console.error('Failed to sync state', err);
       }
@@ -190,7 +213,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const debounce = setTimeout(syncBackup, 2000); // 2 second debounce
     return () => clearTimeout(debounce);
-  }, [tasks, goals, transactions, currentPlan, workoutHistory, questionnaire, userTemplates, activeFreeWorkout, settings, selectedProgressionWeek, profile?.id, profile?.xp, profile?.streak, profile?.totalTasksCompleted, profile?.avatarLevel]);
+  }, [tasks, goals, transactions, currentPlan, workoutHistory, questionnaire, userTemplates, activeFreeWorkout, settings, selectedProgressionWeek, profile?.id, profile?.name, profile?.email, profile?.role, profile?.status, profile?.xp, profile?.streak, profile?.totalTasksCompleted, profile?.avatarLevel]);
 
   return <>{children}</>;
 }

@@ -188,6 +188,7 @@ interface WorkoutState {
   setActiveWorkoutSession: (session: ActiveWorkoutSession | null) => void;
   updateActiveWorkoutSession: (data: Partial<ActiveWorkoutSession>) => void;
   setUserTemplates: (templates: WorkoutPlan[]) => void;
+  deleteCurrentPlan: () => void;
   
   // Progression Controls
   advanceWeek: () => void;
@@ -240,6 +241,13 @@ export const useWorkoutStore = create<WorkoutState>()(
 
       setUserTemplates: (templates) => set({
         userTemplates: templates
+      }),
+
+      deleteCurrentPlan: () => set({
+        currentPlan: null,
+        hasCompletedQuestionnaire: false,
+        activeWorkoutSession: null,
+        activeFreeWorkout: null
       }),
 
       updateDayPlan: (dayIndex, dayPlan) => set((state) => {

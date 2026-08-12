@@ -336,7 +336,7 @@ export function MiniCosmicAvatar({ streak, auraColor = 'rgba(0,240,255,0.2)', si
                <div className="w-full h-full absolute inset-0" style={{ background: `linear-gradient(to bottom, transparent 0%, ${weapon.color || '#00f0ff'} 20%, #fff 50%, ${weapon.color || '#00f0ff'} 80%, black 100%)` }} />
                
                {/* Sword core bright line */}
-               <div className="w-[2px] h-[80%] bg-white absolute top-[10%] blur-[1px]" />
+               <div className="w-[2px] h-[80%] bg-text-primary absolute top-[10%] blur-[1px]" />
                
                {/* Hilts */}
                <div className="absolute bottom-[10%] left-1/2 -translate-x-1/2 w-[16px] h-[40px] bg-black rounded-sm border-2" style={{ borderColor: weapon.color || '#00f0ff' }}>
@@ -356,7 +356,7 @@ export function MiniCosmicAvatar({ streak, auraColor = 'rgba(0,240,255,0.2)', si
                transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
             >
                {/* Drone Core */}
-               <div className="w-2 h-2 rounded-full bg-white animate-pulse" style={{ boxShadow: `0 0 15px 5px ${sat.color || '#fff'}` }} />
+               <div className="w-2 h-2 rounded-full bg-text-primary animate-pulse" style={{ boxShadow: `0 0 15px 5px ${sat.color || '#fff'}` }} />
                {/* Tech Lines */}
                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-50 mix-blend-overlay" />
             </motion.div>

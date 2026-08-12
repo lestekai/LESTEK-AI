@@ -14,7 +14,7 @@ export default function AdminFeedbacks() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const q = query(collection(db, 'feedbacks'), orderBy('created_at', 'desc'));
+      const q = query(collection(db, 'feedbacks'));
       const snapshot = await getDocs(q);
       const profQ = await getDocs(collection(db, 'profiles'));
       const profiles: any = {};
@@ -23,6 +23,17 @@ export default function AdminFeedbacks() {
         const fb = d.data();
         return { id: d.id, ...fb, profiles: fb.user_id ? { name: profiles[fb.user_id]?.name, username: profiles[fb.user_id]?.username } : null };
       });
+      data.sort((a, b) => {
+        const getMs = (val) => {
+          if (!val) return 0;
+          if (val.toMillis) return val.toMillis();
+          if (val.seconds) return val.seconds * 1000;
+          const parsed = new Date(val).getTime();
+          return isNaN(parsed) ? 0 : parsed;
+        };
+        return getMs(b.created_at) - getMs(a.created_at);
+      });
+
       if (data) setFeedbacks(data);
     } catch (e) {
       console.warn('AdminFeedbacks error or insufficient permissions:', e);
@@ -76,12 +87,12 @@ export default function AdminFeedbacks() {
                   }`}>
                     {fb.category}
                   </span>
-                  <p className="text-sm font-bold text-white">@{fb.profiles?.username || 'Usuário Desconhecido'}</p>
+                  <p className="text-sm font-bold text-text-primary">@{fb.profiles?.username || 'Usuário Desconhecido'}</p>
                 </div>
                 <span className="text-[10px] text-text-secondary">{new Date(fb.created_at).toLocaleString('pt-BR')}</span>
               </div>
               
-              <div className="bg-background border border-white/5 p-4 rounded-xl mb-4 text-sm text-white/90 leading-relaxed">
+              <div className="bg-background border border-text-primary/5 p-4 rounded-xl mb-4 text-sm text-text-primary/90 leading-relaxed">
                 {fb.message}
               </div>
               
@@ -101,7 +112,7 @@ export default function AdminFeedbacks() {
                     <button onClick={() => updateFeedbackStatus(fb.id, 'resolvido')} className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest bg-emerald-500/10 text-emerald-500 px-3 py-2 rounded-lg border border-emerald-500/20 hover:bg-emerald-500/30 transition-colors">
                       <CheckCircle size={14}/> Marcar como Resolvido
                     </button>
-                    <button onClick={() => updateFeedbackStatus(fb.id, 'ignorado')} className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest bg-white/5 text-text-secondary px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">
+                    <button onClick={() => updateFeedbackStatus(fb.id, 'ignorado')} className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest bg-text-primary/5 text-text-secondary px-3 py-2 rounded-lg border border-text-primary/10 hover:bg-text-primary/10 transition-colors">
                       <XCircle size={14}/> Arquivar/Ignorar
                     </button>
                   </div>

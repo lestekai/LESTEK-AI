@@ -185,7 +185,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
             <div className="absolute top-0 right-[-20%] w-64 h-64 bg-neon-blue/10 rounded-full blur-[60px] pointer-events-none" />
             <div>
               <p className="text-text-secondary text-xs uppercase tracking-widest font-bold mb-1">Saldo Atual</p>
-              <h2 className={`text-4xl font-display font-bold ${balance >= 0 ? 'text-white' : 'text-red-400'}`}>
+              <h2 className={`text-4xl font-display font-bold ${balance >= 0 ? 'text-text-primary' : 'text-red-400'}`}>
                 R$ {balance.toFixed(2)}
               </h2>
             </div>
@@ -193,7 +193,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
             <button 
                onClick={toggleListen}
                disabled={processingAudio}
-               className={`w-14 h-14 rounded-full flex items-center justify-center transition-all relative ${isListening ? 'bg-neon-pink text-white animate-pulse shadow-[0_0_20px_rgba(255,42,127,0.5)]' : processingAudio ? 'bg-surface-light text-text-secondary' : 'bg-surface-light text-white hover:bg-white/10'}`}
+               className={`w-14 h-14 rounded-full flex items-center justify-center transition-all relative ${isListening ? 'bg-neon-pink text-text-primary animate-pulse shadow-[0_0_20px_rgba(255,42,127,0.5)]' : processingAudio ? 'bg-surface-light text-text-secondary' : 'bg-surface-light text-text-primary hover:bg-text-primary/10'}`}
             >
               {processingAudio ? <Loader2 size={24} className="animate-spin" /> : <Mic size={24} />}
               {profile?.role !== 'admin' && (profile?.plan === 'base' || profile?.plan === 'orbit') && (
@@ -236,14 +236,14 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
         <div className="bg-surface p-5 rounded-3xl border border-surface-light relative overflow-hidden">
           <div className="absolute left-0 top-0 bottom-0 w-1 bg-neon-purple" />
           <div className="flex justify-between items-start mb-3">
-            <h3 className="font-bold flex items-center gap-2 text-sm text-white">
+            <h3 className="font-bold flex items-center gap-2 text-sm text-text-primary">
               <BrainCircuit size={18} className="text-neon-purple" />
               Coach Financeiro IA
             </h3>
             <button 
               onClick={generateInsight}
               disabled={loadingInsight || transactions.length === 0}
-              className="text-[10px] uppercase tracking-widest font-bold bg-surface-light text-white px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="text-[10px] uppercase tracking-widest font-bold bg-surface-light text-text-primary px-3 py-1.5 rounded-lg hover:bg-text-primary/10 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loadingInsight ? 'Analisando...' : 'Pedir Conselho'}
               {profile?.role !== 'admin' && (profile?.plan === 'base' || profile?.plan === 'orbit') && <Lock size={12} className="text-text-secondary" />}
@@ -256,13 +256,13 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
 
         {/* Manual Add Form */}
         <form onSubmit={handleAdd} className="bg-surface p-5 rounded-3xl border border-surface-light space-y-4">
-          <p className="text-sm font-bold text-white flex items-center gap-2 mb-2"><Plus size={16} /> Registro Manual</p>
+          <p className="text-sm font-bold text-text-primary flex items-center gap-2 mb-2"><Plus size={16} /> Registro Manual</p>
           <div className="flex bg-background border border-surface-light p-1 rounded-xl">
             <button
               type="button"
               onClick={() => setType('income')}
               className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors ${
-                type === 'income' ? 'bg-surface-light text-emerald-400' : 'text-text-secondary hover:text-white'
+                type === 'income' ? 'bg-surface-light text-emerald-400' : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               Receita
@@ -271,7 +271,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
               type="button"
               onClick={() => setType('expense')}
               className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors ${
-                type === 'expense' ? 'bg-surface-light text-neon-pink' : 'text-text-secondary hover:text-white'
+                type === 'expense' ? 'bg-surface-light text-neon-pink' : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               Despesa
@@ -284,14 +284,14 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
               placeholder="R$ 0,00" 
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="sm:w-1/3 w-full bg-background border border-surface-light rounded-xl px-4 py-3 text-sm font-mono text-white focus:outline-none focus:border-neon-blue transition-colors"
+              className="sm:w-1/3 w-full bg-background border border-surface-light rounded-xl px-4 py-3 text-sm font-mono text-text-primary focus:outline-none focus:border-neon-blue transition-colors"
             />
             <input 
               type="text" 
               placeholder="Descrição curta" 
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="flex-1 bg-background border border-surface-light rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-neon-blue transition-colors"
+              className="flex-1 bg-background border border-surface-light rounded-xl px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-neon-blue transition-colors"
             />
           </div>
           <button 
@@ -306,7 +306,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
         {/* History Overview */}
         <section>
           <div className="flex justify-between items-center mb-4">
-            <h3 className="font-bold text-white">Transações Recentes</h3>
+            <h3 className="font-bold text-text-primary">Transações Recentes</h3>
             <span className="text-xs text-text-secondary">{transactions.length} registros</span>
           </div>
           
@@ -331,7 +331,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
                          {tx.type === 'income' ? <TrendingUp size={16} className="text-emerald-400" /> : <TrendingDown size={16} className="text-neon-pink" />}
                        </div>
                        <div>
-                         <p className="font-bold text-white text-sm tracking-tight">{tx.description}</p>
+                         <p className="font-bold text-text-primary text-sm tracking-tight">{tx.description}</p>
                          <p className="text-xs text-text-secondary mt-0.5 font-mono">{tx.date.split('-').reverse().join('/')}</p>
                        </div>
                     </div>

@@ -73,7 +73,47 @@ export default defineConfig(({ mode }) => {
             const rawUrl = req.originalUrl || req.url || '';
             const lowercaseUrl = rawUrl.toLowerCase();
             
-            if (lowercaseUrl.includes('/api/gemini/generate')) {
+            if (lowercaseUrl.includes('/api/gemini/generate-workout-async')) {
+              res.setHeader('Access-Control-Allow-Origin', '*');
+              res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, X-Gemini-Key, X-Gemini-Api-Key');
+              res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+
+              if (req.method === 'OPTIONS') {
+                res.statusCode = 204;
+                res.end();
+                return;
+              }
+
+              if (req.method === 'POST') {
+                (async () => {
+                  try {
+                    const body = await getRequestBody(req);
+                    const { requestId, userId, questionnaireData } = JSON.parse(body || '{}');
+                    const authHeader = req.headers['authorization'] || '';
+                    const idToken = authHeader.replace(/^Bearer\s+/i, '');
+                    const customHeaderKey = req.headers['x-gemini-key'] || req.headers['X-Gemini-Key'] || '';
+                    const apiKey = process.env.GEMINI_API_KEY || (typeof customHeaderKey === 'string' && customHeaderKey.trim() !== '' ? customHeaderKey : (process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || ''));
+
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify({ ok: true, requestId }));
+
+                    const { processWorkoutGeneration } = await import('./lib/workoutGeneratorBackend');
+                    processWorkoutGeneration(requestId, userId, idToken, questionnaireData, apiKey).catch(console.error);
+                  } catch (err: any) {
+                    console.error('Vite Workout Generator Middleware Error:', err);
+                    if (!res.headersSent) {
+                      res.statusCode = 500;
+                      res.setHeader('Content-Type', 'application/json');
+                      res.end(JSON.stringify({ error: err.message || 'Error processing async workout generation' }));
+                    }
+                  }
+                })();
+                return;
+              }
+            }
+
+            if (lowercaseUrl.includes('/api/gemini/generate') && !lowercaseUrl.includes('generate-workout-async')) {
               // Set CORS headers
               res.setHeader('Access-Control-Allow-Origin', '*');
               res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, X-Gemini-Key, X-Gemini-Api-Key');

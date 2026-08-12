@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/lib/store';
 import { Header } from '@/components/Header';
 import { BottomNav } from '@/components/BottomNav';
@@ -51,7 +51,7 @@ export default function SettingsPage() {
                {isEditingName ? (
                  <div className="flex items-center gap-2">
                     <input 
-                       className="bg-background border border-white/10 rounded-lg px-2 py-1 text-sm text-text-primary focus:border-neon-blue w-full"
+                       className="bg-background border border-text-primary/10 rounded-lg px-2 py-1 text-sm text-text-primary focus:border-neon-blue w-full"
                        value={newName}
                        onChange={e => setNewName(e.target.value)}
                        autoFocus
@@ -62,7 +62,7 @@ export default function SettingsPage() {
                ) : (
                 <div className="flex items-center gap-2">
                   <h2 className="text-lg font-bold text-text-primary truncate max-w-[150px]">{profile.name}</h2>
-                  <button onClick={() => setIsEditingName(true)} className="text-[10px] text-text-secondary hover:text-text-primary uppercase tracking-widest bg-white/5 px-2 py-1 rounded-full">Renomear</button>
+                  <button onClick={() => setIsEditingName(true)} className="text-[10px] text-text-secondary hover:text-text-primary uppercase tracking-widest bg-text-primary/5 px-2 py-1 rounded-full">Renomear</button>
                 </div>
                )}
               <p className="text-sm text-text-secondary mt-1">Plano: <span className="text-neon-purple uppercase font-bold text-[10px] tracking-widest">{profile.plan}</span></p>
@@ -80,9 +80,9 @@ export default function SettingsPage() {
                  <span className="text-xs font-bold text-neon-blue">{zoomLevel}%</span>
                </div>
                <div className="flex gap-2">
-                  <button onClick={() => setZoomLevel(Math.max(50, zoomLevel - 5))} className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-bold text-text-primary hover:bg-white/10">-</button>
+                  <button onClick={() => setZoomLevel(Math.max(50, zoomLevel - 5))} className="w-8 h-8 rounded-full bg-text-primary/5 border border-text-primary/10 flex items-center justify-center font-bold text-text-primary hover:bg-text-primary/10">-</button>
                   <input type="range" min="50" max="150" step="5" value={zoomLevel} onChange={e => setZoomLevel(Number(e.target.value))} className="flex-1 accent-neon-blue" />
-                  <button onClick={() => setZoomLevel(Math.min(150, zoomLevel + 5))} className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center font-bold text-text-primary hover:bg-white/10">+</button>
+                  <button onClick={() => setZoomLevel(Math.min(150, zoomLevel + 5))} className="w-8 h-8 rounded-full bg-text-primary/5 border border-text-primary/10 flex items-center justify-center font-bold text-text-primary hover:bg-text-primary/10">+</button>
                </div>
                <p className="text-[10px] text-text-secondary mt-2">Personalize o tamanho dos elementos da tela (padrão: 100%).</p>
             </div>
@@ -125,10 +125,10 @@ export default function SettingsPage() {
                 onClick={() => setNotifications(!notifications)}
                 className={`w-10 h-6 rounded-full relative transition-colors ${notifications ? 'bg-neon-blue' : 'bg-surface-light'}`}
               >
-                <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${notifications ? 'left-5' : 'left-1'}`} />
+                <div className={`w-4 h-4 bg-text-primary rounded-full absolute top-1 transition-transform ${notifications ? 'left-5' : 'left-1'}`} />
               </button>
             </div>
-            <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5 transition-colors">
+            <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-text-primary/5 transition-colors">
               <div className="flex items-center gap-3">
                 <Shield size={18} className="text-emerald-500" />
                 <span className="text-sm font-bold text-text-primary">Dados Criptografados</span>
@@ -153,7 +153,7 @@ export default function SettingsPage() {
     localStorage.removeItem('evolux_finance');
     navigate('/login');
             }}
-            className="w-full flex items-center justify-center gap-2 py-4 bg-surface border border-surface-light text-text-primary rounded-2xl text-sm font-bold hover:bg-white/5 transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-4 bg-surface border border-surface-light text-text-primary rounded-2xl text-sm font-bold hover:bg-text-primary/5 transition-colors"
           >
             <LogOut size={18} /> Sair da Conta
           </button>

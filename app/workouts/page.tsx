@@ -1,19 +1,24 @@
-import { Link, useNavigate } from 'react-router-dom';
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useWorkoutStore, WorkoutPlan } from '@/lib/workoutStore';
 import { useAppStore } from '@/lib/store';
 import { Header } from '@/components/Header';
 import { BottomNav } from '@/components/BottomNav';
 import { motion, AnimatePresence } from 'motion/react';
-import { Dumbbell, Target, Clock, Activity, Shield, PlaySquare, Edit3, Settings, TrendingUp, Sparkles, History, Calendar, Flame, Zap, Plus, ArrowRight, List, Trash2, AlertTriangle } from 'lucide-react';
+import { 
+  Dumbbell, Target, Clock, Activity, Shield, PlaySquare, Edit3, Settings, 
+  TrendingUp, Sparkles, History, Calendar, Flame, Zap, Plus, ArrowRight, List, 
+  Trash2, AlertTriangle, Download, Upload, FolderDown, CheckCircle2, X 
+} from 'lucide-react';
 
 import { getProgressionPhase } from '@/lib/progressionSystem';
 import { PREMADE_TEMPLATES } from '@/lib/templates';
 
 import { QuestionnaireWizard } from '@/components/workout/QuestionnaireWizard';
 import { WorkoutEditor } from '@/components/workout/WorkoutEditor';
+import { WorkoutManagementSection } from '@/components/workout/WorkoutManagementSection';
 import { EXERCISE_LIBRARY } from '@/lib/exerciseLibrary';
 
 // Attach library to global for easiest lookup without passing large sets around if needed 
@@ -31,9 +36,12 @@ export default function WorkoutsPage() {
     <div className="min-h-screen bg-background pb-28 overflow-x-hidden font-sans">
       <Header title="Treinos" subtitle="Seja consistente, a evolução é consequência." />
       
-      <main className="px-4 sm:px-0 max-w-xl mx-auto space-y-4 mt-2">
+      <main className="px-4 sm:px-0 max-w-xl mx-auto space-y-6 mt-2">
         {!hasCompletedQuestionnaire || !currentPlan ? (
-           <QuestionnaireWizard />
+           <div className="space-y-6">
+             <QuestionnaireWizard />
+             <WorkoutManagementSection />
+           </div>
         ) : (
            <WorkoutDashboard plan={currentPlan} />
         )}
@@ -61,7 +69,7 @@ function WorkoutDashboard({ plan }: { plan: any }) {
   const [editingTemplate, setEditingTemplate] = useState<{ id: string, dayIndex: number } | null>(null);
   const [confirmAction, setConfirmAction] = useState<{ title: string, message: string, onConfirm: () => void, isDestructive?: boolean } | null>(null);
 
-  const daysPerWeek = questionnaire.daysPerWeek || 4;
+  const daysPerWeek = questionnaire?.daysPerWeek || 4;
   const autoWeek = Math.floor(workoutHistory.length / daysPerWeek) % 4 + 1;
   const currentWeek = selectedProgressionWeek === 0 ? autoWeek : selectedProgressionWeek;
   
@@ -116,8 +124,8 @@ function WorkoutDashboard({ plan }: { plan: any }) {
            <div className="relative p-4 z-10 flex flex-col min-h-[200px]">
               <div className="flex justify-between items-start mb-3">
                  <div>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 text-text-primary rounded-full text-[10px] font-bold tracking-wider mb-2 backdrop-blur-md border border-surface-light">
-                      <Target size={14} className="text-neon-blue" /> {questionnaire.mainGoal === 'hypertrophy' ? 'Hipertrofia' : questionnaire.mainGoal === 'strength' ? 'Força' : 'Condicionamento'}
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-text-primary/10 text-text-primary rounded-full text-[10px] font-bold tracking-wider mb-2 backdrop-blur-md border border-surface-light">
+                      <Target size={14} className="text-neon-blue" /> {questionnaire?.mainGoal === 'hypertrophy' ? 'Hipertrofia' : questionnaire?.mainGoal === 'strength' ? 'Força' : 'Condicionamento'}
                     </span>
                     <h3 className="text-2xl font-black text-text-primary leading-none tracking-tight mt-1">
                        {todayPlan.isRest ? 'Recuperação' : todayPlan.focus}
@@ -127,7 +135,7 @@ function WorkoutDashboard({ plan }: { plan: any }) {
                     </p>
                  </div>
                  {!todayPlan.isRest && (
-                   <button onClick={(e) => { e.stopPropagation(); navigate('/workouts/progression'); }} className="w-10 h-10 flex items-center justify-center bg-white/5 hover:bg-white/15 text-text-primary transition-colors rounded-full backdrop-blur border border-surface-light shadow-lg">
+                   <button onClick={(e) => { e.stopPropagation(); navigate('/workouts/progression'); }} className="w-10 h-10 flex items-center justify-center bg-text-primary/5 hover:bg-text-primary/15 text-text-primary transition-colors rounded-full backdrop-blur border border-surface-light shadow-lg">
                       <List size={18} />
                    </button>
                  )}
@@ -158,7 +166,7 @@ function WorkoutDashboard({ plan }: { plan: any }) {
                    
                    <button 
                      onClick={() => setEditingDayIndex(todayIndex)}
-                     className="w-full py-3 bg-transparent border-2 border-dashed border-surface-light text-text-secondary rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:border-white/30 hover:text-text-primary transition-all"
+                     className="w-full py-3 bg-transparent border-2 border-dashed border-surface-light text-text-secondary rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:border-text-primary/30 hover:text-text-primary transition-all"
                    >
                      <Edit3 size={16} />
                      Editar Treino de Hoje
@@ -269,7 +277,7 @@ function WorkoutDashboard({ plan }: { plan: any }) {
                       });
                     }
                   }}
-                  className="w-full h-full text-left bg-surface rounded-2xl border border-surface-light relative overflow-hidden p-4 flex flex-col justify-between hover:border-white/20 hover:bg-surface-light transition-all shadow-xl active:scale-95 duration-200"
+                  className="w-full h-full text-left bg-surface rounded-2xl border border-surface-light relative overflow-hidden p-4 flex flex-col justify-between hover:border-text-primary/20 hover:bg-surface-light transition-all shadow-xl active:scale-95 duration-200"
                 >
                   {/* Subtle Background Glow corresponding to card type */}
                   <div className={`absolute top-0 right-0 w-32 h-32 ${isSingleDay ? 'bg-neon-blue/5' : 'bg-neon-purple/5'} rounded-full blur-[40px] pointer-events-none`} />
@@ -295,7 +303,7 @@ function WorkoutDashboard({ plan }: { plan: any }) {
                     {isSingleDay && tpl.schedule[0]?.exercises && (
                       <div className="flex flex-wrap gap-1 mt-2">
                         {tpl.schedule[0].exercises.slice(0, 2).map((ex: any, idx: number) => (
-                          <span key={idx} className="text-[10px] bg-white/5 text-text-secondary px-1.5 py-0.5 rounded-md border border-surface-light max-w-[100px] truncate">
+                          <span key={idx} className="text-[10px] bg-text-primary/5 text-text-secondary px-1.5 py-0.5 rounded-md border border-surface-light max-w-[100px] truncate">
                             {ex.name}
                           </span>
                         ))}
@@ -336,52 +344,8 @@ function WorkoutDashboard({ plan }: { plan: any }) {
         </div>
       </section>
 
-      {/* AÇÕES E BIBLIOTECAS */}
-      <section className="pb-4 space-y-3">
-         {/* 1 Treino Personalizado */}
-         <Link to="/workouts/free" className="bg-surface rounded-2xl border border-surface-light p-5 flex items-center gap-4 hover:bg-surface-light transition-all group">
-            <div className="w-10 h-10 rounded-full bg-neon-blue/10 flex items-center justify-center shrink-0">
-               <Zap size={20} className="text-neon-blue group-hover:scale-110 transition-transform" />
-            </div>
-            <div>
-               <h3 className="text-base font-black text-text-primary">Treino Personalizado</h3>
-               <p className="text-text-secondary text-xs font-medium mt-1">Crie e monte treinos personalizados com IA.</p>
-            </div>
-         </Link>
-
-         {/* 2 Meu Progresso */}
-         <Link to="/workouts/history" className="bg-surface rounded-2xl border border-surface-light p-5 flex items-center gap-4 hover:bg-surface-light transition-all group">
-            <div className="w-10 h-10 rounded-full bg-neon-purple/10 flex items-center justify-center shrink-0">
-               <TrendingUp size={20} className="text-neon-purple group-hover:scale-110 transition-transform" />
-            </div>
-            <div>
-               <h3 className="text-base font-black text-text-primary">Meu Progresso</h3>
-               <p className="text-text-secondary text-xs font-medium mt-1">Histórico, PRs e estatísticas da sua evolução.</p>
-            </div>
-         </Link>
-
-         {/* 3 Treinos Prontos */}
-         <Link to="/workouts/templates" className="bg-surface rounded-2xl border border-surface-light p-5 flex items-center gap-4 hover:bg-surface-light transition-all group">
-            <div className="w-10 h-10 rounded-full bg-neon-blue/10 flex items-center justify-center shrink-0">
-               <Sparkles size={20} className="text-neon-blue group-hover:scale-110 transition-transform" />
-            </div>
-            <div>
-               <h3 className="text-base font-black text-text-primary">Treinos Prontos</h3>
-               <p className="text-text-secondary text-xs font-medium mt-1">Explore templates criados por especialistas.</p>
-            </div>
-         </Link>
-
-         {/* 4 Biblioteca de Movimentos */}
-         <Link to="/workouts/library" className="bg-surface rounded-2xl border border-surface-light p-5 flex items-center gap-4 hover:bg-surface-light transition-all group">
-            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
-               <Dumbbell size={20} className="text-text-secondary group-hover:text-text-primary transition-colors" />
-            </div>
-            <div>
-               <h3 className="text-base font-black text-text-primary">Biblioteca de Movimentos</h3>
-               <p className="text-text-secondary text-xs font-medium mt-1">Consulte pesos e execuções corretas de +100 exercícios.</p>
-            </div>
-         </Link>
-      </section>
+      {/* AÇÕES E FERRAMENTAS DE GESTÃO DE TREINO */}
+      <WorkoutManagementSection />
 
       <AnimatePresence>
         {confirmAction && (
@@ -421,7 +385,7 @@ function WorkoutDashboard({ plan }: { plan: any }) {
                 </button>
                 <button
                   onClick={() => setConfirmAction(null)}
-                  className="w-full py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-text-primary font-bold text-sm uppercase tracking-widest transition-colors"
+                  className="w-full py-3 rounded-2xl bg-text-primary/5 hover:bg-text-primary/10 text-text-primary font-bold text-sm uppercase tracking-widest transition-colors"
                 >
                   Cancelar
                 </button>
@@ -432,7 +396,7 @@ function WorkoutDashboard({ plan }: { plan: any }) {
       </AnimatePresence>
 
       {editingDayIndex !== null && (
-        <WorkoutEditor dayIndex={editingDayIndex} onClose={() => setEditingDayIndex(null)} />
+        <WorkoutEditor fullPlan={currentPlan || undefined} dayIndex={editingDayIndex} onClose={() => setEditingDayIndex(null)} />
       )}
       
       {editingTemplate !== null && (
@@ -448,7 +412,6 @@ function WorkoutDashboard({ plan }: { plan: any }) {
 
 function TemplateEditor({ templateId, initialDayIndex, onClose }: { templateId: string, initialDayIndex: number, onClose: () => void }) {
   const { userTemplates, updateUserTemplate } = useWorkoutStore();
-  const [dayIndex, setDayIndex] = useState(initialDayIndex);
   
   const template = userTemplates?.find(t => t.id === templateId);
   
@@ -456,44 +419,18 @@ function TemplateEditor({ templateId, initialDayIndex, onClose }: { templateId: 
     onClose();
     return null;
   }
-  
-  const isMultiDay = template.schedule.length > 1;
-  
-  const handleSavePlan = (updatedDayPlan: any) => {
-    const updatedSchedule = [...template.schedule];
-    updatedSchedule[dayIndex] = updatedDayPlan;
-    
-    updateUserTemplate(templateId, {
-      ...template,
-      schedule: updatedSchedule
-    });
+
+  const handleSaveFullPlan = (updatedPlan: any) => {
+    updateUserTemplate(templateId, updatedPlan);
   };
 
   return (
-    <>
-      <WorkoutEditor 
-        // Force remount when dayIndex changes
-        key={`editor-${templateId}-${dayIndex}`}
-        initialDayPlan={template.schedule[dayIndex]} 
-        onSavePlan={handleSavePlan}
-        onClose={onClose} 
-      />
-      {isMultiDay && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[60] bg-surface border border-surface-light rounded-full px-2 py-1 flex gap-1 shadow-2xl backdrop-blur-md">
-          {template.schedule.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setDayIndex(i)}
-              className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center transition-all ${
-                i === dayIndex ? 'bg-neon-blue text-black' : 'bg-transparent text-text-secondary hover:text-text-primary'
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-      )}
-    </>
+    <WorkoutEditor 
+      fullPlan={template}
+      dayIndex={initialDayIndex} 
+      onSaveFullPlan={handleSaveFullPlan}
+      onClose={onClose} 
+    />
   );
 }
 

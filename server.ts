@@ -10,6 +10,30 @@ app.use(cors());
 app.use(express.json());
 
 // API route for Gemini
+app.post('/api/gemini/generate-workout-async', async (req, res) => {
+  try {
+    const { requestId, userId, questionnaireData } = req.body;
+    const authHeader = req.headers['authorization'] || '';
+    const idToken = authHeader.replace(/^Bearer\s+/i, '');
+    const customHeaderKey = req.headers['x-gemini-key'] || req.headers['X-Gemini-Key'] || '';
+    const apiKey = (typeof customHeaderKey === 'string' && customHeaderKey.trim() !== '')
+      ? customHeaderKey
+      : process.env.GEMINI_API_KEY || '';
+
+    res.json({ ok: true, requestId });
+
+    const { processWorkoutGeneration } = await import('./lib/workoutGeneratorBackend');
+    processWorkoutGeneration(requestId, userId, idToken, questionnaireData, apiKey).catch(err => {
+      console.error("[Workout Generator Backend Error]:", err);
+    });
+  } catch (err: any) {
+    console.error("Error in generate-workout-async route:", err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: err.message || 'Error processing workout generation' });
+    }
+  }
+});
+
 app.post('/api/gemini/generate', async (req, res) => {
   try {
     const { prompt, model, systemInstruction, responseMimeType } = req.body;

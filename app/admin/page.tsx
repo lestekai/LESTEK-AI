@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
@@ -27,44 +27,35 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(true);
 
-  const checkAdmin = async () => {
-    // MOCK BYPASS
-    if (profile?.role === 'admin' && profile?.id === 'test-admin-id') {
-      setIsAdmin(true);
-      setLoading(false);
-      return;
-    }
-
-    const user = auth.currentUser;
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
-    const docSnap = await getDoc(doc(db, 'profiles', user.uid));
-    const data = docSnap.exists() ? docSnap.data() : null;
-    const error = !docSnap.exists();
-
-    if (user.email === 'lestek.sup@gmail.com' || (!error && data?.role === 'admin')) {
-      setIsAdmin(true);
-      setLoading(false);
-    } else {
-      navigate('/dashboard');
-    }
-  };
-
   useEffect(() => {
-    let mounted = true;
-    if (mounted) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      checkAdmin();
-    }
-    return () => { mounted = false; };
-  }, [profile]); // eslint-disable-line react-hooks/exhaustive-deps
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        navigate('/login');
+        return;
+      }
+
+      try {
+        const docSnap = await getDoc(doc(db, 'profiles', user.uid));
+        const data = docSnap.exists() ? docSnap.data() : null;
+        
+        if (user.email === 'lestek.sup@gmail.com' || (data?.role === 'admin')) {
+          setIsAdmin(true);
+          setLoading(false);
+        } else {
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+        navigate('/dashboard');
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-white">
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center text-text-primary">
         <Loader2 className="animate-spin text-neon-blue mb-4" size={32} />
         <p className="text-text-secondary uppercase tracking-widest text-xs">Verificando Credenciais...</p>
       </div>
@@ -85,7 +76,7 @@ export default function AdminDashboard() {
       case 'logs': return <AdminLogs />;
       case 'settings': return <AdminSettings />;
       default: return (
-        <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-white/10 rounded-2xl">
+        <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-text-primary/10 rounded-2xl">
           <p className="text-text-secondary">Módulo &quot;{activeTab}&quot; em desenvolvimento.</p>
         </div>
       );
@@ -93,15 +84,15 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-white flex flex-col md:flex-row">
+    <div className="min-h-screen bg-background text-text-primary flex flex-col md:flex-row">
       {/* Sidebar */}
       <aside className="w-full md:w-64 bg-surface border-r border-surface-light flex-shrink-0 flex flex-col">
         <div className="p-6 border-b border-surface-light flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shield className="text-neon-blue drop-shadow-[0_0_8px_rgba(0,240,255,0.5)]" size={24} />
-            <h1 className="text-lg font-black font-display tracking-tight text-white leading-none">EVOLUX<br/><span className="text-[10px] text-neon-blue tracking-widest font-normal uppercase">Command</span></h1>
+            <h1 className="text-lg font-black font-display tracking-tight text-text-primary leading-none">EVOLUX<br/><span className="text-[10px] text-neon-blue tracking-widest font-normal uppercase">Command</span></h1>
           </div>
-          <button onClick={() => navigate('/dashboard')} className="md:hidden p-2 text-text-secondary hover:text-white">
+          <button onClick={() => navigate('/dashboard')} className="md:hidden p-2 text-text-secondary hover:text-text-primary">
             <ArrowLeft size={20} />
           </button>
         </div>
@@ -117,7 +108,7 @@ export default function AdminDashboard() {
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive 
                     ? 'bg-neon-blue/10 text-neon-blue border border-neon-blue/20' 
-                    : 'text-text-secondary hover:bg-white/5 hover:text-white border border-transparent'
+                    : 'text-text-secondary hover:bg-text-primary/5 hover:text-text-primary border border-transparent'
                 }`}
               >
                 <Icon size={18} className={isActive ? 'text-neon-blue' : 'text-text-secondary'} />
@@ -130,7 +121,7 @@ export default function AdminDashboard() {
         <div className="p-4 border-t border-surface-light">
           <button 
             onClick={() => navigate('/dashboard')}
-            className="w-full flex items-center justify-center gap-2 py-2 text-xs font-bold uppercase tracking-widest text-text-secondary hover:text-white transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-2 text-xs font-bold uppercase tracking-widest text-text-secondary hover:text-text-primary transition-colors"
           >
             <ArrowLeft size={14} /> Voltar ao App
           </button>
@@ -138,7 +129,7 @@ export default function AdminDashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 h-screen overflow-y-auto p-4 md:p-8 bg-[#030303]">
+      <main className="flex-1 h-screen overflow-y-auto p-4 md:p-8 bg-background">
         <div className="max-w-6xl mx-auto">
           {renderContent()}
         </div>

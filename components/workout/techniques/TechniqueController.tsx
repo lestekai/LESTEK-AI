@@ -82,7 +82,7 @@ export function TechniqueController({ state, onAdvance, onComplete }: Props) {
             </span>
             <button
                 onClick={handleAdvance}
-                className="text-[10px] mt-4 uppercase font-black text-text-secondary hover:text-text-primary transition-colors tracking-widest bg-white/5 px-4 py-2 rounded-xl"
+                className="text-[10px] mt-4 uppercase font-black text-text-secondary hover:text-text-primary transition-colors tracking-widest bg-text-primary/5 px-4 py-2 rounded-xl"
             >
                 Pular Rest
             </button>

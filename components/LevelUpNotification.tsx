@@ -39,7 +39,7 @@ export function LevelUpNotification() {
            <div className="bg-surface border-2 border-neon-blue box-glow-blue p-8 rounded-[2rem] text-center shadow-2xl relative overflow-hidden max-w-sm w-full">
              <div className="absolute top-0 right-0 w-32 h-32 bg-neon-purple/20 blur-xl rounded-full" />
              <Star size={48} className="text-neon-blue mx-auto mb-4 drop-shadow-[0_0_10px_rgba(0,240,255,1)]" />
-             <h2 className="text-3xl font-display font-bold text-white mb-2 uppercase tracking-widest text-glow-blue">Level UP!</h2>
+             <h2 className="text-3xl font-display font-bold text-text-primary mb-2 uppercase tracking-widest text-glow-blue">Level UP!</h2>
              <p className="text-lg text-text-secondary">Você alcançou o Nível <span className="font-bold text-neon-purple">{profile?.avatarLevel}</span></p>
              <p className="text-xs text-text-secondary mt-2">Continue forçando seus limites.</p>
            </div>

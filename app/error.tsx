@@ -29,14 +29,14 @@ export default function GlobalError({
           <AlertTriangle size={32} />
         </div>
         
-        <h2 className="text-2xl font-display font-bold text-white mb-2 relative z-10">Falha Sistêmica</h2>
+        <h2 className="text-2xl font-display font-bold text-text-primary mb-2 relative z-10">Falha Sistêmica</h2>
         <p className="text-sm text-text-secondary mb-8 relative z-10">
           Encontramos uma anomalia em nossos sistemas. Não se preocupe, a evolução é contínua. 
         </p>
         
         <button
           onClick={() => reset()}
-          className="w-full flex items-center justify-center gap-2 bg-neon-blue text-background font-bold uppercase tracking-widest text-xs py-4 rounded-xl hover:bg-[#00d5ff] transition-colors relative z-10"
+          className="w-full flex items-center justify-center gap-2 bg-neon-blue text-background font-bold uppercase tracking-widest text-xs py-4 rounded-xl hover:bg-background transition-colors relative z-10"
         >
           <RefreshCcw size={16} />
           <span>Tentar Novamente</span>

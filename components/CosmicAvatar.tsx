@@ -51,7 +51,7 @@ export function CosmicAvatar({ profile }: CosmicAvatarProps) {
              </span>
              
              {/* Stats Display */}
-             <div className="relative z-10 w-full flex flex-col items-center border-t border-white/10 pt-2 mt-1">
+             <div className="relative z-10 w-full flex flex-col items-center border-t border-text-primary/10 pt-2 mt-1">
                 <span className={`text-xs font-bold uppercase tracking-widest ${rank.color}`}>
                    LEVEL {avatarLevel}: {rank.name}
                 </span>

@@ -198,7 +198,7 @@ export default function AdminOverview() {
           <div className="flex-1 flex flex-col justify-center gap-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
+                <div className="w-10 h-10 rounded-xl bg-text-primary/5 flex items-center justify-center border border-text-primary/10">
                    <Target size={18} className="text-text-secondary" />
                 </div>
                 <div>

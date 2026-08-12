@@ -14,9 +14,20 @@ export default function AdminPlans() {
 
   const fetchUsers = async () => {
     setLoading(true);
-    const q = query(collection(db, 'profiles'), orderBy('created_at', 'desc'));
+    const q = query(collection(db, 'profiles'));
     const snapshot = await getDocs(q);
     const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      data.sort((a, b) => {
+        const getMs = (val) => {
+          if (!val) return 0;
+          if (val.toMillis) return val.toMillis();
+          if (val.seconds) return val.seconds * 1000;
+          const parsed = new Date(val).getTime();
+          return isNaN(parsed) ? 0 : parsed;
+        };
+        return getMs(b.created_at) - getMs(a.created_at);
+      });
+
     setUsers(data as any);
     setLoading(false);
   };
@@ -106,7 +117,7 @@ export default function AdminPlans() {
       </div>
 
       <div className="bg-surface border border-surface-light rounded-2xl p-4">
-        <h3 className="text-sm font-bold text-white mb-4">Gerenciar Solicitações e Assinaturas</h3>
+        <h3 className="text-sm font-bold text-text-primary mb-4">Gerenciar Solicitações e Assinaturas</h3>
         <div className="relative mb-6">
            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary" size={18} />
            <input 
@@ -114,7 +125,7 @@ export default function AdminPlans() {
              placeholder="Buscar usuário por nome, email ou username..."
              value={search}
              onChange={e => setSearch(e.target.value)}
-             className="w-full bg-background border border-white/5 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-neon-blue transition-colors text-white"
+             className="w-full bg-background border border-text-primary/5 rounded-xl pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-neon-blue transition-colors text-text-primary"
            />
         </div>
 
@@ -188,9 +199,9 @@ function PlanRow({ user, initialPlan, initialExpiresAt, planRequest, planRequest
   const hasChanges = plan !== initialPlan || expiresAt !== initialExpiresAt;
 
   return (
-    <tr className="hover:bg-white/5 transition-colors">
+    <tr className="hover:bg-text-primary/5 transition-colors">
       <td className="px-4 py-4">
-        <div className="font-bold text-sm text-white">{user.name || user.username}</div>
+        <div className="font-bold text-sm text-text-primary">{user.name || user.username}</div>
         <div className="text-[10px] text-text-secondary">@{user.username}</div>
       </td>
       <td className="px-4 py-4 text-xs text-text-secondary">{user.email}</td>
@@ -198,7 +209,7 @@ function PlanRow({ user, initialPlan, initialExpiresAt, planRequest, planRequest
         <select 
           value={plan} 
           onChange={e => setPlan(e.target.value)}
-          className="bg-background border border-white/10 rounded-lg px-2 py-1 text-sm focus:border-neon-blue"
+          className="bg-background border border-text-primary/10 rounded-lg px-2 py-1 text-sm focus:border-neon-blue"
         >
           <option value="base">Base (Gratuito)</option>
           <option value="orbit">Orbit</option>
@@ -234,13 +245,13 @@ function PlanRow({ user, initialPlan, initialExpiresAt, planRequest, planRequest
             type="date"
             value={expiresAt}
             onChange={e => setExpiresAt(e.target.value)}
-            className="bg-background border border-white/10 rounded-lg px-2 py-1 text-sm focus:border-neon-blue"
+            className="bg-background border border-text-primary/10 rounded-lg px-2 py-1 text-sm focus:border-neon-blue"
           />
           <div className="flex flex-wrap gap-1">
-            <button onClick={() => addDays(30)} className="text-[10px] bg-white/5 px-2 py-1 rounded hover:bg-white/10">+30d</button>
-            <button onClick={() => addDays(90)} className="text-[10px] bg-white/5 px-2 py-1 rounded hover:bg-white/10">+90d</button>
-            <button onClick={() => addDays(180)} className="text-[10px] bg-white/5 px-2 py-1 rounded hover:bg-white/10">+180d</button>
-            <button onClick={() => addDays(365)} className="text-[10px] bg-white/5 px-2 py-1 rounded hover:bg-white/10">+365d</button>
+            <button onClick={() => addDays(30)} className="text-[10px] bg-text-primary/5 px-2 py-1 rounded hover:bg-text-primary/10">+30d</button>
+            <button onClick={() => addDays(90)} className="text-[10px] bg-text-primary/5 px-2 py-1 rounded hover:bg-text-primary/10">+90d</button>
+            <button onClick={() => addDays(180)} className="text-[10px] bg-text-primary/5 px-2 py-1 rounded hover:bg-text-primary/10">+180d</button>
+            <button onClick={() => addDays(365)} className="text-[10px] bg-text-primary/5 px-2 py-1 rounded hover:bg-text-primary/10">+365d</button>
             <button onClick={() => setExpiresAt('')} className="text-[10px] bg-red-500/10 text-red-400 px-2 py-1 rounded hover:bg-red-500/20">Remover</button>
           </div>
           <div className="flex gap-1 mt-1">
@@ -249,9 +260,9 @@ function PlanRow({ user, initialPlan, initialExpiresAt, planRequest, planRequest
               placeholder="Dias" 
               value={customDays}
               onChange={e => setCustomDays(e.target.value)}
-              className="w-16 bg-background border border-white/10 rounded-lg px-2 py-1 text-[10px] focus:border-neon-blue"
+              className="w-16 bg-background border border-text-primary/10 rounded-lg px-2 py-1 text-[10px] focus:border-neon-blue"
             />
-            <button onClick={handleCustomDays} className="text-[10px] bg-white/5 px-2 py-1 rounded hover:bg-white/10">Personalizado</button>
+            <button onClick={handleCustomDays} className="text-[10px] bg-text-primary/5 px-2 py-1 rounded hover:bg-text-primary/10">Personalizado</button>
           </div>
         </div>
       </td>

@@ -23,7 +23,9 @@ export interface ProgressionStats {
 
 // Utility to normalize strings for matching
 function normalizeName(name: string): string {
+  if (!name) return '';
   return name
+    .toString()
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -31,13 +33,14 @@ function normalizeName(name: string): string {
 }
 
 // Parse target reps safely (e.g., "10-12" -> 10, "15" -> 15, "45s" -> 1)
-export function parseTargetReps(repsStr: string): number {
+export function parseTargetReps(repsStr: string | number): number {
   if (!repsStr) return 10; // default benchmark
+  const str = repsStr.toString();
   // If it's a timed hold like "45s" or similar
-  if (repsStr.toLowerCase().includes('s') || repsStr.toLowerCase().includes('min')) {
+  if (str.toLowerCase().includes('s') || str.toLowerCase().includes('min')) {
     return 1; // standard time metric
   }
-  const match = repsStr.match(/^(\d+)/);
+  const match = str.match(/^(\d+)/);
   if (match) {
     return parseInt(match[1], 10);
   }

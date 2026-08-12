@@ -1,5 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 'use client';
+
+import { useNavigate } from 'react-router-dom';
 
 
 import { motion } from 'motion/react';
@@ -89,7 +90,7 @@ export default function PlansPage() {
   return (
     <div className="min-h-screen bg-background overflow-y-auto pb-12">
       <header className="p-6 sticky top-0 bg-background/80 backdrop-blur-md z-20 flex items-center">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-text-secondary hover:text-white">
+        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-text-secondary hover:text-text-primary">
           <ArrowLeft size={24} />
         </button>
         <h1 className="text-xl font-bold ml-2">Escolha seu destino</h1>
@@ -107,7 +108,7 @@ export default function PlansPage() {
               className={`relative p-6 rounded-3xl border ${plan.border} ${plan.bg} overflow-hidden flex flex-col`}
             >
               {plan.popular && (
-                <div className="absolute top-0 right-0 bg-neon-purple text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+                <div className="absolute top-0 right-0 bg-neon-purple text-text-primary text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
                   Mais Escolhido
                 </div>
               )}
@@ -138,12 +139,12 @@ export default function PlansPage() {
                 onClick={() => handleSelectPlan(plan.id)}
                 className={`w-full py-3 rounded-xl font-bold transition-all mt-auto ${
                 plan.popular 
-                  ? 'bg-neon-purple text-white box-glow-purple' 
+                  ? 'bg-neon-purple text-text-primary box-glow-purple' 
                   : plan.id === 'infinite'
-                    ? 'bg-neon-pink text-white shadow-[0_0_15px_rgba(255,0,127,0.4)] hover:bg-white hover:text-neon-pink'
+                    ? 'bg-neon-pink text-text-primary shadow-[0_0_15px_rgba(255,0,127,0.4)] hover:bg-text-primary hover:text-neon-pink'
                     : plan.id === 'orbit'
-                    ? 'bg-neon-blue text-background shadow-[0_0_15px_rgba(0,240,255,0.4)] hover:bg-white'
-                    : 'bg-surface-light text-white hover:bg-surface-light/80'
+                    ? 'bg-neon-blue text-background shadow-[0_0_15px_rgba(0,240,255,0.4)] hover:bg-text-primary'
+                    : 'bg-surface-light text-text-primary hover:bg-surface-light/80'
               }`}>
                 {profile?.plan === plan.id ? 'Plano Atual' : (plan.buttonText || `Selecionar ${plan.name}`)}
               </button>

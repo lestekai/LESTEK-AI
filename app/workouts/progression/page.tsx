@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useWorkoutStore } from '@/lib/workoutStore';
 import { motion, AnimatePresence } from 'motion/react';
 import { Target, CheckCircle2, Circle, Flame, ChevronRight, Activity, Calendar, Zap, RotateCcw, ArrowRight, Trophy, ArrowLeft, ChevronUp, ChevronDown, Check, Clock, Dumbbell, Info } from 'lucide-react';
@@ -54,7 +54,7 @@ export default function ProgressionPage() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 font-sans">
         <h2 className="text-2xl font-black text-text-primary mb-2">Sem plano ativo</h2>
-        <button onClick={() => navigate('/workouts')} className="bg-[#e57d3b] text-black px-4 py-3 rounded-xl font-black uppercase text-sm">Criar Treino</button>
+        <button onClick={() => navigate('/workouts')} className="bg-background text-black px-4 py-3 rounded-xl font-black uppercase text-sm">Criar Treino</button>
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function ProgressionPage() {
     <div className="min-h-screen bg-background pb-32 overflow-x-hidden font-sans">
       <header className="p-5 sticky top-0 bg-background/95 backdrop-blur-xl z-20 flex justify-between items-center border-b border-surface-light pt-12">
         <div className="flex items-center gap-4 flex-1 min-w-0">
-          <button onClick={() => navigate(-1)} className="w-12 h-12 shrink-0 flex items-center justify-center bg-white/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95">
+          <button onClick={() => navigate(-1)} className="w-12 h-12 shrink-0 flex items-center justify-center bg-text-primary/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95">
             <ArrowLeft size={20} />
           </button>
           <div className="min-w-0 pr-2">
@@ -110,7 +110,7 @@ export default function ProgressionPage() {
                 <button
                   key={idx}
                   onClick={() => setSelectedPhaseIndex(idx)}
-                  className={`shrink-0 snap-start w-40 p-4 rounded-[20px] border transition-all text-left ${isSelected ? 'bg-surface border-[#e57d3b] shadow-[0_0_15px_rgba(229,125,59,0.1)]' : 'bg-surface border-surface-light opacity-70 hover:opacity-100 hover:border-white/20'}`}
+                  className={`shrink-0 snap-start w-40 p-4 rounded-[20px] border transition-all text-left ${isSelected ? 'bg-surface border-[#e57d3b] shadow-[0_0_15px_rgba(229,125,59,0.1)]' : 'bg-surface border-surface-light opacity-70 hover:opacity-100 hover:border-text-primary/20'}`}
                 >
                   <div className="flex justify-between items-start mb-2">
                     <span className={`text-sm font-black truncate pr-2 ${isSelected ? 'text-[#e57d3b]' : 'text-text-primary'}`}>{idx + 1}: {p.name.replace(/^Fase \d+:\s*/i, '')}</span>
@@ -133,14 +133,14 @@ export default function ProgressionPage() {
                 {selectedPhaseIndex === currentPhaseIndex ? `${currentWeekIndex + 1} de ${selectedPhase.durationWeeks} Semanas` : `${selectedPhase.durationWeeks} Semanas`}
               </p>
             </div>
-            <button className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors">
+            <button className="w-10 h-10 rounded-full bg-text-primary/5 flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors">
               <Info size={18} />
             </button>
           </div>
           
-          <div className="h-1.5 bg-white/5 rounded-full overflow-hidden w-full">
+          <div className="h-1.5 bg-text-primary/5 rounded-full overflow-hidden w-full">
              <div 
-               className="h-full bg-[#e57d3b] rounded-full transition-all duration-1000"
+               className="h-full bg-background rounded-full transition-all duration-1000"
                style={{ width: selectedPhaseIndex < currentPhaseIndex ? '100%' : selectedPhaseIndex === currentPhaseIndex ? `${(currentWeekIndex / selectedPhase.durationWeeks) * 100}%` : '0%' }}
              />
           </div>
@@ -224,7 +224,7 @@ function PhaseWeekItem({
                {/* Timeline of Days */}
                <div className="relative pl-4 space-y-4 mb-4">
                  {/* Timeline Line */}
-                 <div className="absolute left-[23px] top-4 bottom-4 w-px bg-white/5" />
+                 <div className="absolute left-[23px] top-4 bottom-4 w-px bg-text-primary/5" />
                  
                  {trainingDays.map((day: any, i: number) => {
                    const isDayCompleted = isCompleted || (isActive && i < realWorkoutsCount);
@@ -277,15 +277,15 @@ function PhaseWeekItem({
 
                  {isActive && (
                    <div className="flex gap-3">
-                     <button onClick={repeatWeek} className="flex-1 py-3 bg-background border border-[#e57d3b]/30 rounded-[16px] text-[#e57d3b] font-black uppercase tracking-widest text-[10px] hover:bg-[#e57d3b]/10 transition-all active:scale-95 text-center">
+                     <button onClick={repeatWeek} className="flex-1 py-3 bg-background border border-[#e57d3b]/30 rounded-[16px] text-[#e57d3b] font-black uppercase tracking-widest text-[10px] hover:bg-background/10 transition-all active:scale-95 text-center">
                        Repetir Semana
                      </button>
                      {!isLastWeek ? (
-                       <button onClick={advanceWeek} className="flex-1 py-3 bg-[#e57d3b] text-black rounded-[16px] font-black uppercase tracking-widest text-[10px] shadow-lg hover:bg-amber-400 transition-all active:scale-95 text-center">
+                       <button onClick={advanceWeek} className="flex-1 py-3 bg-background text-black rounded-[16px] font-black uppercase tracking-widest text-[10px] shadow-lg hover:bg-amber-400 transition-all active:scale-95 text-center">
                          Próxima Semana
                        </button>
                      ) : !isLastPhase ? (
-                       <button onClick={advancePhase} className="flex-1 py-3 bg-[#e57d3b] text-black rounded-[16px] font-black uppercase tracking-widest text-[10px] shadow-lg hover:bg-amber-400 transition-all active:scale-95 text-center">
+                       <button onClick={advancePhase} className="flex-1 py-3 bg-background text-black rounded-[16px] font-black uppercase tracking-widest text-[10px] shadow-lg hover:bg-amber-400 transition-all active:scale-95 text-center">
                          Avançar Fase
                        </button>
                      ) : (

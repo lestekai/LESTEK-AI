@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useWorkoutStore, WorkoutPlan } from '@/lib/workoutStore';
+import { useNavigate } from 'react-router-dom';
 import { BottomNav } from '@/components/BottomNav';
 import { ArrowLeft, Save, Activity, Upload, Download, Copy, Check, ChevronDown, ChevronUp, Zap } from 'lucide-react';
 
@@ -95,7 +95,7 @@ export default function TemplatesPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Evolux_${currentPlan.phaseName.replace(/\s+/g, '_')}.json`;
+    a.download = `Evolux_${(currentPlan.phaseName || currentPlan.programName || 'treino').replace(/\s+/g, '_')}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -104,7 +104,7 @@ export default function TemplatesPage() {
     <div className="min-h-screen bg-background pb-32 overflow-x-hidden text-text-primary font-sans">
       <header className="p-5 sticky top-0 bg-background/95 backdrop-blur-xl z-20 flex justify-between items-center border-b border-surface-light pt-12">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="w-12 h-12 flex items-center justify-center bg-white/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95">
+          <button onClick={() => navigate(-1)} className="w-12 h-12 flex items-center justify-center bg-text-primary/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95">
             <ArrowLeft size={20} />
           </button>
           <div>
@@ -124,7 +124,7 @@ export default function TemplatesPage() {
               <div className="flex gap-2 overflow-x-auto pb-4 mb-2 no-scrollbar">
                 <button
                   onClick={() => { setSelectedCategory(null); setExpandedIndex(null); }}
-                  className={`px-4 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${!selectedCategory ? 'bg-neon-blue text-black border-neon-blue' : 'bg-surface border-surface-light text-text-secondary hover:border-white/30'}`}
+                  className={`px-4 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${!selectedCategory ? 'bg-neon-blue text-black border-neon-blue' : 'bg-surface border-surface-light text-text-secondary hover:border-text-primary/30'}`}
                 >
                   Todos
                 </button>
@@ -132,7 +132,7 @@ export default function TemplatesPage() {
                   <button
                     key={cat as string}
                     onClick={() => { setSelectedCategory(cat as string); setExpandedIndex(null); }}
-                    className={`px-4 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${selectedCategory === cat ? 'bg-neon-blue text-black border-neon-blue' : 'bg-surface border-surface-light text-text-secondary hover:border-white/30'}`}
+                    className={`px-4 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all ${selectedCategory === cat ? 'bg-neon-blue text-black border-neon-blue' : 'bg-surface border-surface-light text-text-secondary hover:border-text-primary/30'}`}
                   >
                     {cat as string}
                   </button>
@@ -145,7 +145,7 @@ export default function TemplatesPage() {
                  const originalIndex = PREMADE_TEMPLATES.indexOf(tpl);
                  const isExpanded = expandedIndex === originalIndex;
                  return (
-                 <div key={tpl.id || originalIndex} className={`bg-surface transition-all duration-300 rounded-2xl overflow-hidden border ${isExpanded ? 'border-neon-blue/50 shadow-lg shadow-neon-blue/10' : 'border-surface-light hover:border-white/20'}`}>
+                 <div key={tpl.id || originalIndex} className={`bg-surface transition-all duration-300 rounded-2xl overflow-hidden border ${isExpanded ? 'border-neon-blue/50 shadow-lg shadow-neon-blue/10' : 'border-surface-light hover:border-text-primary/20'}`}>
                     <div 
                       className="flex justify-between items-center cursor-pointer p-4 sm:p-5"
                       onClick={() => setExpandedIndex(isExpanded ? null : originalIndex)}
@@ -156,12 +156,12 @@ export default function TemplatesPage() {
                         <p className={`text-sm text-text-secondary font-medium transition-all ${isExpanded ? '' : 'line-clamp-2'}`}>{tpl.planPromptDescription}</p>
                         
                         <div className="flex gap-2 mt-4 flex-wrap">
-                          {tpl.level && <span className="px-3 py-1 rounded-full bg-white/5 text-[9px] font-black uppercase tracking-widest text-text-secondary border border-surface-light">{tpl.level}</span>}
-                          {tpl.daysPerWeek && <span className="px-3 py-1 rounded-full bg-white/5 text-[9px] font-black uppercase tracking-widest text-text-secondary border border-surface-light">{tpl.daysPerWeek} Dias/Sem</span>}
-                          {tpl.durationWeeks && <span className="px-3 py-1 rounded-full bg-white/5 text-[9px] font-black uppercase tracking-widest text-text-secondary border border-surface-light">{tpl.durationWeeks} Semanas</span>}
+                          {tpl.level && <span className="px-3 py-1 rounded-full bg-text-primary/5 text-[9px] font-black uppercase tracking-widest text-text-secondary border border-surface-light">{tpl.level}</span>}
+                          {tpl.daysPerWeek && <span className="px-3 py-1 rounded-full bg-text-primary/5 text-[9px] font-black uppercase tracking-widest text-text-secondary border border-surface-light">{tpl.daysPerWeek} Dias/Sem</span>}
+                          {tpl.durationWeeks && <span className="px-3 py-1 rounded-full bg-text-primary/5 text-[9px] font-black uppercase tracking-widest text-text-secondary border border-surface-light">{tpl.durationWeeks} Semanas</span>}
                         </div>
                       </div>
-                      <div className={`p-3 rounded-full border shrink-0 transition-all ${isExpanded ? 'bg-neon-blue/10 border-neon-blue/30 text-neon-blue' : 'bg-white/5 border-surface-light text-text-secondary group-hover:border-white/20'}`}>
+                      <div className={`p-3 rounded-full border shrink-0 transition-all ${isExpanded ? 'bg-neon-blue/10 border-neon-blue/30 text-neon-blue' : 'bg-text-primary/5 border-surface-light text-text-secondary group-hover:border-text-primary/20'}`}>
                         {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                       </div>
                     </div>
@@ -173,7 +173,7 @@ export default function TemplatesPage() {
                           <div className="grid gap-3">
                             {tpl.schedule.map((day: any, j: number) => (
                               <div key={j} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl bg-background border border-surface-light relative overflow-hidden group gap-4">
-                                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-white/5 group-hover:bg-neon-blue/50 transition-colors" />
+                                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-text-primary/5 group-hover:bg-neon-blue/50 transition-colors" />
                                 <div className="pl-3">
                                   <span className="font-black text-text-primary block text-sm">{day.dayName.split('-')[0]}</span>
                                   <span className={`text-[11px] font-black uppercase tracking-widest ${day.isRest ? 'text-neon-purple' : 'text-text-secondary'}`}>{day.focus}</span>
@@ -182,12 +182,12 @@ export default function TemplatesPage() {
                                   {!day.isRest && day.exercises && (
                                     <div className="mt-3 flex flex-wrap gap-1.5">
                                       {day.exercises.slice(0, 4).map((ex: any, idx: number) => (
-                                        <span key={idx} className="text-[10px] bg-white/5 border border-surface-light text-text-secondary px-2 py-1 rounded-md line-clamp-1 max-w-[120px]" title={ex.name}>
+                                        <span key={idx} className="text-[10px] bg-text-primary/5 border border-surface-light text-text-secondary px-2 py-1 rounded-md line-clamp-1 max-w-[120px]" title={ex.name}>
                                           {ex.sets}x {ex.name}
                                         </span>
                                       ))}
                                       {day.exercises.length > 4 && (
-                                        <span className="text-[10px] bg-white/5 border border-surface-light text-text-secondary px-2 py-1 rounded-md">
+                                        <span className="text-[10px] bg-text-primary/5 border border-surface-light text-text-secondary px-2 py-1 rounded-md">
                                           +{day.exercises.length - 4} exs
                                         </span>
                                       )}
@@ -202,7 +202,7 @@ export default function TemplatesPage() {
                                         e.stopPropagation();
                                         startFreeWorkoutFromTemplate(day, tpl.phaseName);
                                       }}
-                                      className="py-1.5 px-4 bg-white/10 hover:bg-white text-text-primary hover:text-black rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 shrink-0"
+                                      className="py-1.5 px-4 bg-text-primary/10 hover:bg-text-primary text-text-primary hover:text-black rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5 shrink-0"
                                       title="Iniciar como Treino Livre"
                                     >
                                       <Activity size={12} /> Testar
@@ -227,7 +227,7 @@ export default function TemplatesPage() {
                               useWorkoutStore.getState().addUserTemplate(extraPlan as unknown as WorkoutPlan);
                               alert('Treino salvo nos Treinos Extras!');
                             }}
-                            className="flex-1 py-3 rounded-[20px] bg-surface border border-surface-light text-text-primary font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-white/5 transition-all shadow-lg active:scale-95"
+                            className="flex-1 py-3 rounded-[20px] bg-surface border border-surface-light text-text-primary font-black text-xs tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-text-primary/5 transition-all shadow-lg active:scale-95"
                           >
                             <Save size={16}/> Salvar no Extra
                           </button>
@@ -256,7 +256,7 @@ export default function TemplatesPage() {
             {currentPlan ? (
               <div className="bg-surface border border-surface-light p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
                  <div className="text-center sm:text-left">
-                   <p className="font-black text-text-primary text-lg">{currentPlan.phaseName}</p>
+                   <p className="font-black text-text-primary text-lg">{currentPlan.phaseName || currentPlan.programName || 'Treino Personalizado'}</p>
                    <p className="text-xs text-text-secondary font-medium mt-1">Gere um backup completo</p>
                  </div>
                  <button 
@@ -293,9 +293,9 @@ export default function TemplatesPage() {
               </button>
               
               <div className="flex items-center gap-4 py-2 opacity-50">
-                 <div className="h-px bg-white/10 flex-1" />
+                 <div className="h-px bg-text-primary/10 flex-1" />
                  <span className="text-[9px] font-black text-text-secondary uppercase tracking-widest">Opção Manual</span>
-                 <div className="h-px bg-white/10 flex-1" />
+                 <div className="h-px bg-text-primary/10 flex-1" />
               </div>
 
               <textarea 

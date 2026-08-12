@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function getBodyPartImageUrl(muscle: string): string | null {
-  if (!muscle) return null;
+  if (!muscle || typeof muscle !== 'string') return null;
   const cleanMuscle = muscle.toLowerCase().trim();
   
   if (cleanMuscle.includes('cardio') || cleanMuscle.includes('esteira') || cleanMuscle.includes('bicicleta') || cleanMuscle.includes('elíptico')) return null;

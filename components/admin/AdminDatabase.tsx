@@ -57,22 +57,8 @@ export default function AdminDatabase() {
         <h2 className="text-xl font-bold font-display">Console do Banco de Dados</h2>
       </div>
 
-      <div className="bg-amber-500/10 border border-amber-500/20 p-6 rounded-2xl">
-        <div className="flex items-center gap-2 mb-4">
-          <TerminalSquare className="text-amber-500" size={20} />
-          <h3 className="text-sm font-bold text-amber-500 uppercase tracking-widest">Atualização Necessária: Schema V2</h3>
-        </div>
-        <p className="text-sm text-text-secondary mb-4 leading-relaxed">
-          Para que o novo armazenamento de Questionário IA, Finanças e Inventário Isolado funcione 100%, você precisa rodar o script SQL gerado <strong className="text-white">EVOLUX_ADVANCED_SCHEMA_V2.sql</strong>.
-        </p>
-        <ul className="text-xs text-text-secondary space-y-2 list-disc list-inside bg-black/40 p-4 rounded-xl border border-white/5">
-          <li>Acesse seu painel do Firebase Console.</li>
-          <li>Vá em <strong>Firestore Database</strong> &gt; <strong>Regras (Rules)</strong>.</li>
-          <li>Verifique se as regras estão corretas e seguras.</li>
-          <li>O banco de dados irá criar as coleções automaticamente sob demanda (Firestore é schemaless).</li>
-          <li>Sua base passará a contar com coleções para <code className="text-amber-500">finances</code> e <code className="text-amber-500">user_inventory</code>, melhorando o isolamento de dados pedido.</li>
-        </ul>
-      </div>
+      
+        
 
       <div className="bg-surface border border-surface-light p-6 rounded-2xl">
         <h3 className="text-sm font-bold text-text-secondary uppercase tracking-widest mb-6">Uso de Armazenamento Geral</h3>
@@ -82,7 +68,7 @@ export default function AdminDatabase() {
            <span className="text-sm font-bold text-text-secondary pb-1">/ {maxCapacityMb} MB</span>
         </div>
 
-        <div className="h-4 bg-background rounded-full overflow-hidden border border-white/10 mb-4">
+        <div className="h-4 bg-background rounded-full overflow-hidden border border-text-primary/10 mb-4">
           <div 
             className="h-full bg-emerald-500" 
             style={{ width: `${percentUsed < 1 ? 1 : percentUsed}%` }}
@@ -104,9 +90,9 @@ export default function AdminDatabase() {
            
            <div className="space-y-4">
              {tables.map(table => (
-               <div key={table.name} className="flex items-center justify-between p-3 rounded-xl bg-background border border-white/5">
+               <div key={table.name} className="flex items-center justify-between p-3 rounded-xl bg-background border border-text-primary/5">
                  <div>
-                   <div className="text-sm font-bold text-white">{table.name}</div>
+                   <div className="text-sm font-bold text-text-primary">{table.name}</div>
                    <div className="text-[10px] text-text-secondary">{table.rows} registros</div>
                  </div>
                  <div className="text-sm font-bold text-neon-blue">{table.sizeMb} MB</div>
@@ -128,7 +114,7 @@ export default function AdminDatabase() {
               </div>
               <div className="flex items-center justify-between border-b border-surface-light pb-3">
                 <span className="text-xs text-text-secondary">Plataforma</span>
-                <span className="text-xs font-bold text-white">Firebase (Firestore)</span>
+                <span className="text-xs font-bold text-text-primary">Firebase (Firestore)</span>
               </div>
               <div className="flex items-center justify-between border-b border-surface-light pb-3">
                 <span className="text-xs text-text-secondary">Security Rules</span>

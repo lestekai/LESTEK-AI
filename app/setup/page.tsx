@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 'use client';
 
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 
 import { Download, MonitorSmartphone, BellRing, ArrowRight } from 'lucide-react';
@@ -27,7 +27,7 @@ export default function SetupAppPage() {
           >
             <MonitorSmartphone size={40} className="text-neon-blue" />
           </motion.div>
-          <h1 className="text-3xl font-black font-display text-white">Instale o App</h1>
+          <h1 className="text-3xl font-black font-display text-text-primary">Instale o App</h1>
           <p className="text-text-secondary text-sm">Adicione o Evolux à sua tela inicial e ative as notificações para transformar sua rotina.</p>
         </div>
 
@@ -42,7 +42,7 @@ export default function SetupAppPage() {
               <Download size={20} className="text-neon-blue" />
             </div>
             <div>
-              <h3 className="font-bold text-white text-sm mb-1">Passo 1: Instalar o App</h3>
+              <h3 className="font-bold text-text-primary text-sm mb-1">Passo 1: Instalar o App</h3>
               <p className="text-[11px] text-text-secondary leading-tight mb-2">No navegador, toque em &quot;Compartilhar&quot; (iOS) ou nos 3 pontinhos (Android) e selecione <strong className="text-neon-blue">&quot;Adicionar à Tela Inicial&quot;</strong>.</p>
             </div>
           </motion.div>
@@ -57,7 +57,7 @@ export default function SetupAppPage() {
               <BellRing size={20} className="text-neon-purple" />
             </div>
             <div>
-              <h3 className="font-bold text-white text-sm mb-1">Passo 2: Permitir Notificações</h3>
+              <h3 className="font-bold text-text-primary text-sm mb-1">Passo 2: Permitir Notificações</h3>
               <p className="text-[11px] text-text-secondary leading-tight mb-3">Ative as notificações para receber os alertas dos seus treinos e hábitos diários.</p>
               <button onClick={() => alert('Em ambiente web nativo, isso solicita permissão.')} className="text-[10px] font-bold text-neon-purple bg-neon-purple/10 px-3 py-1.5 rounded-lg w-fit uppercase tracking-widest hover:bg-neon-purple/20 transition-colors">
                 Solicitar Permissão
@@ -71,7 +71,7 @@ export default function SetupAppPage() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
           onClick={handleFinish}
-          className="w-full py-4 mt-4 bg-white text-background font-black rounded-2xl flex items-center justify-center gap-2 hover:bg-white/90 transition-colors"
+          className="w-full py-4 mt-4 bg-text-primary text-background font-black rounded-2xl flex items-center justify-center gap-2 hover:bg-text-primary/90 transition-colors"
         >
           Ir para o Dashboard <ArrowRight size={18} />
         </motion.button>

@@ -85,15 +85,15 @@ export function resolveExerciseMedia(exerciseNameOrId: string, fallbackMuscle?: 
   let normalizedInput = normalizeExerciseName(exerciseNameOrId);
   if (MANUAL_ALIASES[normalizedInput]) {
      normalizedInput = MANUAL_ALIASES[normalizedInput];
-  } else if (MANUAL_ALIASES[exerciseNameOrId.toLowerCase()]) {
+  } else if (exerciseNameOrId && typeof exerciseNameOrId === 'string' && MANUAL_ALIASES[exerciseNameOrId.toLowerCase()]) {
      normalizedInput = MANUAL_ALIASES[exerciseNameOrId.toLowerCase()];
   }
   
   // 1. Strict Search in Database
   let matchedExercise = EXERCISE_DATABASE.find(ex => 
     ex.normalizedName === normalizedInput || 
-    ex.aliases.includes(normalizedInput) ||
-    ex.canonicalName.toLowerCase() === normalizedInput
+    (ex.aliases && Array.isArray(ex.aliases) && ex.aliases.includes(normalizedInput)) ||
+    (ex.canonicalName && ex.canonicalName.toLowerCase() === normalizedInput)
   );
 
   // Fallback to startsWith for highly similar basic names if exact fails

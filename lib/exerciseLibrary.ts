@@ -12,19 +12,25 @@ export type ExerciseDefinition = {
   description?: string;
 };
 
-export function findExerciseInLibrary(id: string): ExerciseDefinition | undefined { return EXERCISE_LIBRARY.find(ex => ex.id === id); }
+export function findExerciseInLibrary(id: string): ExerciseDefinition | undefined { 
+  if (!id) return undefined;
+  return EXERCISE_LIBRARY.find(ex => ex.id === id); 
+}
 
 export function searchExercises(query: string, muscleFilter: string = "Todos", difficultyFilter: string = "Todas"): ExerciseDefinition[] {
   let results = EXERCISE_LIBRARY;
   if (muscleFilter !== "Todos") {
-    results = results.filter(ex => ex.targetMuscles.includes(muscleFilter));
+    results = results.filter(ex => (ex.targetMuscles || []).includes(muscleFilter));
   }
   if (difficultyFilter !== "Todas") {
     results = results.filter(ex => ex.difficulty === difficultyFilter);
   }
   if (query) {
     const q = query.toLowerCase();
-    results = results.filter(ex => ex.name.toLowerCase().includes(q) || ex.targetMuscles.some(m => m.toLowerCase().includes(q)));
+    results = results.filter(ex => 
+      ((ex.name || '').toLowerCase().includes(q)) || 
+      ((ex.targetMuscles || []).some(m => (m || '').toLowerCase().includes(q)))
+    );
   }
   return results;
 }

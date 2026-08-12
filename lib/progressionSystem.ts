@@ -10,10 +10,28 @@ export interface ProgressionPhaseInfo {
   evolutionForecast: string;
 }
 
+// Helper to safely extract string from any goal parameter (string, object, array, etc.)
+function parseGoalString(goalInput: any): string {
+  if (!goalInput) return 'Hipertrofia Muscular';
+  if (typeof goalInput === 'string') return goalInput;
+  if (typeof goalInput === 'object') {
+    if (goalInput.title) return String(goalInput.title);
+    if (goalInput.name) return String(goalInput.name);
+    if (goalInput.mainGoal) return String(goalInput.mainGoal);
+    if (Array.isArray(goalInput)) return goalInput.join(' ');
+    try {
+      return JSON.stringify(goalInput);
+    } catch {
+      return String(goalInput);
+    }
+  }
+  return String(goalInput);
+}
+
 // 1. Core periodization configuration based on Goal
-export function getProgressionPhase(week: number, goalStr: string = 'Hipertrofia Muscular'): ProgressionPhaseInfo {
+export function getProgressionPhase(week: number, goalStr: any = 'Hipertrofia Muscular'): ProgressionPhaseInfo {
   // Normalize goal
-  const goal = goalStr || 'Hipertrofia Muscular';
+  const safeGoal = parseGoalString(goalStr);
   const nextWeek = week === 4 ? 1 : week + 1;
 
   const phasesMap: Record<number, { name: string; desc: string; intensity: string; weightMod: number }> = {
@@ -48,7 +66,7 @@ export function getProgressionPhase(week: number, goalStr: string = 'Hipertrofia
 
   // Specific forecasts based on user's goal
   let forecastStr = '';
-  if (goal.includes('Hipertrofia')) {
+  if (safeGoal.includes('Hipertrofia')) {
     forecastStr = week === 1 
       ? 'Ajuste neural. Esperado ganho de controle motor. Pump moderado.' 
       : week === 2
@@ -56,7 +74,7 @@ export function getProgressionPhase(week: number, goalStr: string = 'Hipertrofia
       : week === 3
       ? 'Falha concêntrica no limite. Sobrecarga máxima de nutrientes e sinalização anabólica extrema.'
       : 'Supercompensação de glicogênio. Músculos se regeneram maiores e mais fortes sem fadiga crônica.';
-  } else if (goal.includes('Força')) {
+  } else if (safeGoal.includes('Força')) {
     forecastStr = week === 1
       ? 'Coordenação intramuscular inicial. Perfeito para calibrar as cargas máximas.'
       : week === 2
@@ -64,7 +82,7 @@ export function getProgressionPhase(week: number, goalStr: string = 'Hipertrofia
       : week === 3
       ? 'Recordes Pessoais (PR). Foco total em força tensional absoluta. Fadiga neural no limite.'
       : 'Recuperação dos tendões e tecidos conjuntivos. Pronto para bater novos recordes no próximo ciclo.';
-  } else if (goal.includes('Emagrecimento') || goal.includes('Definição')) {
+  } else if (safeGoal.includes('Emagrecimento') || safeGoal.includes('Definição')) {
     forecastStr = week === 1
       ? 'Grande gasto calórico inicial, ativação aeróbia e depleção básica de glicogênio.'
       : week === 2
@@ -98,34 +116,38 @@ export function getProgressionPhase(week: number, goalStr: string = 'Hipertrofia
 export function adjustExerciseForWeek(
   exercise: ExerciseDefinition, 
   week: number, 
-  goalStr: string = 'Hipertrofia Muscular'
+  goalStr: any = 'Hipertrofia Muscular'
 ): ExerciseDefinition {
-  const goal = goalStr || 'Hipertrofia Muscular';
+  const safeGoal = parseGoalString(goalStr);
   
   // Create a clean shallow copy of the exercise to prevent accidental side effects
   const adjusted = { ...exercise };
 
   // Helper to parse existing reps to a number representation if needed, e.g. "8-12" -> 10, "15" -> 15, "5" -> 5
-  const getBaseReps = (repStr: string): number => {
-    const parts = repStr.split('-');
+  const getBaseReps = (repStr: string | number): number => {
+    if (!repStr) return 10;
+    const str = repStr.toString();
+    const parts = str.split('-');
     if (parts.length === 2) {
       const min = parseInt(parts[0], 10) || 10;
       const max = parseInt(parts[1], 10) || 10;
       return Math.round((min + max) / 2);
     }
-    const val = parseInt(repStr, 10);
+    const val = parseInt(str, 10);
     return isNaN(val) ? 10 : val;
   };
 
+  const safeRepsStr = (exercise.reps || '').toString();
+
   // Skip adjusting elements like Cardio (which might be marked by sets: 1, reps: "15min")
-  if (exercise.reps.includes('min') || exercise.reps.includes('s')) {
+  if (safeRepsStr.includes('min') || safeRepsStr.includes('s')) {
     return adjusted;
   }
 
   const baseSets = exercise.sets || 3;
   const baseRepsVal = getBaseReps(exercise.reps);
 
-  if (goal.includes('Hipertrofia')) {
+  if (safeGoal.includes('Hipertrofia')) {
     switch (week) {
       case 1: // 3x10 (Adaptation)
         adjusted.sets = baseSets;
@@ -144,7 +166,7 @@ export function adjustExerciseForWeek(
         adjusted.reps = `${Math.max(6, baseRepsVal - 2)}`;
         break;
     }
-  } else if (goal.includes('Força')) {
+  } else if (safeGoal.includes('Força')) {
     switch (week) {
       case 1: // 3x5
         adjusted.sets = baseSets;
@@ -163,7 +185,7 @@ export function adjustExerciseForWeek(
         adjusted.reps = '5';
         break;
     }
-  } else if (goal.includes('Emagrecimento') || goal.includes('Definição')) {
+  } else if (safeGoal.includes('Emagrecimento') || safeGoal.includes('Definição')) {
     switch (week) {
       case 1: // 3x15
         adjusted.sets = baseSets;

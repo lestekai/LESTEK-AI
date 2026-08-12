@@ -1,5 +1,6 @@
-export function getCommonErrorsForExercise(name: string, muscles: string[]): string[] {
-  const n = name.toLowerCase();
+export function getCommonErrorsForExercise(name: string, muscles: string[] = []): string[] {
+  const n = (name || '').toLowerCase();
+  const safeMuscles = Array.isArray(muscles) ? muscles : [];
   
   if (n.includes('supino') || n.includes('press')) {
     return [
@@ -98,7 +99,7 @@ export function getCommonErrorsForExercise(name: string, muscles: string[]): str
   }
   
   // Generic Fallbacks based on target muscle
-  if (muscles.includes('Costas')) {
+  if (safeMuscles.includes('Costas')) {
     return [
       "Fazer o movimento puxando apenas com os braços, sem ativar as escápulas.",
       "Encurtar a amplitude não alongando o músculo por completo na fase excêntrica.",
@@ -106,7 +107,7 @@ export function getCommonErrorsForExercise(name: string, muscles: string[]): str
     ];
   }
   
-  if (muscles.includes('Pernas') || muscles.includes('Glúteos')) {
+  if (safeMuscles.includes('Pernas') || safeMuscles.includes('Glúteos')) {
     return [
       "Não manter a estabilidade no calcanhar, focando o peso nas pontas dos pés.",
       "Permitir que os joelhos caiam para dentro (valgo dinâmico).",
@@ -114,7 +115,7 @@ export function getCommonErrorsForExercise(name: string, muscles: string[]): str
     ];
   }
 
-  if (muscles.includes('Ombros')) {
+  if (safeMuscles.includes('Ombros')) {
     return [
       "Utilizar carga excessiva e roubar no movimento balançando o corpo.",
       "Negligenciar a descida, deixando a gravidade puxar o peso.",

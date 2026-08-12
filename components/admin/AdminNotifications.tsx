@@ -15,9 +15,20 @@ export default function AdminNotifications() {
 
   const fetchHistory = async () => {
     try {
-      const q = query(collection(db, 'notifications'), orderBy('created_at', 'desc'), limit(20));
+      const q = query(collection(db, 'notifications'), limit(20));
       const snapshot = await getDocs(q);
       const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      data.sort((a, b) => {
+        const getMs = (val) => {
+          if (!val) return 0;
+          if (val.toMillis) return val.toMillis();
+          if (val.seconds) return val.seconds * 1000;
+          const parsed = new Date(val).getTime();
+          return isNaN(parsed) ? 0 : parsed;
+        };
+        return getMs(b.created_at) - getMs(a.created_at);
+      });
+
       if (data) setHistory(data);
     } catch (e) {
       console.warn('AdminNotifications error or insufficient permissions:', e);
@@ -86,7 +97,7 @@ export default function AdminNotifications() {
               <input 
                 value={title}
                 onChange={e => setTitle(e.target.value)}
-                className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-neon-purple"
+                className="w-full bg-background border border-text-primary/10 rounded-xl px-4 py-3 text-sm focus:border-neon-purple"
                 placeholder="Ex: Atualização do Sistema"
                 required
               />
@@ -96,7 +107,7 @@ export default function AdminNotifications() {
               <textarea 
                 value={message}
                 onChange={e => setMessage(e.target.value)}
-                className="w-full bg-background border border-white/10 rounded-xl px-4 py-3 text-sm h-32 focus:border-neon-purple resize-none"
+                className="w-full bg-background border border-text-primary/10 rounded-xl px-4 py-3 text-sm h-32 focus:border-neon-purple resize-none"
                 placeholder="Escreva a mensagem para todos os usuários..."
                 required
               />
@@ -104,7 +115,7 @@ export default function AdminNotifications() {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full py-3 bg-neon-purple text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all hover:scale-105 disabled:opacity-50"
+              className="w-full py-3 bg-neon-purple text-text-primary rounded-xl font-bold flex items-center justify-center gap-2 transition-all hover:scale-105 disabled:opacity-50"
             >
               {loading ? <Activity className="animate-spin" size={18}/> : <Send size={18} />}
               Disparar para Todos
@@ -119,8 +130,8 @@ export default function AdminNotifications() {
               <p className="text-xs text-text-secondary">Nenhuma notificação enviada ainda.</p>
             ) : (
               history.map(n => (
-                <div key={n.id} className="bg-background border border-white/5 p-4 rounded-xl relative group">
-                  <h4 className="font-bold text-sm text-white mb-1">{n.title}</h4>
+                <div key={n.id} className="bg-background border border-text-primary/5 p-4 rounded-xl relative group">
+                  <h4 className="font-bold text-sm text-text-primary mb-1">{n.title}</h4>
                   <p className="text-xs text-text-secondary">{n.message}</p>
                   <button 
                     onClick={() => deleteNotification(n.id)}

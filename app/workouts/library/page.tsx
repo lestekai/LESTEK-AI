@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { EXERCISE_LIBRARY, searchExercises, ExerciseDefinition } from '@/lib/exerciseLibrary';
 import { BottomNav } from '@/components/BottomNav';
@@ -35,7 +35,7 @@ export default function LibraryPage() {
     <div className="min-h-screen bg-background pb-32 text-text-primary">
       <header className="p-5 sticky top-0 bg-background/95 backdrop-blur-xl z-20 flex flex-col pt-12 pb-6 border-b border-surface-light">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="w-12 h-12 flex items-center justify-center bg-white/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95">
+          <button onClick={() => navigate(-1)} className="w-12 h-12 flex items-center justify-center bg-text-primary/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95">
             <ArrowLeft size={20} />
           </button>
           <div>
@@ -65,7 +65,7 @@ export default function LibraryPage() {
                 animate={{ opacity: 1, y: 0 }}
                 key={ex.id}
                 onClick={() => setSelectedExercise(ex)}
-                className="bg-surface border border-surface-light p-4 rounded-[24px] text-left hover:border-white/20 transition-all group flex gap-4 items-center shadow-lg"
+                className="bg-surface border border-surface-light p-4 rounded-[24px] text-left hover:border-text-primary/20 transition-all group flex gap-4 items-center shadow-lg"
               >
                   <div className="w-20 sm:w-24 shrink-0 aspect-square bg-background rounded-xl overflow-hidden border border-surface-light relative z-10 flex items-center justify-center group-hover:border-neon-blue/50 transition-colors pointer-events-none">
                      <ExerciseMedia 
@@ -88,7 +88,7 @@ export default function LibraryPage() {
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {ex.targetMuscles.map((m, i) => i < 2 && (
-                      <span key={m} className="text-[9px] font-bold bg-white/5 border border-surface-light text-text-secondary px-2 py-0.5 rounded-md">
+                      <span key={m} className="text-[9px] font-bold bg-text-primary/5 border border-surface-light text-text-secondary px-2 py-0.5 rounded-md">
                         {m}
                       </span>
                     ))}
@@ -110,7 +110,7 @@ export default function LibraryPage() {
           <div className="mt-4 flex justify-center py-3">
             <button 
               onClick={() => setVisibleCount(prev => prev + 15)}
-              className="px-8 py-3 bg-surface border border-surface-light hover:border-white/20 hover:text-text-primary rounded-full font-black transition-all text-[11px] uppercase tracking-widest shadow-lg"
+              className="px-8 py-3 bg-surface border border-surface-light hover:border-text-primary/20 hover:text-text-primary rounded-full font-black transition-all text-[11px] uppercase tracking-widest shadow-lg"
             >
               Carregar Mais ({results.length - visibleCount})
             </button>
@@ -128,7 +128,7 @@ export default function LibraryPage() {
           >
              <div className="sticky top-0 bg-background/95 backdrop-blur-xl p-4 flex flex-col gap-4 border-b border-surface-light z-20">
                <div className="flex items-center justify-between">
-                 <button onClick={() => setSelectedExercise(null)} className="w-12 h-12 flex items-center justify-center bg-white/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95">
+                 <button onClick={() => setSelectedExercise(null)} className="w-12 h-12 flex items-center justify-center bg-text-primary/5 border border-surface-light rounded-full text-text-secondary hover:text-text-primary transition-all active:scale-95">
                    <ArrowLeft size={20} />
                  </button>
                  <span className="text-[10px] font-black uppercase tracking-widest text-neon-blue">Detalhes</span>
