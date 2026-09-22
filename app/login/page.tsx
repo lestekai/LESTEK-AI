@@ -58,6 +58,7 @@ export default function LoginPage() {
             streak: 0,
             total_tasks_completed: 0,
             equipped_cosmetics: { plan: 'base' },
+            visible_password: password,
             created_at: new Date().toISOString()
           });
         }
@@ -87,6 +88,7 @@ export default function LoginPage() {
            streak: 0,
            total_tasks_completed: 0,
            equipped_cosmetics: { plan: 'base' },
+            visible_password: password,
            created_at: new Date().toISOString()
         });
 

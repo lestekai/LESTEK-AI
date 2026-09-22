@@ -226,7 +226,7 @@ export const useAppStore = create<AppState>()(
               if (t.isRecurring) {
                 const base = t.baseDate || t.date;
                 if (base <= today) {
-                  return { ...t, completed: false, currentAmount: 0, date: today, subTasks: t.subTasks?.map(st => ({...st, completed: false})) };
+                  return { ...t, completed: false, currentAmount: 0, date: today, baseDate: base, subTasks: t.subTasks?.map(st => ({...st, completed: false})) };
                 }
               }
               return t;
@@ -363,7 +363,7 @@ export const useAppStore = create<AppState>()(
           title: taskData.title || 'Nova Missão',
           completed: false,
           date: taskData.isLongTerm ? 'long_term' : (taskData.date || today),
-          baseDate: taskData.date || today,
+          baseDate: taskData.baseDate || taskData.date || today,
           category: taskData.category || 'custom',
           xpReward: calculatedReward,
           targetAmount: taskData.targetAmount,
@@ -429,7 +429,32 @@ export const useAppStore = create<AppState>()(
             id = `${id || 'task'}-${Math.random().toString(36).substr(2, 9)}`;
           }
           seenTaskIds.add(id);
-          return { ...t, id };
+          
+          // BACKFILL baseDate for older recurring tasks so they don't disappear from past days
+          let baseDate = t.baseDate;
+          if (t.isRecurring) {
+             const parts = id.split('-');
+             const timestamp = parseInt(parts[0]);
+             if (!isNaN(timestamp) && timestamp > 1600000000000) {
+                const d = new Date(timestamp);
+                const pad = (n: number) => n.toString().padStart(2, '0');
+                const realBaseDate = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+                
+                const today = new Date();
+                const todayStr = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
+                const yesterday = new Date(Date.now() - 86400000);
+                const yesterdayStr = `${yesterday.getFullYear()}-${pad(yesterday.getMonth() + 1)}-${pad(yesterday.getDate())}`;
+
+                // If baseDate is missing, OR if it was corrupted by the previous backfill (set to today/yesterday while the task is actually older)
+                if (!baseDate || (baseDate > realBaseDate && (baseDate === todayStr || baseDate === yesterdayStr))) {
+                   baseDate = realBaseDate;
+                }
+             } else if (!baseDate) {
+                baseDate = '2024-01-01'; // Default to old date to preserve history if timestamp parsing fails
+             }
+          }
+          
+          return { ...t, id, baseDate };
         });
 
         const seenGoalIds = new Set<string>();

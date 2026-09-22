@@ -3,6 +3,7 @@ import { db, auth } from '@/lib/firebase';
 import { collection, getCountFromServer } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { Database, HardDrive, BarChart2, AlertTriangle, TerminalSquare } from 'lucide-react';
+import AdminDiagnostics from './AdminDiagnostics';
 
 export default function AdminDatabase() {
   const [tables, setTables] = useState<any[]>([]);
@@ -56,6 +57,7 @@ export default function AdminDatabase() {
         <Database className="text-emerald-500" size={24} />
         <h2 className="text-xl font-bold font-display">Console do Banco de Dados</h2>
       </div>
+      <AdminDiagnostics />
 
       
         

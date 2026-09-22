@@ -95,8 +95,28 @@ FORMATO DO JSON EXIGIDO:
   ]
 }`;
 
-    const finalData = questionnaireData;
-    const prompt = `Gere um protocolo de treinamento hiper-preciso, profissional e totalmente personalizado com base neste perfil do aluno:
+    const isManualText = Boolean(
+      (typeof questionnaireData === 'string' && questionnaireData.trim().length > 0) ||
+      (questionnaireData && (questionnaireData.rawText || questionnaireData.mode === 'manual' || questionnaireData.manualText))
+    );
+    const rawUserText = typeof questionnaireData === 'string'
+      ? questionnaireData
+      : (questionnaireData?.rawText || questionnaireData?.manualText || '');
+
+    let prompt = '';
+    if (isManualText) {
+      prompt = `Parse o seguinte texto informando treinos, rotina e exercícios do usuário e transforme estritamente no esquema JSON conforme as regras do sistema.
+Identifique divisões, os exercícios, e adapte repetições e séries onde encontrar ou defina 3x10 como padrão.
+Gere de 1 a 4 fases lógicas e garanta que o "schedule" de cada fase tenha EXATAMENTE 7 itens, representando os 7 dias da semana (marcando "isRest": true e "focus": "Descanso" nos dias sem treino especificado).
+Dias com treino ativo devem ter "isRest": false, "warmup" (array de strings), "cooldown" (array de strings) e a lista completa de "exercises".
+IMPORTANTE: Todos os exercícios listados devem ser selecionados APENAS da seguinte lista de exercícios disponíveis no sistema. Encontre o mais próximo possível se o nome for diferente:
+${validExerciseNames}
+
+Texto do Usuário:
+"${rawUserText}"`;
+    } else {
+      const finalData = questionnaireData || {};
+      prompt = `Gere um protocolo de treinamento hiper-preciso, profissional e totalmente personalizado com base neste perfil do aluno:
     
 - NOME: ${finalData.name || 'Aluno'}
 - GÊNERO: ${finalData.gender || 'Não especificado'}
@@ -120,6 +140,7 @@ INSTRUÇÕES FINAIS PARA A IA:
 - Adeque os exercícios, séries e repetições estritamente para o objetivo principal (${finalData.mainGoal || ''}).
 - IMPORTANTE: Todos os exercícios listados devem ser selecionados APENAS da seguinte lista de exercícios disponíveis no sistema. NUNCA crie exercícios que não estejam nesta lista:
 ${validExerciseNames}`;
+    }
 
     let responseText = "";
     let lastError: any = null;

@@ -1,15 +1,33 @@
-import { Loader2 } from 'lucide-react';
+import { Skeleton } from '@/components/Skeleton';
+import { motion } from 'motion/react';
 
 export default function Loading() {
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
-      <div className="relative">
-        <div className="absolute inset-0 bg-neon-blue/20 blur-[50px] rounded-full" />
-        <Loader2 size={48} className="text-neon-blue animate-spin relative z-10" />
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen bg-background flex flex-col p-6 space-y-6 max-w-7xl mx-auto w-full pt-12"
+    >
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-[200px]" />
+          <Skeleton className="h-4 w-[150px]" />
+        </div>
+        <Skeleton className="h-12 w-12 rounded-full" />
       </div>
-      <p className="mt-8 text-sm font-bold text-text-secondary uppercase tracking-widest animate-pulse">
-        Carregando Módulos...
-      </p>
-    </div>
+
+      <div className="grid grid-cols-2 gap-4 mt-8">
+        <Skeleton className="h-24 w-full rounded-2xl" />
+        <Skeleton className="h-24 w-full rounded-2xl" />
+      </div>
+
+      <div className="space-y-4 mt-8">
+        <Skeleton className="h-6 w-[120px]" />
+        <Skeleton className="h-[200px] w-full rounded-2xl" />
+        <Skeleton className="h-[120px] w-full rounded-2xl" />
+        <Skeleton className="h-[120px] w-full rounded-2xl" />
+      </div>
+    </motion.div>
   );
 }

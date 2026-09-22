@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { db, auth } from '@/lib/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useAppStore } from '@/lib/store';
 import { useWorkoutStore } from '@/lib/workoutStore';
@@ -147,6 +147,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => unsubscribe();
   }, [navigate, location.pathname, fetchProfile]);
+
+  // Global background listener for pending workout generation requests (both AI questionnaire and text import)
+  useEffect(() => {
+    let unsubscribeReq: (() => void) | null = null;
+    let activeReqId: string | null = null;
+
+    const checkAndListenPending = () => {
+      const pendingReqId = typeof localStorage !== 'undefined' ? localStorage.getItem('pending_workout_request') : null;
+      if (!pendingReqId) {
+        if (unsubscribeReq) {
+          unsubscribeReq();
+          unsubscribeReq = null;
+          activeReqId = null;
+        }
+        return;
+      }
+
+      if (activeReqId === pendingReqId) return;
+      activeReqId = pendingReqId;
+
+      if (unsubscribeReq) unsubscribeReq();
+
+      unsubscribeReq = onSnapshot(doc(db, 'workout_generation_requests', pendingReqId), async (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.status === 'completed' && data.workoutId) {
+            try {
+              const workoutDoc = await getDoc(doc(db, 'workouts', data.workoutId));
+              if (workoutDoc.exists()) {
+                const newPlan = workoutDoc.data();
+                setPlan(newPlan);
+                localStorage.removeItem('workout_q_step');
+                localStorage.removeItem('workout_q_data');
+                localStorage.removeItem('pending_workout_request');
+              }
+            } catch (err) {
+              console.error('Error hydrating background completed workout in AuthProvider:', err);
+            }
+          } else if (data.status === 'failed') {
+            localStorage.removeItem('pending_workout_request');
+          }
+        }
+      });
+    };
+
+    checkAndListenPending();
+    const interval = setInterval(checkAndListenPending, 2000);
+
+    return () => {
+      if (unsubscribeReq) unsubscribeReq();
+      clearInterval(interval);
+    };
+  }, [setPlan]);
 
   // SYNC UP: Whenever local state changes, push to database
   useEffect(() => {

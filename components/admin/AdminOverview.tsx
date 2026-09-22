@@ -172,7 +172,7 @@ export default function AdminOverview() {
         <div className="lg:col-span-2 bg-surface rounded-2xl p-6 border border-surface-light">
           <h3 className="text-sm font-bold text-text-secondary uppercase tracking-widest mb-6">Crescimento de Usuários</h3>
           <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
               <AreaChart data={growthData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">

@@ -4,14 +4,20 @@ import { Dumbbell, ImageOff } from 'lucide-react';
 import { detectMediaType } from '@/lib/mediaValidator';
 
 interface ExerciseMediaProps {
-  exerciseNameOrId: string;
+  exerciseNameOrId?: string;
+  name?: string;
+  id?: string;
+  exerciseName?: string;
   fallbackMuscle?: string;
   className?: string;
   priority?: boolean;
 }
 
 export const ExerciseMedia = ({
-  exerciseNameOrId,
+  exerciseNameOrId = '',
+  name,
+  id,
+  exerciseName,
   fallbackMuscle,
   className = 'w-full h-full absolute inset-0',
   priority = false
@@ -20,16 +26,30 @@ export const ExerciseMedia = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
+  // Derive human-readable name and id
+  const isSynthetic = (s?: string) => !s || s.startsWith('ex_') || s.startsWith('ex-') || /^[0-9a-f]{8}-/i.test(s);
+  const humanName = name || exerciseName || (!isSynthetic(exerciseNameOrId) ? exerciseNameOrId : '');
+  const candidateId = id || (exerciseNameOrId !== humanName ? exerciseNameOrId : '');
+
+  const primarySearch = humanName || candidateId || exerciseNameOrId || '';
+  const secondarySearch = candidateId && candidateId !== primarySearch ? candidateId : (humanName && humanName !== primarySearch ? humanName : '');
+
   useEffect(() => {
-    // Media resolution
-    const media = resolveExerciseMedia(exerciseNameOrId, fallbackMuscle);
+    // Media resolution with dual identifiers
+    let media = resolveExerciseMedia(primarySearch, fallbackMuscle, secondarySearch);
+    if (media.sourcePriority === 'fallback' && secondarySearch) {
+      const alt = resolveExerciseMedia(secondarySearch, fallbackMuscle);
+      if (alt.sourcePriority !== 'fallback') {
+        media = alt;
+      }
+    }
     media.type = detectMediaType(media.url) as 'video'|'image'|'placeholder';
     
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setResolvedMedia(media);
     setHasError(false);
     setIsLoading(true);
-  }, [exerciseNameOrId, fallbackMuscle]);
+  }, [primarySearch, secondarySearch, fallbackMuscle]);
 
   const handleMediaLoad = () => {
     setIsLoading(false);
@@ -37,13 +57,19 @@ export const ExerciseMedia = ({
 
   const handleMediaError = () => {
     if (resolvedMedia?.url) {
-       console.error('Falhou ao carregar mídia, buscando fallback:', resolvedMedia.url, exerciseNameOrId);
+       console.error('Falhou ao carregar mídia, buscando fallback:', resolvedMedia.url, primarySearch);
        
        // Track this failure so we don't try it again
        markMediaAsFailed(resolvedMedia.url);
 
-       // Re-resolve. Since the bad url is tracked, it should hand us the next priority url (remote or placeholder)
-       const nextMedia = resolveExerciseMedia(exerciseNameOrId, fallbackMuscle);
+       // Re-resolve with secondary search fallback
+       let nextMedia = resolveExerciseMedia(primarySearch, fallbackMuscle, secondarySearch);
+       if (nextMedia.sourcePriority === 'fallback' && secondarySearch) {
+         const alt = resolveExerciseMedia(secondarySearch, fallbackMuscle);
+         if (alt.sourcePriority !== 'fallback') {
+           nextMedia = alt;
+         }
+       }
        
        if (nextMedia.url && nextMedia.url !== resolvedMedia.url) {
           nextMedia.type = detectMediaType(nextMedia.url) as 'video'|'image'|'placeholder';
@@ -93,7 +119,7 @@ export const ExerciseMedia = ({
       ) : (
         <img
           src={resolvedMedia.url}
-          alt={exerciseNameOrId}
+          alt={primarySearch || exerciseNameOrId}
           className={`w-full h-full object-center transition-all duration-700 ${objectFitStyle} ${isLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'} absolute top-0 left-0`}
           onLoad={handleMediaLoad}
           onError={handleMediaError}

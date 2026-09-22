@@ -348,7 +348,7 @@ export default function FreeWorkoutPage() {
                 >
                   <div className="flex justify-between items-start gap-4 mb-4">
                     <div className="w-[120px] h-[120px] rounded-xl overflow-hidden shrink-0 border border-surface-light bg-background/50 relative">
-                      <ExerciseMedia exerciseNameOrId={ex.id || ex.name} fallbackMuscle={ex.targetMuscles?.[0]} />
+                      <ExerciseMedia exerciseNameOrId={ex.name || ex.id} name={ex.name} id={ex.id} fallbackMuscle={ex.targetMuscles?.[0]} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-text-primary text-[15px] leading-tight break-words mb-1">{idx + 1}. {ex.name}</h4>
@@ -431,7 +431,7 @@ export default function FreeWorkoutPage() {
                 {searchResults.map(ex => (
                   <div key={ex.id} className="p-3 bg-surface border border-surface-light rounded-2xl flex justify-between items-center text-left">
                     <div className="w-[104px] h-[104px] rounded-xl overflow-hidden shrink-0 border border-surface-light bg-background/50 relative mr-4">
-                      <ExerciseMedia exerciseNameOrId={ex.id} fallbackMuscle={ex.targetMuscles?.[0]} />
+                      <ExerciseMedia exerciseNameOrId={ex.name || ex.id} name={ex.name} id={ex.id} fallbackMuscle={ex.targetMuscles?.[0]} />
                     </div>
                     <div className="flex-1 min-w-0 pr-3">
                       <h4 className="font-bold text-[15px] text-text-primary break-words leading-tight mb-1">{ex.name}</h4>

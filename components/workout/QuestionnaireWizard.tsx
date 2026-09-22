@@ -54,7 +54,7 @@ export function QuestionnaireWizard({ setStoreQuestionnaire, setPlan }: { setSto
 
   useEffect(() => {
     const pendingRequestId = typeof localStorage !== 'undefined' ? localStorage.getItem('pending_workout_request') : null;
-    if (pendingRequestId && auth.currentUser) {
+    if (pendingRequestId) {
       const unsubscribe = onSnapshot(doc(db, 'workout_generation_requests', pendingRequestId), async (docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
@@ -197,78 +197,12 @@ FORMATO DO JSON EXIGIDO:
   ]
 }`;
 
-  const requestGemini = async (prompt: string) => {
-    setIsGenerating(true);
-    try {
-      const data = await generateAI({
-        prompt,
-        model: 'gemini-2.5-flash',
-        systemInstruction: planSystemInstruction,
-        responseMimeType: 'application/json'
-      });
-
-      let cleanText = data.text;
-      if (cleanText.startsWith('```json')) {
-        cleanText = cleanText.replace(/```json/g, '').replace(/```/g, '');
-      } else if (cleanText.startsWith('```')) {
-        cleanText = cleanText.replace(/```/g, '');
-      }
-      cleanText = cleanText.trim();
-
-      const planItem = JSON.parse(cleanText);
-      
-      if (!planItem.phases) {
-        planItem.phases = [{
-          id: 'fase_1',
-          name: planItem.phaseName || 'Fase 1',
-          description: planItem.planPromptDescription || '',
-          durationWeeks: 4,
-          schedule: planItem.schedule || []
-        }];
-        planItem.programName = planItem.phaseName || 'Programa de Treino';
-      }
-      
-      if (!planItem.schedule && planItem.phases && planItem.phases.length > 0) {
-        planItem.schedule = planItem.phases[0].schedule;
-      }
-      
-      planItem.currentPhaseIndex = 0;
-      planItem.currentWeekIndex = 0;
-
-      _setPlan({
-        ...planItem,
-        id: generateId(),
-        generatedAt: new Date().toISOString()
-      });
-      localStorage.removeItem('workout_q_step');
-      localStorage.removeItem('workout_q_data');
-      if (!setPlan) navigate('/workouts');
-    } catch (e: any) {
-      console.error('Gemini error:', e);
-      alert(`Erro no Evolux AI: ${e.message || 'Erro ao conectar ao servidor'}`);
-    } finally {
-      setIsGenerating(false);
+  const startWorkoutGeneration = async (payload: any, isManual = false) => {
+    if (isManual) {
+      _setStoreQuestionnaire({ specificGoal: "Importado Manualmente" });
+    } else {
+      _setStoreQuestionnaire(payload);
     }
-  };
-
-  const generatePlanManual = async (text: string) => {
-    _setStoreQuestionnaire({ specificGoal: "Importado Manualmente" });
-    
-    // Obter todos os nomes válidos da biblioteca
-    const validExerciseNames = EXERCISE_LIBRARY.map(ex => ex.name).join(', ');
-
-    const prompt = `Parse o seguinte texto informando treinos, rotina e exercícios do usuário e transforme estritamente no esquema JSON.
-Identifique divisões, os exercícios, e adapte repetições e séries onde encontrar ou defina 3x10 como padrão. 
-IMPORTANTE: Todos os exercícios listados devem ser selecionados APENAS da seguinte lista de exercícios disponíveis no sistema. Encontre o mais próximo possível se o nome for diferente:
-${validExerciseNames}
-
-Texto do Usuário:
-"${text}"`;
-    await requestGemini(prompt);
-  };
-
-  const generatePlanAI = async (finalData: WorkoutQuestionnaire) => {
-    _setStoreQuestionnaire(finalData);
     setIsGenerating(true);
 
     try {
@@ -292,15 +226,16 @@ Texto do Usuário:
       const requestId = `req_${generateId()}`;
       const idToken = await currentUser.getIdToken(true);
       
-      // Create pending request
+      // Create pending request doc in Firestore
       await setDoc(doc(db, 'workout_generation_requests', requestId), {
         status: 'pending',
         user_id: targetUserId,
+        mode: isManual ? 'manual' : 'ai',
         createdAt: new Date().toISOString()
       });
       localStorage.setItem('pending_workout_request', requestId);
 
-      // Start background process
+      // Start background async process on server
       fetch('/api/gemini/generate-workout-async', {
         method: 'POST',
         headers: {
@@ -310,18 +245,19 @@ Texto do Usuário:
         body: JSON.stringify({
           requestId,
           userId: targetUserId,
-          questionnaireData: finalData
+          questionnaireData: isManual
+            ? { rawText: payload, mode: 'manual', specificGoal: 'Importado Manualmente' }
+            : payload
         })
       }).catch(console.error);
 
-      // Listen to Firestore for completion
+      // Listen to Firestore for completion in real-time
       const unsubscribe = onSnapshot(doc(db, 'workout_generation_requests', requestId), async (docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           if (data.status === 'completed' && data.workoutId) {
             unsubscribe();
             try {
-              // Fetch the completed workout
               const workoutDoc = await getDoc(doc(db, 'workouts', data.workoutId));
               if (workoutDoc.exists()) {
                  const newPlan = workoutDoc.data();
@@ -353,14 +289,49 @@ Texto do Usuário:
     }
   };
 
+  const generatePlanManual = async (text: string) => {
+    await startWorkoutGeneration(text, true);
+  };
+
+  const generatePlanAI = async (finalData: WorkoutQuestionnaire) => {
+    await startWorkoutGeneration(finalData, false);
+  };
+
   if (isGenerating) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center h-[60vh]">
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} className="mb-4 bg-surface p-4 rounded-full border border-surface-light shadow-[0_0_50px_rgba(0,210,255,0.15)]">
+      <div className="flex flex-col items-center justify-center p-8 text-center min-h-[60vh] max-w-md mx-auto my-auto">
+        <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} className="mb-6 bg-surface p-5 rounded-full border border-surface-light shadow-[0_0_50px_rgba(0,210,255,0.2)]">
           <BrainCircuit className="w-16 h-16 text-neon-blue" />
         </motion.div>
-        <h3 className="text-xl font-black text-text-primary mb-2 tracking-tight">Processando Protocolo...</h3>
-        <p className="text-text-secondary font-medium text-sm leading-relaxed max-w-sm">Estruturando o plano ideal. Cada série, repetição e variável sendo perfeitamente ajustada para seu perfil.</p>
+
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-blue/10 border border-neon-blue/20 text-neon-blue text-[10px] font-black uppercase tracking-widest mb-3">
+          <Zap size={12} /> Processamento em Segundo Plano
+        </div>
+
+        <h3 className="text-2xl font-black text-text-primary mb-3 tracking-tight">Processando seu Protocolo...</h3>
+        
+        <p className="text-text-secondary font-medium text-sm leading-relaxed mb-6">
+          Sua inteligência artificial está ajustando perfeitamente cada série, repetição e variável para o seu perfil.
+          <br className="my-2" />
+          <span className="text-text-primary font-bold block mt-2">
+            💡 Você pode fechar esta tela ou navegar pelo aplicativo livremente enquanto processamos. O seu treino estará pronto em instantes!
+          </span>
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="w-full py-3 px-4 bg-surface border border-surface-light hover:border-neon-blue/50 text-text-primary rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
+          >
+            Ir para o Dashboard
+          </button>
+          <button
+            onClick={() => navigate('/workouts')}
+            className="w-full py-3 px-4 bg-neon-purple/20 border border-neon-purple/40 hover:bg-neon-purple/30 text-neon-purple rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
+          >
+            Explorar Treinos
+          </button>
+        </div>
       </div>
     );
   }

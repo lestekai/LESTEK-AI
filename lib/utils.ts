@@ -15,7 +15,7 @@ export function getBodyPartImageUrl(muscle: string): string | null {
   if (cleanMuscle.includes('peit')) return 'https://smartworkout.app/assets/images/bodyPart/chest_male_dark.png';
   if (cleanMuscle.includes('costas') || cleanMuscle.includes('dorsal')) return 'https://smartworkout.app/assets/images/bodyPart/back_male_dark.png';
   if (cleanMuscle.includes('ombr') || cleanMuscle.includes('delto')) return 'https://smartworkout.app/assets/images/bodyPart/shoulders_male_dark.png';
-  if (cleanMuscle.includes('pern') || cleanMuscle.includes('coxa') || cleanMuscle.includes('panturrilha') || cleanMuscle.includes('quad')) return 'https://smartworkout.app/assets/images/bodyPart/legs_male_dark.png';
+  if (cleanMuscle.includes('pern') || cleanMuscle.includes('coxa') || cleanMuscle.includes('panturrilha') || cleanMuscle.includes('panturrilhas') || cleanMuscle.includes('gemeos') || cleanMuscle.includes('gêmeos') || cleanMuscle.includes('quad')) return 'https://smartworkout.app/assets/images/bodyPart/legs_male_dark.png';
   if (cleanMuscle.includes('glúte') || cleanMuscle.includes('glute')) return 'https://smartworkout.app/assets/images/bodyPart/gluteus_male_dark.png';
   if (cleanMuscle.includes('bíc') || cleanMuscle.includes('bic')) return 'https://smartworkout.app/assets/images/bodyPart/biceps_male_dark.png';
   if (cleanMuscle.includes('tríc') || cleanMuscle.includes('tric')) return 'https://smartworkout.app/assets/images/bodyPart/triceps_male_dark.png';

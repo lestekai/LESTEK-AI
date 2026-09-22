@@ -1,15 +1,13 @@
 const { initializeApp } = require('firebase/app');
 const { getFirestore, collection, getDocs } = require('firebase/firestore');
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync('firebase-applet-config.json'));
+const config = JSON.parse(fs.readFileSync('firebase-applet-config.json', 'utf8'));
 const app = initializeApp(config);
 const db = getFirestore(app);
-
-async function check() {
+async function run() {
   const snap = await getDocs(collection(db, 'profiles'));
-  snap.forEach(doc => {
-    console.log(doc.id, doc.data().email, doc.data().name, doc.data().role);
-  });
+  console.log("Current DB profiles:");
+  snap.docs.forEach(d => console.log(d.id, d.data().email));
   process.exit(0);
 }
-check().catch(e => { console.error(e); process.exit(1); });
+run();

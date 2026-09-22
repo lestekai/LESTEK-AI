@@ -193,7 +193,7 @@ export default function TasksPage() {
         xpReward: 10,
         isLongTerm: false,
         isRecurring: false,
-        date: todayStr,
+        date: selectedStr,
       });
       setQuickInput('');
     }
@@ -279,19 +279,30 @@ export default function TasksPage() {
                 ))}
              </div>
              <div className="grid grid-cols-7 gap-y-2 gap-x-1">
-                {calendarDays.map((day, i) => (
+                {calendarDays.map((day, i) => {
+                   const dayStr = getLocalDateStr(day.date);
+                   const hasTasks = tasks.some(t => !t.isLongTerm && (
+                      t.date === dayStr ||
+                      (t.isRecurring && (t.baseDate ? t.baseDate <= dayStr : t.date <= dayStr))
+                   ));
+                   
+                   return (
                    <div key={i} className="flex justify-center items-center relative">
                       <button 
                          onClick={() => setSelectedCalendarDate(day.date)}
-                         className={`w-10 h-10 flex items-center justify-center rounded-full text-sm transition-all focus:outline-none ${
+                         className={`w-10 h-10 flex flex-col items-center justify-center rounded-full text-sm transition-all focus:outline-none relative ${
                          day.isSelected ? 'bg-amber-500 text-black font-bold shadow-lg scale-110 shadow-[0_0_15px_rgba(245,158,11,0.5)] z-10' :
                          day.isToday && !day.isSelected ? 'bg-neon-blue text-black font-bold shadow-lg scale-110' : 
                          day.isCurrentMonth ? 'text-text-primary/80 hover:bg-surface-light border border-transparent hover:border-text-primary/10' : 'text-text-primary/20 hover:bg-surface-light'
                       }`}>
-                         {day.dayNumber}
+                         <span className={hasTasks ? "-mt-1" : ""}>{day.dayNumber}</span>
+                         {hasTasks && (
+                           <span className={`w-1 h-1 rounded-full absolute bottom-2 ${day.isSelected || day.isToday ? 'bg-black opacity-60' : 'bg-amber-500'}`} />
+                         )}
                       </button>
                    </div>
-                ))}
+                   );
+                })}
              </div>
          </div>
       </div>
@@ -552,7 +563,7 @@ export default function TasksPage() {
               
               <div className="space-y-3">
                 <button onClick={() => {
-                  addTask({ title: "Focar 5 minutos apenas na maior prioridade", category: "routine", xpReward: 50, date: todayStr, isLongTerm: false, isRecurring: false });
+                  addTask({ title: "Focar 5 minutos apenas na maior prioridade", category: "routine", xpReward: 50, date: selectedStr, isLongTerm: false, isRecurring: false });
                   setShowStuckModal(false);
                 }} className="w-full bg-neon-purple/10 border border-neon-purple/30 text-neon-purple font-bold px-4 py-3 rounded-xl hover:bg-neon-purple hover:text-text-primary transition-colors text-sm uppercase tracking-widest flex justify-between items-center group">
                   Regra dos 5 Minutos <Zap size={16} className="group-hover:animate-pulse" />
@@ -566,7 +577,7 @@ export default function TasksPage() {
                   Quebrar a Tarefa <LayoutList size={16} />
                 </button>
                 <button onClick={() => {
-                  addTask({ title: "Reorganizar minhas prioridades do dia", category: "goal", xpReward: 20, date: todayStr, isLongTerm: false, isRecurring: false });
+                  addTask({ title: "Reorganizar minhas prioridades do dia", category: "goal", xpReward: 20, date: selectedStr, isLongTerm: false, isRecurring: false });
                   setShowStuckModal(false);
                 }} className="w-full bg-surface border border-surface-light text-text-secondary hover:text-text-primary font-bold px-4 py-3 rounded-xl hover:bg-surface-light transition-colors text-sm uppercase tracking-widest flex justify-between items-center group">
                   Pausar e Reorganizar <Calendar size={16} />

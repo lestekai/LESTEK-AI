@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { useWorkoutStore, ExerciseDefinition, WorkoutDayPlan } from '@/lib/workoutStore';
+import { useWorkoutStore, ExerciseDefinition, WorkoutDayPlan, WorkoutPlan } from '@/lib/workoutStore';
 import { EXERCISE_LIBRARY, ExerciseLibraryItem, searchExercises } from '@/lib/exerciseLibrary';
 import { X, Save, Edit3, Trash2, Plus, Search, Replace, Info, PlaySquare, GripVertical } from 'lucide-react';
 import {
@@ -420,7 +420,7 @@ export function WorkoutEditor({ fullPlan, dayIndex = 0, initialDayPlan, onSavePl
                >
                  <div className="flex items-center gap-4">
                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-background relative shrink-0 border border-surface-light">
-                     <ExerciseMedia exerciseNameOrId={lib.id} fallbackMuscle={lib.targetMuscles[0]} />
+                     <ExerciseMedia exerciseNameOrId={lib.name || lib.id} name={lib.name} id={lib.id} fallbackMuscle={lib.targetMuscles[0]} />
                    </div>
                    <div>
                      <h4 className="font-black text-text-primary text-sm group-hover:text-neon-blue transition-colors">{lib.name}</h4>
@@ -575,7 +575,7 @@ function SortableExerciseItem({ ex, idx, handleUpdateExercise, setReplacementTar
           
           <div className="flex flex-row gap-3">
             <div className="w-32 h-32 rounded-xl overflow-hidden shrink-0 border border-surface-light bg-background/50 relative self-center">
-              <ExerciseMedia exerciseNameOrId={ex.id || ex.name} fallbackMuscle={ex.targetMuscles?.[0]} />
+              <ExerciseMedia exerciseNameOrId={ex.name || ex.id} name={ex.name} id={ex.id} fallbackMuscle={ex.targetMuscles?.[0]} />
             </div>
             
             <div className="flex-1 min-w-0">

@@ -1,0 +1,181 @@
+app/checkout/page.tsx(36,36): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'CollectionReference<unknown, DocumentData>': id, path, parent, withConverter, and 2 more.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'DocumentReference<unknown, DocumentData>': converter, firestore, id, path, and 2 more.
+app/checkout/page.tsx(42,23): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'CollectionReference<unknown, DocumentData>': id, path, parent, withConverter, and 2 more.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'DocumentReference<unknown, DocumentData>': converter, firestore, id, path, and 2 more.
+app/dashboard/page.tsx(169,18): error TS2322: Type '{ children: Element[]; href: string; className: string; }' is not assignable to type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'.
+  Property 'href' does not exist on type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'. Did you mean 'ref'?
+app/dashboard/page.tsx(191,21): error TS2322: Type '{ children: Element[]; href: string; className: string; }' is not assignable to type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'.
+  Property 'href' does not exist on type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'. Did you mean 'ref'?
+app/dashboard/page.tsx(213,19): error TS2322: Type '{ children: string; href: string; className: string; }' is not assignable to type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'.
+  Property 'href' does not exist on type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'. Did you mean 'ref'?
+app/dashboard/page.tsx(258,23): error TS2322: Type '{ children: (string | number)[]; href: string; className: string; }' is not assignable to type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'.
+  Property 'href' does not exist on type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'. Did you mean 'ref'?
+app/dashboard/page.tsx(274,20): error TS2322: Type '{ children: Element[]; href: string; className: string; }' is not assignable to type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'.
+  Property 'href' does not exist on type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'. Did you mean 'ref'?
+app/dashboard/page.tsx(298,20): error TS2322: Type '{ children: Element[]; href: string; className: string; }' is not assignable to type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'.
+  Property 'href' does not exist on type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'. Did you mean 'ref'?
+app/dashboard/page.tsx(319,18): error TS2322: Type '{ children: Element; href: string; className: string; }' is not assignable to type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'.
+  Property 'href' does not exist on type 'IntrinsicAttributes & LinkProps & RefAttributes<HTMLAnchorElement>'. Did you mean 'ref'?
+app/dashboard/page.tsx(371,23): error TS2304: Cannot find name 'sessionError'.
+app/dashboard/page.tsx(372,53): error TS2304: Cannot find name 'sessionError'.
+app/dashboard/page.tsx(375,23): error TS2304: Cannot find name 'session'.
+app/dashboard/page.tsx(378,34): error TS18047: 'user' is possibly 'null'.
+app/dashboard/page.tsx(379,34): error TS2304: Cannot find name 'feedbackText'.
+app/dashboard/page.tsx(385,26): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
+app/dashboard/page.tsx(389,54): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
+app/dashboard/page.tsx(390,96): error TS2552: Cannot find name 'error'. Did you mean 'Error'?
+app/plans/page.tsx(25,23): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'CollectionReference<unknown, DocumentData>': id, path, parent, withConverter, and 2 more.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'DocumentReference<unknown, DocumentData>': converter, firestore, id, path, and 2 more.
+app/ranking/page.tsx(525,49): error TS7006: Parameter 'badge' implicitly has an 'any' type.
+app/ranking/page.tsx(525,56): error TS7006: Parameter 'i' implicitly has an 'any' type.
+app/settings/page.tsx(33,23): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'CollectionReference<unknown, DocumentData>': id, path, parent, withConverter, and 2 more.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'DocumentReference<unknown, DocumentData>': converter, firestore, id, path, and 2 more.
+app/workouts/active/page.tsx(239,19): error TS18049: 'todayPlan' is possibly 'null' or 'undefined'.
+app/workouts/active/page.tsx(268,19): error TS18049: 'todayPlan' is possibly 'null' or 'undefined'.
+app/workouts/active/page.tsx(421,61): error TS2339: Property 'target' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(423,45): error TS2339: Property 'libraryId' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(423,56): error TS2554: Expected 1 arguments, but got 2.
+app/workouts/active/page.tsx(424,51): error TS2554: Expected 1 arguments, but got 2.
+app/workouts/active/page.tsx(425,49): error TS2554: Expected 1 arguments, but got 2.
+app/workouts/active/page.tsx(938,17): error TS18049: 'todayPlan' is possibly 'null' or 'undefined'.
+app/workouts/active/page.tsx(975,34): error TS18049: 'todayPlan' is possibly 'null' or 'undefined'.
+app/workouts/active/page.tsx(977,25): error TS2345: Argument of type '{ exercises: ExerciseDefinition[]; dayName?: string | undefined; focus?: string | undefined; isRest?: boolean | undefined; warmup?: string[]; cooldown?: string[]; intensity?: string | undefined; }' is not assignable to parameter of type 'WorkoutDayPlan'.
+  Types of property 'dayName' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+app/workouts/active/page.tsx(1091,43): error TS2339: Property 'libraryId' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(1114,59): error TS2339: Property 'libraryId' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(1115,95): error TS2339: Property 'target' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(1197,48): error TS2554: Expected 3 arguments, but got 2.
+app/workouts/active/page.tsx(1198,51): error TS2339: Property 'libraryId' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(1203,60): error TS2339: Property 'weight' does not exist on type 'ProgressionStats'.
+app/workouts/active/page.tsx(1203,76): error TS2339: Property 'weight' does not exist on type 'ProgressionStats'.
+app/workouts/active/page.tsx(1204,58): error TS2339: Property 'reps' does not exist on type 'ProgressionStats'.
+app/workouts/active/page.tsx(1204,72): error TS2339: Property 'reps' does not exist on type 'ProgressionStats'.
+app/workouts/active/page.tsx(1215,37): error TS2554: Expected 2-3 arguments, but got 5.
+app/workouts/active/page.tsx(1215,44): error TS2339: Property 'progressionType' does not exist on type 'WorkoutPhaseDef'.
+app/workouts/active/page.tsx(1293,64): error TS2339: Property 'advance' does not exist on type 'AdvancedTechniqueEngine'.
+app/workouts/active/page.tsx(1294,65): error TS2339: Property 'complete' does not exist on type 'AdvancedTechniqueEngine'.
+app/workouts/active/page.tsx(1689,91): error TS2339: Property 'libraryId' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(1691,43): error TS2339: Property 'commonErrors' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(1691,78): error TS2339: Property 'commonErrors' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(1692,34): error TS2339: Property 'commonErrors' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(1712,58): error TS2339: Property 'libraryId' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(1713,97): error TS2339: Property 'target' does not exist on type 'ExerciseDefinition'.
+app/workouts/active/page.tsx(1728,33): error TS7006: Parameter 'e' implicitly has an 'any' type.
+app/workouts/active/page.tsx(1728,36): error TS7006: Parameter 'i' implicitly has an 'any' type.
+app/workouts/free/page.tsx(21,14): error TS2739: Type 'ExerciseDefinition' is missing the following properties from type 'ExerciseDefinition': sets, reps, restSeconds
+app/workouts/free/page.tsx(25,27): error TS2739: Type 'ExerciseDefinition' is missing the following properties from type 'ExerciseDefinition': sets, reps, restSeconds
+app/workouts/library/page.tsx(25,48): error TS2345: Argument of type 'string[] | undefined' is not assignable to parameter of type 'string | undefined'.
+  Type 'string[]' is not assignable to type 'string'.
+app/workouts/page.tsx(399,34): error TS2304: Cannot find name 'currentPlan'.
+components/AuthProvider.tsx(180,25): error TS2345: Argument of type 'DocumentData' is not assignable to parameter of type 'WorkoutPlan'.
+  Type 'DocumentData' is missing the following properties from type 'WorkoutPlan': id, generatedAt, schedule
+components/AuthProvider.tsx(211,24): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(firestore: Firestore, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+  Overload 2 of 3, '(reference: CollectionReference<unknown, DocumentData>, path?: string | undefined, ...pathSegments: string[]): DocumentReference<unknown, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'CollectionReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'CollectionReference<unknown, DocumentData>': id, path, parent, withConverter, and 2 more.
+  Overload 3 of 3, '(reference: DocumentReference<unknown, DocumentData>, path: string, ...pathSegments: string[]): DocumentReference<DocumentData, DocumentData>', gave the following error.
+    Argument of type 'Firestore' is not assignable to parameter of type 'DocumentReference<unknown, DocumentData>'.
+      Type 'Firestore' is missing the following properties from type 'DocumentReference<unknown, DocumentData>': converter, firestore, id, path, and 2 more.
+components/AuthProvider.tsx(249,15): error TS7023: 'stripUndefined' implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+components/GlobalNotifications.tsx(20,57): error TS2339: Property 'created_at' does not exist on type '{ id: string; }'.
+components/GlobalNotifications.tsx(20,92): error TS2339: Property 'created_at' does not exist on type '{ id: string; }'.
+components/ThemeProvider.tsx(5,41): error TS2307: Cannot find module 'next-themes/dist/types' or its corresponding type declarations.
+components/admin/AdminDatabase.tsx(13,35): error TS7006: Parameter 'col' implicitly has an 'any' type.
+components/admin/AdminFeedbacks.tsx(27,24): error TS7006: Parameter 'val' implicitly has an 'any' type.
+components/admin/AdminFeedbacks.tsx(34,24): error TS2339: Property 'created_at' does not exist on type '{ profiles: { name: any; username: any; } | null; id: string; }'.
+components/admin/AdminFeedbacks.tsx(34,46): error TS2339: Property 'created_at' does not exist on type '{ profiles: { name: any; username: any; } | null; id: string; }'.
+components/admin/AdminFeedbacks.tsx(56,33): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+components/admin/AdminNotifications.tsx(5,30): error TS7016: Could not find a declaration file for module 'uuid'. '/app/applet/node_modules/uuid/dist/esm-browser/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/uuid` if it exists or add a new declaration (.d.ts) file containing `declare module 'uuid';`
+components/admin/AdminNotifications.tsx(22,24): error TS7006: Parameter 'val' implicitly has an 'any' type.
+components/admin/AdminNotifications.tsx(29,24): error TS2339: Property 'created_at' does not exist on type '{ id: string; }'.
+components/admin/AdminNotifications.tsx(29,46): error TS2339: Property 'created_at' does not exist on type '{ id: string; }'.
+components/admin/AdminNotifications.tsx(67,35): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+components/admin/AdminNotifications.tsx(80,33): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+components/admin/AdminOverview.tsx(88,9): error TS2353: Object literal may only specify known properties, and 'weeklyGrowth' does not exist in type 'SetStateAction<{ totalUsers: number; activeUsers: number; bannedUsers: number; totalTasks: number; baseUsers: number; orbitUsers: number; novaUsers: number; infiniteUsers: number; }>'.
+components/admin/AdminOverview.tsx(138,20): error TS2339: Property 'weeklyGrowth' does not exist on type '{ totalUsers: number; activeUsers: number; bannedUsers: number; totalTasks: number; baseUsers: number; orbitUsers: number; novaUsers: number; infiniteUsers: number; }'.
+components/admin/AdminOverview.tsx(138,55): error TS2339: Property 'weeklyGrowth' does not exist on type '{ totalUsers: number; activeUsers: number; bannedUsers: number; totalTasks: number; baseUsers: number; orbitUsers: number; novaUsers: number; infiniteUsers: number; }'.
+components/admin/AdminPlans.tsx(21,24): error TS7006: Parameter 'val' implicitly has an 'any' type.
+components/admin/AdminPlans.tsx(28,24): error TS2339: Property 'created_at' does not exist on type '{ id: string; }'.
+components/admin/AdminPlans.tsx(28,46): error TS2339: Property 'created_at' does not exist on type '{ id: string; }'.
+components/admin/AdminPlans.tsx(68,35): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+components/admin/AdminPlans.tsx(95,35): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+components/admin/AdminSettings.tsx(44,35): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+components/admin/AdminUsers.tsx(74,35): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+components/admin/AdminUsers.tsx(120,37): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+components/admin/AdminUsers.tsx(146,35): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+components/admin/AdminUsers.tsx(162,35): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+components/workout/WorkoutEditor.tsx(7,28): error TS2724: '"@/lib/exerciseLibrary"' has no exported member named 'ExerciseLibraryItem'. Did you mean 'EXERCISE_LIBRARY'?
+components/workout/WorkoutEditor.tsx(99,17): error TS2339: Property '_dndId' does not exist on type 'ExerciseDefinition'.
+lib/store.tsx(172,15): error TS2353: Object literal may only specify known properties, and 'symbol' does not exist in type 'Partial<Record<CosmeticType, string>>'.
+lib/store.tsx(181,7): error TS1117: An object literal cannot have multiple properties with the same name.
+lib/store.tsx(182,7): error TS1117: An object literal cannot have multiple properties with the same name.
+lib/workoutStore.ts(323,23): error TS18048: 'plan.phases' is possibly 'undefined'.
+lib/workoutStore.ts(347,28): error TS18048: 'plan.phases' is possibly 'undefined'.
+lib/workoutStore.ts(348,29): error TS18048: 'plan.phases' is possibly 'undefined'.
+scripts/deepPurge.ts(6,25): error TS7006: Parameter 'url' implicitly has an 'any' type.
+scripts/fastCheckGifs.ts(6,19): error TS7006: Parameter 'urlStr' implicitly has an 'any' type.
+scripts/fastCheckGifs.ts(29,40): error TS7006: Parameter 'ex' implicitly has an 'any' type.
+scripts/fastCheckGifs.ts(38,22): error TS18046: 'res' is of type 'unknown'.
+scripts/finalClean.ts(19,19): error TS2304: Cannot find name 'resolveExerciseMedia'.
+scripts/generateAliases.ts(133,3): error TS1117: An object literal cannot have multiple properties with the same name.
+scripts/purgeBadLib.ts(8,19): error TS7006: Parameter 'urlStr' implicitly has an 'any' type.
+scripts/purgeBadLib.ts(21,9): error TS7034: Variable 'validExercises' implicitly has type 'any[]' in some locations where its type cannot be determined.
+scripts/purgeBadLib.ts(22,9): error TS7034: Variable 'removedNames' implicitly has type 'any[]' in some locations where its type cannot be determined.
+scripts/purgeBadLib.ts(44,25): error TS18046: 'res' is of type 'unknown'.
+scripts/purgeBadLib.ts(73,48): error TS7005: Variable 'validExercises' implicitly has an 'any[]' type.
+scripts/purgeBadLib.ts(77,18): error TS7005: Variable 'removedNames' implicitly has an 'any[]' type.
+scripts/validateDbLinks.ts(12,50): error TS2322: Type 'number | undefined' is not assignable to type 'number | "error"'.
+  Type 'undefined' is not assignable to type 'number | "error"'.
+scripts/validateDbLinks.ts(32,9): error TS2532: Object is possibly 'undefined'.
+scripts/validateLibraryGifs.ts(4,25): error TS7006: Parameter 'urlObj' implicitly has an 'any' type.
+scripts/validateLibraryGifs.ts(8,24): error TS7006: Parameter 'res' implicitly has an 'any' type.
+scripts/validateLibraryGifs.ts(24,15): error TS18046: 'res' is of type 'unknown'.
+scripts/validateLibraryGifs.ts(24,37): error TS18046: 'res' is of type 'unknown'.

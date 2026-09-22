@@ -2,6 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { GoogleGenAI } from '@google/genai';
+import * as Sentry from '@sentry/node';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN || "",
+  tracesSampleRate: 1.0,
+});
 
 const app = express();
 const port = 3000;

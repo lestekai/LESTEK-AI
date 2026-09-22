@@ -629,7 +629,7 @@ export default function HistoryPage() {
                       {exerciseEvolutionData.length > 0 ? (
                         <div className="h-[280px] w-full pt-4">
                           {isMounted && (
-                            <ResponsiveContainer width="100%" height="100%">
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                               <LineChart data={exerciseEvolutionData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                                 <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 10, fontWeight: 800 }} />

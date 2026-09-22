@@ -97,6 +97,7 @@ Responda EXATAMENTE E APENAS no formato JSON: {"amount": número, "description":
       
       recognitionRef.current = recognition;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 

@@ -24,3 +24,13 @@ export function handleFirestoreError(error: any, operation: OperationType, path:
 }
 
 
+
+
+export const getSecondaryAuth = () => {
+  const apps = getApps();
+  let secondaryApp = apps.find(a => a.name === 'SecondaryApp');
+  if (!secondaryApp) {
+    secondaryApp = initializeApp(firebaseConfig, 'SecondaryApp');
+  }
+  return getAuth(secondaryApp);
+};

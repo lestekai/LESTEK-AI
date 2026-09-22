@@ -69,7 +69,9 @@ export default function LibraryPage() {
               >
                   <div className="w-20 sm:w-24 shrink-0 aspect-square bg-background rounded-xl overflow-hidden border border-surface-light relative z-10 flex items-center justify-center group-hover:border-neon-blue/50 transition-colors pointer-events-none">
                      <ExerciseMedia 
-                       exerciseNameOrId={ex.id}
+                       exerciseNameOrId={ex.name || ex.id}
+                       name={ex.name}
+                       id={ex.id}
                        fallbackMuscle={ex.targetMuscles[0] || 'Corpo Todo'}
                        priority={false}
                        className="w-full h-full object-cover"
@@ -157,7 +159,9 @@ export default function LibraryPage() {
                 <div className="bg-surface border border-surface-light rounded-2xl overflow-hidden aspect-video relative shadow-2xl p-2 group">
                   <div className="w-full h-full rounded-[24px] overflow-hidden relative">
                     <ExerciseMedia 
-                       exerciseNameOrId={selectedExercise.id}
+                       exerciseNameOrId={selectedExercise.name || selectedExercise.id}
+                       name={selectedExercise.name}
+                       id={selectedExercise.id}
                        fallbackMuscle={selectedExercise.targetMuscles[0] || 'Corpo Todo'}
                        priority={true}
                        className="w-full h-full object-cover"

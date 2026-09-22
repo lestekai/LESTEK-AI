@@ -1111,7 +1111,9 @@ function ActiveWorkoutContent() {
                     }}
                   >
                      <ExerciseMedia
-                        exerciseNameOrId={currentExercise.libraryId || currentExercise.name || currentExercise.id}
+                        exerciseNameOrId={currentExercise.name || currentExercise.libraryId || currentExercise.id}
+                        name={currentExercise.name}
+                        id={currentExercise.libraryId || currentExercise.id}
                         fallbackMuscle={currentExercise.targetMuscles?.[0] || currentExercise.target || "Corpo Todo"}
                         priority={isExpanded}
                      />
@@ -1457,7 +1459,7 @@ function ActiveWorkoutContent() {
                       }`}
                     >
                       <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-surface-light bg-background/50">
-                        <ExerciseMedia exerciseNameOrId={ex.id || ex.name} fallbackMuscle={ex.targetMuscles?.[0]} />
+                        <ExerciseMedia exerciseNameOrId={ex.name || ex.id} name={ex.name} id={ex.id} fallbackMuscle={ex.targetMuscles?.[0]} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-bold text-[11px] truncate">{ex.name}</h4>
@@ -1709,7 +1711,9 @@ function ActiveWorkoutContent() {
             <div className="flex-1 w-full flex flex-col p-4 overflow-y-auto space-y-4 pb-24">
               <div className="w-full max-w-4xl mx-auto aspect-video relative rounded-2xl overflow-hidden border border-surface-light shadow-2xl bg-black shrink-0">
                  <ExerciseMedia
-                    exerciseNameOrId={fullscreenExercise.libraryId || fullscreenExercise.name || fullscreenExercise.id}
+                    exerciseNameOrId={fullscreenExercise.name || fullscreenExercise.libraryId || fullscreenExercise.id}
+                    name={fullscreenExercise.name}
+                    id={fullscreenExercise.libraryId || fullscreenExercise.id}
                     fallbackMuscle={fullscreenExercise.targetMuscles?.[0] || fullscreenExercise.target || "Corpo Todo"}
                     priority={true}
                  />

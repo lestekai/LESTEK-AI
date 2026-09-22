@@ -396,7 +396,7 @@ function WorkoutDashboard({ plan }: { plan: any }) {
       </AnimatePresence>
 
       {editingDayIndex !== null && (
-        <WorkoutEditor fullPlan={currentPlan || undefined} dayIndex={editingDayIndex} onClose={() => setEditingDayIndex(null)} />
+        <WorkoutEditor fullPlan={plan || undefined} dayIndex={editingDayIndex} onClose={() => setEditingDayIndex(null)} />
       )}
       
       {editingTemplate !== null && (
