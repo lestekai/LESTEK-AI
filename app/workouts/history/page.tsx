@@ -23,8 +23,10 @@ import {
   Sparkles, 
   Percent,
   Dumbbell,
-  Target
+  Target,
+  Edit3
 } from 'lucide-react';
+import { CalendarDayEditorModal } from '@/components/ui/calendar';
 
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -89,6 +91,7 @@ export default function HistoryPage() {
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
   const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<Date | null>(new Date());
+  const [editingDateModal, setEditingDateModal] = useState<Date | null>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -373,9 +376,22 @@ export default function HistoryPage() {
                             className="overflow-hidden bg-background/50 border-t border-surface-light"
                           >
                             <div className="p-5 space-y-4">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black text-text-secondary uppercase tracking-widest">Exercícios Executados</span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingDateModal(new Date(log.date));
+                                  }}
+                                  className="px-3 py-1.5 rounded-xl bg-neon-blue/15 text-neon-blue border border-neon-blue/30 hover:bg-neon-blue hover:text-black text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer"
+                                >
+                                  <Edit3 size={12} />
+                                  <span>Editar Cargas & Reps</span>
+                                </button>
+                              </div>
                               {log.exerciseLogs && log.exerciseLogs.length > 0 ? (
                                 <div className="space-y-3">
-                                  <span className="text-[10px] font-black text-text-secondary uppercase tracking-widest block mb-2">Exercícios Executados</span>
                                   {log.exerciseLogs.map((el, elIdx) => (
                                     <div key={elIdx} className="flex justify-between items-center gap-2 py-2 border-b border-surface-light last:border-0 last:pb-0">
                                       <span className="text-sm text-text-primary font-bold max-w-[65%] truncate">
@@ -491,8 +507,18 @@ export default function HistoryPage() {
                           <span className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-1 block">Treino Realizado</span>
                           <h4 className="font-black text-xl tracking-tight">{clickedDayWorkout.dayFocus}</h4>
                         </div>
-                        <div className="bg-black/10 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border border-black/10">
-                          {clickedDayWorkout.durationMinutes} min
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setEditingDateModal(selectedCalendarDate)}
+                            className="bg-neon-blue text-black px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-1 cursor-pointer"
+                          >
+                            <Edit3 size={12} />
+                            <span>Editar</span>
+                          </button>
+                          <div className="bg-black/10 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border border-black/10">
+                            {clickedDayWorkout.durationMinutes} min
+                          </div>
                         </div>
                       </div>
 
@@ -706,6 +732,13 @@ export default function HistoryPage() {
         )}
 
       </main>
+
+      {editingDateModal && (
+        <CalendarDayEditorModal
+          date={editingDateModal}
+          onClose={() => setEditingDateModal(null)}
+        />
+      )}
 
       <BottomNav />
     </div>

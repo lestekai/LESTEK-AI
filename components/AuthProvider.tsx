@@ -264,7 +264,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    const debounce = setTimeout(syncBackup, 2000); // 2 second debounce
+    const debounce = setTimeout(syncBackup, 500); // 500ms debounce for near-instant cloud persistence
     return () => clearTimeout(debounce);
   }, [tasks, goals, transactions, currentPlan, workoutHistory, questionnaire, userTemplates, activeFreeWorkout, settings, selectedProgressionWeek, profile?.id, profile?.name, profile?.email, profile?.role, profile?.status, profile?.xp, profile?.streak, profile?.totalTasksCompleted, profile?.avatarLevel]);
 

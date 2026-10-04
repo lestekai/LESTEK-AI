@@ -9,7 +9,7 @@ import { BottomNav } from '@/components/BottomNav';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Dumbbell, Target, Clock, Activity, Shield, PlaySquare, Edit3, Settings, 
-  TrendingUp, Sparkles, History, Calendar, Flame, Zap, Plus, ArrowRight, List, 
+  TrendingUp, Sparkles, History, Flame, Zap, Plus, ArrowRight, List, 
   Trash2, AlertTriangle, Download, Upload, FolderDown, CheckCircle2, X 
 } from 'lucide-react';
 
@@ -19,6 +19,7 @@ import { PREMADE_TEMPLATES } from '@/lib/templates';
 import { QuestionnaireWizard } from '@/components/workout/QuestionnaireWizard';
 import { WorkoutEditor } from '@/components/workout/WorkoutEditor';
 import { WorkoutManagementSection } from '@/components/workout/WorkoutManagementSection';
+import { Calendar, formatDateKey } from '@/components/ui/calendar';
 import { EXERCISE_LIBRARY } from '@/lib/exerciseLibrary';
 
 // Attach library to global for easiest lookup without passing large sets around if needed 
@@ -39,6 +40,7 @@ export default function WorkoutsPage() {
       <main className="px-4 sm:px-0 max-w-xl mx-auto space-y-6 mt-2">
         {!hasCompletedQuestionnaire || !currentPlan ? (
            <div className="space-y-6">
+             <Calendar />
              <QuestionnaireWizard />
              <WorkoutManagementSection />
            </div>
@@ -74,7 +76,8 @@ function WorkoutDashboard({ plan }: { plan: any }) {
   const currentWeek = selectedProgressionWeek === 0 ? autoWeek : selectedProgressionWeek;
   
   const todayIndex = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
-  const todayPlan = plan.schedule[todayIndex] || plan.schedule[0];
+  const todayDateKey = formatDateKey(new Date());
+  const todayPlan = plan.dateOverrides?.[todayDateKey] || plan.schedule[todayIndex] || plan.schedule[0];
 
   // New Phase System Logic
   const phases = plan.phases || [];
@@ -97,8 +100,12 @@ function WorkoutDashboard({ plan }: { plan: any }) {
   const progressPercent = totalWeeks > 0 ? Math.min(100, Math.round(((currentWeekIndex) / totalWeeks) * 100)) : 0;
 
   return (
-    <div className="space-y-4">
-      
+    <div className="space-y-5">
+      {/* CALENDÁRIO DE TREINOS & CARGAS NO TOPO DA PÁGINA */}
+      <section>
+        <Calendar onOpenRoutineEditor={(dayIdx) => setEditingDayIndex(dayIdx)} />
+      </section>
+
       {/* HEADER SECTION - RESUMO IMEDIATO */}
       <section className="flex items-center justify-between">
         <div>

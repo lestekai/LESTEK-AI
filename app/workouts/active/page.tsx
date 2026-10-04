@@ -665,18 +665,28 @@ function ActiveWorkoutContent() {
       let weightVal = currentLog.weight;
 
       if (!repsVal) {
-        const parsed = currentExercise.reps?.split("-")[0] || "10";
+        const configuredReps =
+          currentExercise.setDetails?.[setNumber - 1]?.reps ||
+          currentExercise.reps;
+        const parsed = String(configuredReps || "10").split("-")[0] || "10";
         repsVal = parsed.replace(/\D/g, "") || "10";
       }
 
       if (!weightVal) {
-        const stats = getProgressionStats(
-          currentExercise.name,
-          currentExercise.reps,
-          workoutHistory,
-        );
-        weightVal =
-          stats.suggestedWeight > 0 ? String(stats.suggestedWeight) : "0";
+        const configuredWeight =
+          currentExercise.setDetails?.[setNumber - 1]?.weight ??
+          currentExercise.weight;
+        if (configuredWeight !== undefined && configuredWeight !== null) {
+          weightVal = String(configuredWeight);
+        } else {
+          const stats = getProgressionStats(
+            currentExercise.name,
+            currentExercise.reps,
+            workoutHistory,
+          );
+          weightVal =
+            stats.suggestedWeight > 0 ? String(stats.suggestedWeight) : "0";
+        }
       }
 
       setSetLogs((prev) => ({
@@ -931,6 +941,32 @@ function ActiveWorkoutContent() {
         };
       })
       .filter((el) => el.setsLog.length > 0);
+
+    // Persist updated weights & reps back to the permanent plan
+    if (!isFree && todayPlan) {
+      const updatedPlanExercises = (todayPlan.exercises || []).map((ex, exIdx) => {
+        const loggedEx = exerciseLogs.find(
+          (el) => el.exerciseId === ex.id || el.exerciseName === ex.name
+        );
+        if (!loggedEx || loggedEx.setsLog.length === 0) return ex;
+        const regularSets = loggedEx.setsLog.filter((s) => s.setNumber !== 99);
+        if (regularSets.length === 0) return ex;
+        const maxW = Math.max(...regularSets.map((s) => s.weight || 0));
+        return {
+          ...ex,
+          weight: maxW,
+          setDetails: regularSets.map((s, idx) => ({
+            setNumber: idx + 1,
+            reps: String(s.reps),
+            weight: s.weight,
+          })),
+        };
+      });
+      updateDayPlan(dayIndex, {
+        ...todayPlan,
+        exercises: updatedPlanExercises,
+      });
+    }
 
     completeWorkout({
       id: generateId(),
@@ -1197,25 +1233,35 @@ function ActiveWorkoutContent() {
                                 const log = setLogs[logKey] || { reps: "", weight: "" };
                                 
                                 const pStats = getProgressionStats(
-                                  currentExercise.libraryId || currentExercise.name,
-                                  setNumber
+                                  currentExercise.name,
+                                  currentExercise.reps,
+                                  workoutHistory
                                 );
+                                const configuredSet = currentExercise.setDetails?.[i];
                                 
-                                // Simplified progression targets
-                                let targetWeight = pStats?.weight ? pStats.weight : "";
-                                let targetReps = pStats?.reps ? pStats.reps : (parseInt(currentExercise.reps) || "");
+                                // Target weight & reps prioritizing user's saved configuration
+                                const targetWeight =
+                                  configuredSet?.weight !== undefined
+                                    ? configuredSet.weight
+                                    : currentExercise.weight !== undefined
+                                      ? currentExercise.weight
+                                      : pStats?.suggestedWeight
+                                        ? pStats.suggestedWeight
+                                        : "";
+                                let targetReps: string | number =
+                                  configuredSet?.reps !== undefined
+                                    ? configuredSet.reps
+                                    : parseInt(currentExercise.reps) || currentExercise.reps || "";
                                 
-                                if (currentPlan?.phases && currentPlan.currentPhaseIndex !== undefined && currentPlan.currentWeekIndex !== undefined) {
+                                if (configuredSet?.reps === undefined && currentPlan?.phases && currentPlan.currentPhaseIndex !== undefined && currentPlan.currentWeekIndex !== undefined) {
                                   const cPhase = currentPlan.phases[currentPlan.currentPhaseIndex];
                                   const wRatio = selectedProgressionWeek === 0
                                     ? ((currentPlan.currentWeekIndex + 1) / (cPhase.durationWeeks || 4))
                                     : (selectedProgressionWeek / (cPhase.durationWeeks || 4));
                                   const adj = adjustExerciseForWeek(
-                                    currentExercise.reps,
-                                    currentExercise.sets,
-                                    wRatio,
-                                    cPhase.progressionType || "linear",
-                                    currentExercise.advancedTechnique
+                                    currentExercise,
+                                    Math.max(1, Math.round(wRatio * 4)),
+                                    questionnaire?.mainGoal
                                   );
                                   targetReps = adj.reps;
                                 }

@@ -53,14 +53,24 @@ export interface WorkoutQuestionnaire {
   includeCardio?: boolean;
 }
 
+export interface ExerciseSetConfig {
+  setNumber: number;
+  reps: string;
+  weight: number;
+}
+
 export interface ExerciseDefinition {
   id: string;
+  libraryId?: string;
   name: string;
   sets: number;
   reps: string;
+  weight?: number;
+  setDetails?: ExerciseSetConfig[];
   restSeconds: number;
   instructions: string;
   targetMuscles: string[];
+  target?: string;
   substitutions?: string[];
   difficulty?: string;
   equipment?: string;
@@ -88,6 +98,7 @@ export interface WorkoutPhaseDef {
   name: string; // e.g., "Fase 1: Hipertrofia Base"
   description: string;
   durationWeeks: number;
+  progressionType?: string;
   schedule: WorkoutDayPlan[];
 }
 
@@ -100,6 +111,7 @@ export interface WorkoutPlan {
   phaseName?: string;
   planPromptDescription?: string;
   schedule: WorkoutDayPlan[]; 
+  dateOverrides?: Record<string, WorkoutDayPlan>;
   
   // New Program Structure
   programName?: string;
@@ -178,7 +190,11 @@ interface WorkoutState {
   updateUserTemplate: (id: string, plan: WorkoutPlan) => void;
   removeUserTemplate: (id: string) => void;
   updateDayPlan: (dayIndex: number, dayPlan: WorkoutDayPlan) => void;
+  updateDateOverride: (dateKey: string, dayPlan: WorkoutDayPlan | null) => void;
   completeWorkout: (log: WorkoutLog) => void;
+  updateWorkoutLog: (logId: string, updatedLog: WorkoutLog) => void;
+  upsertWorkoutLogForDate: (dateKey: string, log: WorkoutLog) => void;
+  removeWorkoutLog: (logId: string) => void;
   resetWorkoutSystem: () => void;
   setWorkoutHistory: (history: WorkoutLog[]) => void;
   updateSettings: (settings: Partial<WorkoutSettings>) => void;
@@ -252,12 +268,41 @@ export const useWorkoutStore = create<WorkoutState>()(
 
       updateDayPlan: (dayIndex, dayPlan) => set((state) => {
         if (!state.currentPlan) return state;
-        const newSchedule = [...state.currentPlan.schedule];
+        const newSchedule = [...(state.currentPlan.schedule || [])];
         newSchedule[dayIndex] = dayPlan;
+
+        let updatedPhases = state.currentPlan.phases;
+        if (updatedPhases && updatedPhases.length > 0) {
+          const pIdx = state.currentPlan.currentPhaseIndex || 0;
+          updatedPhases = updatedPhases.map((phase, idx) => {
+            if (idx !== pIdx) return phase;
+            const phaseSched = [...(phase.schedule || [])];
+            phaseSched[dayIndex] = dayPlan;
+            return { ...phase, schedule: phaseSched };
+          });
+        }
+
         return {
           currentPlan: {
             ...state.currentPlan,
-            schedule: newSchedule
+            schedule: newSchedule,
+            ...(updatedPhases ? { phases: updatedPhases } : {})
+          }
+        };
+      }),
+
+      updateDateOverride: (dateKey, dayPlan) => set((state) => {
+        if (!state.currentPlan) return state;
+        const nextOverrides = { ...(state.currentPlan.dateOverrides || {}) };
+        if (dayPlan === null) {
+          delete nextOverrides[dateKey];
+        } else {
+          nextOverrides[dateKey] = dayPlan;
+        }
+        return {
+          currentPlan: {
+            ...state.currentPlan,
+            dateOverrides: nextOverrides
           }
         };
       }),
@@ -265,6 +310,38 @@ export const useWorkoutStore = create<WorkoutState>()(
       completeWorkout: (log) => set((state) => ({
         workoutHistory: [...(Array.isArray(state.workoutHistory) ? state.workoutHistory : []), log]
       })),
+
+      updateWorkoutLog: (logId, updatedLog) => set((state) => {
+        const current = Array.isArray(state.workoutHistory) ? state.workoutHistory : [];
+        return {
+          workoutHistory: current.map(log => log.id === logId ? updatedLog : log)
+        };
+      }),
+
+      upsertWorkoutLogForDate: (dateKey, log) => set((state) => {
+        const current = Array.isArray(state.workoutHistory) ? state.workoutHistory : [];
+        const matchIdx = current.findIndex(item => {
+          if (item.id === log.id) return true;
+          const d = new Date(item.date);
+          const pad = (n: number) => n.toString().padStart(2, '0');
+          const itemKey = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+          return itemKey === dateKey;
+        });
+
+        if (matchIdx >= 0) {
+          const updated = [...current];
+          updated[matchIdx] = { ...updated[matchIdx], ...log };
+          return { workoutHistory: updated };
+        }
+        return { workoutHistory: [...current, log] };
+      }),
+
+      removeWorkoutLog: (logId) => set((state) => {
+        const current = Array.isArray(state.workoutHistory) ? state.workoutHistory : [];
+        return {
+          workoutHistory: current.filter(log => log.id !== logId)
+        };
+      }),
       
       setWorkoutHistory: (history) => set({
         workoutHistory: Array.isArray(history) ? history : []

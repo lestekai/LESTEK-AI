@@ -37,7 +37,7 @@ interface WorkoutEditorProps {
 }
 
 export function WorkoutEditor({ fullPlan, dayIndex = 0, initialDayPlan, onSavePlan, onSaveFullPlan, onClose }: WorkoutEditorProps) {
-  const { currentPlan, updateDayPlan, updateUserTemplate } = useWorkoutStore();
+  const { currentPlan, setPlan, updateDayPlan, updateUserTemplate } = useWorkoutStore();
   
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
@@ -240,22 +240,35 @@ export function WorkoutEditor({ fullPlan, dayIndex = 0, initialDayPlan, onSavePl
     const updatedSchedule = [...schedule];
     updatedSchedule[activeDayIdx] = cleanedActiveDay;
 
-    // 3. Assemble full updated plan object
+    const baseSource = fullPlan || currentPlan;
+    let updatedPhases = baseSource?.phases;
+    if (updatedPhases && updatedPhases.length > 0) {
+      const pIdx = baseSource?.currentPhaseIndex || 0;
+      updatedPhases = updatedPhases.map((phase, idx) =>
+        idx === pIdx ? { ...phase, schedule: updatedSchedule } : phase
+      );
+    }
+
+    // 3. Assemble full updated plan object preserving all metadata
     const updatedFullPlan: WorkoutPlan = {
+      ...(baseSource || {}),
       id: fullPlan?.id || currentPlan?.id || `plan_${Date.now()}`,
-      generatedAt: fullPlan?.generatedAt || new Date().toISOString(),
+      generatedAt: fullPlan?.generatedAt || currentPlan?.generatedAt || new Date().toISOString(),
       phaseName: programName || 'Programa de Treino',
-      planPromptDescription: fullPlan?.planPromptDescription || `${updatedSchedule.length} dias de treino`,
+      planPromptDescription: fullPlan?.planPromptDescription || currentPlan?.planPromptDescription || `${updatedSchedule.length} dias de treino`,
       schedule: updatedSchedule,
+      ...(updatedPhases ? { phases: updatedPhases } : {}),
     };
 
     // 4. Callback execution
     if (onSaveFullPlan) {
       onSaveFullPlan(updatedFullPlan);
-    } else if (fullPlan?.id) {
-      updateUserTemplate(fullPlan.id, updatedFullPlan);
     } else if (onSavePlan) {
       onSavePlan(cleanedActiveDay);
+    } else if (fullPlan?.id && currentPlan?.id && fullPlan.id !== currentPlan.id) {
+      updateUserTemplate(fullPlan.id, updatedFullPlan);
+    } else if (currentPlan) {
+      setPlan(updatedFullPlan);
     } else if (dayIndex !== undefined) {
       updateDayPlan(activeDayIdx, cleanedActiveDay);
     }
@@ -265,7 +278,14 @@ export function WorkoutEditor({ fullPlan, dayIndex = 0, initialDayPlan, onSavePl
 
   const handleUpdateExercise = (index: number, updates: Partial<ExerciseDefinition>) => {
     const newEx = [...dayPlan.exercises];
-    newEx[index] = { ...newEx[index], ...updates };
+    const current = { ...newEx[index], ...updates };
+    if (updates.weight !== undefined && current.setDetails) {
+      current.setDetails = current.setDetails.map(s => ({ ...s, weight: Number(updates.weight) || 0 }));
+    }
+    if (updates.reps !== undefined && current.setDetails) {
+      current.setDetails = current.setDetails.map(s => ({ ...s, reps: String(updates.reps) }));
+    }
+    newEx[index] = current;
     setDayPlan({ ...dayPlan, exercises: newEx });
   };
 
@@ -588,20 +608,24 @@ function SortableExerciseItem({ ex, idx, handleUpdateExercise, setReplacementTar
                    <span className="text-[8px] uppercase text-text-secondary font-black tracking-widest mb-1">Reps</span>
                    <input type="text" value={ex.reps ?? ""} onChange={(e) => handleUpdateExercise(idx, { reps: e.target.value })} className="w-full bg-transparent text-text-primary font-black text-xs focus:outline-none" />
                 </div>
+                <div className="bg-background rounded-lg p-2 border border-neon-blue/30 flex flex-col justify-center shadow-inner">
+                   <span className="text-[8px] uppercase text-neon-blue font-black tracking-widest mb-1">Carga (kg)</span>
+                   <input type="number" step="0.5" placeholder="0" value={ex.weight ?? ""} onChange={(e) => handleUpdateExercise(idx, { weight: parseFloat(e.target.value) || 0 })} className="w-full bg-transparent text-neon-blue font-black text-xs focus:outline-none" />
+                </div>
                 <div className="bg-background rounded-lg p-2 border border-surface-light flex flex-col justify-center shadow-inner">
                    <span className="text-[8px] uppercase text-text-secondary font-black tracking-widest mb-1">Descanso</span>
                    <input type="text" placeholder="60s" value={ex.rest || ''} onChange={(e) => handleUpdateExercise(idx, { rest: e.target.value })} className="w-full bg-transparent text-text-primary font-black text-xs focus:outline-none" />
-                </div>
-                <div className="bg-background rounded-lg p-2 border border-surface-light flex flex-col justify-center shadow-inner">
-                   <span className="text-[8px] uppercase text-text-secondary font-black tracking-widest mb-1">Tempo</span>
-                   <input type="text" placeholder="3010" value={ex.tempo || ''} onChange={(e) => handleUpdateExercise(idx, { tempo: e.target.value })} className="w-full bg-transparent text-text-primary font-black text-xs focus:outline-none" />
                 </div>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2 mt-2">
-            <div className="col-span-2 bg-background rounded-lg p-2 border border-surface-light flex flex-col justify-center shadow-inner">
+            <div className="bg-background rounded-lg p-2 border border-surface-light flex flex-col justify-center shadow-inner">
+               <span className="text-[8px] uppercase text-text-secondary font-black tracking-widest mb-1">Tempo</span>
+               <input type="text" placeholder="3010" value={ex.tempo || ''} onChange={(e) => handleUpdateExercise(idx, { tempo: e.target.value })} className="w-full bg-transparent text-text-primary font-black text-xs focus:outline-none" />
+            </div>
+            <div className="bg-background rounded-lg p-2 border border-surface-light flex flex-col justify-center shadow-inner">
                <span className="text-[8px] uppercase text-text-secondary font-black tracking-widest mb-1">RIR (Rep na Reserva)</span>
                <input type="text" placeholder="0-2" value={ex.rir || ''} onChange={(e) => handleUpdateExercise(idx, { rir: e.target.value })} className="w-full bg-transparent text-text-primary font-black text-xs focus:outline-none" />
             </div>
