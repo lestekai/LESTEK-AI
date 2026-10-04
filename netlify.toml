@@ -7,7 +7,7 @@
   node_bundler = "esbuild"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "22"
   NPM_FLAGS = "--no-audit --no-fund --legacy-peer-deps"
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
   DISABLE_NEXTJS_PLUGIN = "true"
